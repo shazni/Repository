@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0" localization="OSGI-INF/metatype/metatype">
+    <OCD id="registry.core.dscomponent" name="%registry.core.dscomponent.name" description="%registry.core.dscomponent.description"/>
+    <Designate pid="registry.core.dscomponent">
+        <Object ocdref="registry.core.dscomponent"/>
+    </Designate>
+</metatype:MetaData>
