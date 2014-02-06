@@ -21,20 +21,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.registry.core.exceptions.RepositoryConfigurationException;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
-import javax.xml.parsers.DocumentBuilder;
 
 /**
  * This class is to initialize, validate the registry related configurations in carbon.xml. This
@@ -112,29 +110,6 @@ public class RegistryConfiguration {
         try {
             File carbonXML = new File(carbonXMLPath);
             InputStream inSXml = new FileInputStream(carbonXML);
-            
-            String carbonXMLNS = "http://wso2.org/projects/carbon/carbon.xml" ;
-            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-            Document doc = documentBuilder.parse(carbonXML);
-            
-            doc.getDocumentElement().normalize();
-            NodeList nodeList = doc.getElementsByTagNameNS(carbonXMLNS, REGISTRY_CONFIG);
-            
-            int numberOfElements;
-			if((numberOfElements = nodeList.getLength()) > 0) {
-            	if(numberOfElements < 1) {
-            		Node node = nodeList.item(0);
-            		if(node.getNodeType() == Node.ELEMENT_NODE) {
-            			Element element = (Element) node ;
-            			registryConfiguration.put(element.getNodeName(), element.getNodeValue());
-            		}
-            	} else {
-            		throw new RepositoryConfigurationException("Only one registry element should exist in carbon.xml");
-            	}
-            }
-            
-            /*
             OMElement config = new StAXOMBuilder(inSXml).getDocumentElement();
 
             OMElement registryConfig = config.getFirstChildWithName(new QName(
@@ -150,7 +125,7 @@ public class RegistryConfiguration {
                 }
 
                 //Default to embedded configuration
-            }*/
+            }
 
             if (registryConfiguration.get(TYPE) == null) {
                 registryConfiguration.put(TYPE, EMBEDDED_REGISTRY);

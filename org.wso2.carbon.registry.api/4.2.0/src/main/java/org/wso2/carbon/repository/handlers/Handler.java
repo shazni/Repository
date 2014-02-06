@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.repository.handlers;
 
+//import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.repository.Association;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;

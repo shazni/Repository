@@ -18,6 +18,7 @@ package org.wso2.carbon.registry.core.utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.registry.core.internal.RegistryCoreServiceComponent;
 import org.wso2.carbon.registry.core.session.CurrentSession;
 import org.wso2.carbon.repository.ActionConstants;
 import org.wso2.carbon.repository.RepositoryConstants;
@@ -61,6 +62,57 @@ public class AuthorizationUtils {
         }
 
         return true;
+    }
+
+    /**
+     * Method to set authorizations for an anonymous user.
+     *
+     * @param path      the resource path.
+     * @param userRealm the user realm
+     *
+     * @throws RepositoryException if the operation failed.
+     */
+    @SuppressWarnings("unused")
+    @Deprecated
+    public static void setAnonAuthorization(String path, UserRealm userRealm)
+            throws RepositoryException {
+
+        throw new UnsupportedOperationException("This method is no longer supported");
+        
+        /*if (userRealm == null) {
+            return;
+        }
+
+        try {
+            AuthorizationManager accessControlAdmin = userRealm.getAuthorizationManager();
+            RealmConfiguration realmConfig;
+            try {
+                realmConfig = userRealm.getRealmConfiguration();
+            } catch (UserStoreException e) {
+                String msg = "Failed to retrieve realm configuration.";
+                log.error(msg, e);
+                throw new RepositoryException(msg, e);
+            }
+            String anonymousUserName = CarbonConstants.REGISTRY_ANONNYMOUS_USERNAME;
+
+            accessControlAdmin.authorizeUser(anonymousUserName, path, ActionConstants.GET);
+            accessControlAdmin.denyUser(anonymousUserName, path, ActionConstants.PUT);
+            accessControlAdmin.denyUser(anonymousUserName, path, ActionConstants.DELETE);
+            accessControlAdmin.denyUser(anonymousUserName, path, AccessControlConstants.AUTHORIZE);
+
+            String everyoneRole = realmConfig.getEveryOneRoleName();
+
+            accessControlAdmin.authorizeRole(everyoneRole, path, ActionConstants.GET);
+            accessControlAdmin.denyRole(everyoneRole, path, ActionConstants.PUT);
+            accessControlAdmin.denyRole(everyoneRole, path, ActionConstants.DELETE);
+            accessControlAdmin.denyRole(everyoneRole, path, AccessControlConstants.AUTHORIZE);
+
+        } catch (UserStoreException e) {
+            String msg = "Could not set authorizations for the " + path + ". \nCaused by: "
+                    + e.getMessage();
+            log.error(msg, e);
+            throw new RepositoryException(msg);
+        }*/
     }
 
     /**
@@ -141,6 +193,57 @@ public class AuthorizationUtils {
     }
 
     /**
+     * Method to deny anonymous authorizations to the given path.
+     *
+     * @param path      the path.
+     * @param userRealm the user realm to use.
+     *
+     * @throws RepositoryException if the operation failed.
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
+    public static void denyAnonAuthorization(String path, UserRealm userRealm)
+            throws RepositoryException {
+
+        throw new UnsupportedOperationException("This method is no longer supported");
+
+        /*if (userRealm == null) {
+            return;
+        }
+
+        try {
+            AuthorizationManager accessControlAdmin = userRealm.getAuthorizationManager();
+            RealmConfiguration realmConfig;
+            try {
+                realmConfig = userRealm.getRealmConfiguration();
+            } catch (UserStoreException e) {
+                String msg = "Failed to retrieve realm configuration.";
+                log.error(msg, e);
+                throw new RepositoryException(msg, e);
+            }
+            String anonymousUserName = CarbonConstants.REGISTRY_ANONNYMOUS_USERNAME;
+
+            accessControlAdmin.denyUser(anonymousUserName, path, ActionConstants.GET);
+            accessControlAdmin.denyUser(anonymousUserName, path, ActionConstants.PUT);
+            accessControlAdmin.denyUser(anonymousUserName, path, ActionConstants.DELETE);
+            accessControlAdmin.denyUser(anonymousUserName, path, AccessControlConstants.AUTHORIZE);
+
+            String everyoneRole = realmConfig.getEveryOneRoleName();
+
+            accessControlAdmin.denyRole(everyoneRole, path, ActionConstants.GET);
+            accessControlAdmin.denyRole(everyoneRole, path, ActionConstants.PUT);
+            accessControlAdmin.denyRole(everyoneRole, path, ActionConstants.DELETE);
+            accessControlAdmin.denyRole(everyoneRole, path, AccessControlConstants.AUTHORIZE);
+
+        } catch (UserStoreException e) {
+            String msg = "Could not clear authorizations for the " + path + ". \nCaused by: "
+                    + e.getMessage();
+            log.error(msg, e);
+            throw new RepositoryException(msg);
+        }*/
+    }
+
+    /**
      * Method to set authorizations to the root path.
      *
      * @param rootPath  the root path.
@@ -199,6 +302,84 @@ public class AuthorizationUtils {
             log.error(msg, e);
             throw new RepositoryAuthException(msg, RepositoryErrorCodes.COULD_NOT_PROVIDE_ROOT_AUTH_ERROR);
         }
+    }
+
+    /**
+     * Populates all necessary users, roles and authorizations related user store. Note that the
+     * authorizations related to resource store is not populated by this method.
+     *
+     * @param realm Realm for which data has to be populated
+     *
+     * @throws UserStoreException if the operation failed.
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
+    public static void populateUserStore(UserRealm realm) throws UserStoreException {
+
+        throw new UnsupportedOperationException("This method is no longer used");
+
+        /*if (realm == null) {
+            return;
+        }
+
+        UserStoreManager userStoreAdmin = realm.getUserStoreManager();
+        AuthorizationManager accessControlAdmin = realm.getAuthorizationManager();
+
+        RealmConfiguration realmConfig = realm.getRealmConfiguration();
+        String adminRoleName = realmConfig.getAdminRoleName();
+
+        if (!userStoreAdmin.isExistingRole(adminRoleName)) {
+            userStoreAdmin.addRole(adminRoleName, null, null);
+        }
+
+        // adding the admin role and granting permissions are two independent
+        // tasks. There can be
+        // scenarios where the admin role exists without any permissions (e.g.
+        // admin role defined
+        // in external user store)
+        if (!accessControlAdmin.isRoleAuthorized(adminRoleName,
+                AccessControlConstants.USER_RESOURCE, AccessControlConstants.ADD)) {
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.USER_RESOURCE, AccessControlConstants.ADD);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.USER_RESOURCE, AccessControlConstants.READ);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.USER_RESOURCE, AccessControlConstants.EDIT);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.USER_RESOURCE, AccessControlConstants.DELETE);
+
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.ROLE_RESOURCE, AccessControlConstants.ADD);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.ROLE_RESOURCE, AccessControlConstants.READ);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.ROLE_RESOURCE, AccessControlConstants.EDIT);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.ROLE_RESOURCE, AccessControlConstants.DELETE);
+
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.USER_PERMISSION_RESOURCE, AccessControlConstants.READ);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.USER_PERMISSION_RESOURCE, AccessControlConstants.ADD);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.USER_PERMISSION_RESOURCE, AccessControlConstants.EDIT);
+            accessControlAdmin.authorizeRole(adminRoleName,
+                    AccessControlConstants.USER_PERMISSION_RESOURCE, AccessControlConstants.DELETE);
+        }
+        String everyoneRoleName = realmConfig.getEveryOneRoleName();
+        if (!userStoreAdmin.isExistingRole(everyoneRoleName)) {
+            userStoreAdmin.addRole(everyoneRoleName, null, null);
+        }
+
+        if (!accessControlAdmin.isRoleAuthorized(everyoneRoleName,
+                AccessControlConstants.USER_RESOURCE, AccessControlConstants.READ)) {
+            accessControlAdmin.authorizeRole(everyoneRoleName,
+                    AccessControlConstants.USER_RESOURCE, AccessControlConstants.READ);
+            accessControlAdmin.authorizeRole(everyoneRoleName,
+                    AccessControlConstants.ROLE_RESOURCE, AccessControlConstants.READ);
+            accessControlAdmin.authorizeRole(everyoneRoleName,
+                    AccessControlConstants.USER_PERMISSION_RESOURCE, AccessControlConstants.READ);
+        }*/
     }
 
     /**

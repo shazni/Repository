@@ -40,6 +40,7 @@ import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.registry.core.CollectionImpl;
 import org.wso2.carbon.registry.core.CommentImpl;
+//import org.wso2.carbon.registry.core.LogEntryCollection;
 import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.registry.core.caching.RegistryCacheKey;
 import org.wso2.carbon.registry.core.config.DataBaseConfiguration;

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.wso2.carbon.repository.Aspect;
+//import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Association;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;
@@ -583,6 +584,24 @@ public class RequestContext {
     public void setDumpingWriter(Writer dumpingWriter) {
         this.dumpingWriter = dumpingWriter;
     }
+
+    /**
+     * Method to get the Registry Context.
+     *
+     * @return the Registry Context.
+     */
+//    public RegistryContext getRegistryContext() {
+//        return registryContext;
+//    }
+
+    /**
+     * Method to set Registry Context.
+     *
+     * @param registryContext the Registry Context.
+     */
+//    public void setRegistryContext(RegistryContext registryContext) {
+//        this.registryContext = registryContext;
+//    }
 
     /**
      * Method to get the Old Resource.

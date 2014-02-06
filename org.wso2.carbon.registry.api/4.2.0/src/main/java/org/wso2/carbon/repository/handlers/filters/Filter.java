@@ -26,6 +26,10 @@ import org.wso2.carbon.repository.handlers.RequestContext;
  */
 public abstract class Filter {
 
+    ////////////////////////////////////////////////////////
+    // Supported method names
+    ////////////////////////////////////////////////////////
+
     /**
      * Represents a get operation on the registry.
      */

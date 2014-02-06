@@ -19,7 +19,6 @@ package org.wso2.carbon.registry.core.service;
 import java.util.List;
 
 import org.apache.axiom.om.OMElement;
-import org.w3c.dom.Element;
 import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;
@@ -72,7 +71,7 @@ public interface RegistryService extends org.wso2.carbon.repository.RegistryServ
     
     RealmService getRealmService();
     
-    boolean updateHandler(Element configElement, Registry registryContext, String lifecyclePhase) throws RepositoryException ;
+    boolean updateHandler(OMElement configElement, Registry registryContext, String lifecyclePhase) throws RepositoryException ;
     
     /**
      * Method to determine whether a system resource (or collection) path has been registered.

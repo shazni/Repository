@@ -18,8 +18,8 @@
  */
 package org.wso2.carbon.registry.core.service;
 
-//import org.wso2.carbon.utils.AuthenticationObserver;
-//import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
+import org.wso2.carbon.utils.AuthenticationObserver;
+import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 
 /**
  * Initializes the tenant's registry space. This interface also implements the

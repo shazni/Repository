@@ -50,7 +50,6 @@ import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.StatisticsCollector;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.user.core.service.RealmService;
-import org.wso2.carbon.repository.config.StaticConfiguration;
 
 /**
  * This class provides access to core registry configurations. Registry context is associated with
@@ -106,7 +105,7 @@ public class RegistryContext {
     private CustomEditManager customEditManager = new CustomEditManager();
     private Map aspects = new HashMap();
     private boolean versionOnChange;
-//    private int maxCache;
+    private int maxCache;
     private List<RemoteConfiguration> remoteInstances = new ArrayList<RemoteConfiguration>();
     private List<Mount> mounts = new ArrayList<Mount>();
     private List<QueryProcessorConfiguration> queryProcessors =
@@ -278,9 +277,7 @@ public class RegistryContext {
     /**
      * Return a singleton object of the base registry context with custom realm service If a
      * registry context doesn't exist, it will create a new one and return it. Otherwise it will
-     * create the current base registry context                    registryContext.setRegistryRoot(registryRoot);
-                    registryService.setRegistryRoot(registryRoot);
-                    StaticConfiguration.setRegistryRoot(registryRoot);
+     * create the current base registry context
      *
      * @param realmService realm service
      *
@@ -392,10 +389,6 @@ public class RegistryContext {
      */
     public void setRegistryRoot(String registryRoot) {
         this.registryRoot = registryRoot;
-        
-        // This is moved into this method from above
-        registryService.setRegistryRoot(registryRoot);
-        StaticConfiguration.setRegistryRoot(registryRoot);
     }
 
     /**
@@ -414,9 +407,6 @@ public class RegistryContext {
      */
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
-        
-        // This is moved inside
-        registryService.setReadOnly(readOnly);
     }
 
     /**
@@ -435,9 +425,6 @@ public class RegistryContext {
      */
     public void setCacheEnabled(boolean enableCache) {
         this.enableCache = enableCache;
-        
-        // Following is from RegistryConfProcessor
-        registryService.setCacheEnabled(enableCache);
     }
 
     /**
@@ -518,7 +505,7 @@ public class RegistryContext {
             this.customEditManager = baseContext.customEditManager;
             this.aspects = baseContext.aspects;
             this.versionOnChange = baseContext.versionOnChange;
-//            this.maxCache = baseContext.maxCache;
+            this.maxCache = baseContext.maxCache;
             this.profilesPath = baseContext.profilesPath;
             this.remoteInstances = baseContext.remoteInstances;
             this.mounts = baseContext.mounts;
@@ -541,25 +528,25 @@ public class RegistryContext {
         return realmService;
     }
 
-/*    *//**
+    /**
      * Set a maximum entries for cache value
      *
      * @param maxCache the maximum number for cache value.
-     *//*
+     */
     @Deprecated
     public void setMaxCache(int maxCache) {
         this.maxCache = maxCache;
     }
 
-    *//**
+    /**
      * Get the number of maximum cache entries
      *
      * @return number of maximum cache entries
-     *//*
+     */
     @Deprecated
     public int getMaxCache() {
         return this.maxCache;
-    }*/
+    }
 
     /**
      * Return the repository object, which provides an interface to put, get resources to the
@@ -935,9 +922,6 @@ public class RegistryContext {
      */
     public void setServicePath(String servicePath) {
         this.servicePath = servicePath;
-        
-        // From RegConf
-        registryService.setServicePath(servicePath);
     }   
 
     /**

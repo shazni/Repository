@@ -105,7 +105,7 @@ public class CachingHandler extends Handler {
         String connectionId = "";
         DataBaseConfiguration dataBaseConfiguration = null;
         boolean doLocalCleanup = false;
-
+        // first check for mounts.
         String cleanupPath = cachePath;
         if (!local && dbConfigs.size() > 0) {
             for (String targetPath : dbConfigs.keySet()) {
@@ -130,8 +130,9 @@ public class CachingHandler extends Handler {
         if (!local && dataBaseConfiguration != null) {
             doLocalCleanup = true;
         }
-
+        // if not found, then use the default DB configuration.
         if (dataBaseConfiguration == null) {
+            //RegistryContext registryContext = requestContext.getRegistryContext();
         	Registry registry = requestContext.getRegistry();
         	
         	RegistryContext registryContext = InternalUtils.getRegistryContext(registry);
@@ -155,8 +156,10 @@ public class CachingHandler extends Handler {
             cleanupPath = CurrentSession.getLocalPathMap().get(cachePath);
         } else if (!local && doLocalCleanup) {
             if (cachePath.equals(cleanupPath)) {
+                // the normal scenario
                 clearCache(requestContext, cachePath, recursive, true);
             } else if (CurrentSession.getLocalPathMap() == null) {
+                // before setting up a mount, and without an existing local path map.
                 CurrentSession.setLocalPathMap(
                         Collections.<String, String>singletonMap(cleanupPath, cachePath));
                 try {
@@ -165,6 +168,7 @@ public class CachingHandler extends Handler {
                     CurrentSession.removeLocalPathMap();
                 }
             } else {
+                // before setting up a mount, and with an existing local path map.
                 Map<String, String> currentLocalPathMap = CurrentSession.getLocalPathMap();
                 Map<String, String> newLocalPathMap =
                         new HashMap<String, String> (currentLocalPathMap);
@@ -191,6 +195,15 @@ public class CachingHandler extends Handler {
                 }
             }
         }
+//        for (Cache.Entry<RegistryCacheKey, GhostResource> entry : cache) {
+//        	RegistryCacheKey key=entry.getKey();
+//        	String path = key.getPath();
+//        	if (recursive) {
+//                if (path.startsWith(cleanupPath)) {
+//                    removeFromCache(connectionId, tenantId, path);
+//                }
+//            }
+//        }
         clearAncestry(connectionId, tenantId, parentPath);
     }
 
@@ -208,6 +221,13 @@ public class CachingHandler extends Handler {
                 cleared = cleared || removeFromCache(connectionId, tenantId, path);
             }
         }
+//        for (Cache.Entry<RegistryCacheKey, GhostResource> entry : cache) {
+//        	RegistryCacheKey key=entry.getKey();
+//        	String path = key.getPath();
+//        	if (pattern.matcher(path).matches()) {
+//                 cleared = cleared || removeFromCache(connectionId, tenantId, path);
+//            }
+//		}
         if (!cleared && parentPath != null && !parentPath.equals(RepositoryConstants.ROOT_PATH)) {
             clearAncestry(connectionId, tenantId, RepositoryUtils.getParentPath(parentPath));
         }
@@ -218,14 +238,27 @@ public class CachingHandler extends Handler {
         Cache<RegistryCacheKey, GhostResource> cache = getCache();
         if (cache.containsKey(cacheKey)) {
             cache.remove(cacheKey);
+            
+           // TODO: figure out how this is done and its u
+//            if (RegistryCoreServiceComponent.getCacheInvalidator() != null) {
+//                try {
+//                    RegistryCoreServiceComponent.getCacheInvalidator().invalidateCache(
+//                            RepositoryConstants.REGISTRY_CACHE_BACKED_ID, cacheKey);
+//                } catch (CacheException ignored) {
+//                    // if cache invalidation failed, simply ignore it.
+//                }
+//            }
             return true;
         } else {
             return false;
         }
     }
 
+
     @SuppressWarnings("unchecked")
     public void put(RequestContext requestContext) throws RepositoryException {
+        // for collections, we need to ensure that paginated gets that were cached needs to be
+        // cleared.
         Resource resource = requestContext.getResource();
         if (resource.getProperty(RepositoryConstants.REGISTRY_LINK) != null) {
             String path = resource.getProperty(RepositoryConstants.REGISTRY_REAL_PATH);

@@ -18,9 +18,11 @@ package org.wso2.carbon.repository;
 
 import java.util.List;
 
-import org.w3c.dom.Element;
+import org.apache.axiom.om.OMElement;
+//import org.wso2.carbon.registry.core.config.RemoteConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.Handler;
+//import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.repository.handlers.filters.Filter;
 
 /**
@@ -31,7 +33,21 @@ import org.wso2.carbon.repository.handlers.filters.Filter;
  * entities that use the registry would also become automatically suspended.
  */
 public interface RegistryService {
-	
+
+    ////////////////////////////////////////////////////////
+    // According to the registry separation concept, there
+    // are 3 different registries..
+    // 1. Local data repository - to store per instance
+    //    data
+    // 2. Configuration registry - to store data which
+    //    should be shared among all nodes in a cluster
+    // 3. Governance registry - to store data which should
+    //    be shared through the platform
+    //
+    // The following methods can be used to access the above
+    // three registries separately
+    ////////////////////////////////////////////////////////
+
     /**
      * Creates a Registry instance for anonymous user which contains the entire registry tree
      * starting from '/'. Permissions set for anonymous user will be applied for all operations
@@ -604,7 +620,7 @@ public interface RegistryService {
      * @return Created handler
      * @throws RepositoryException if anything goes wrong.
      */
-    boolean updateHandler(Element configElement, Registry registry, String lifecyclePhase) throws RepositoryException ;
+    boolean updateHandler(OMElement configElement, Registry registry, String lifecyclePhase) throws RepositoryException ;
     
     /**
      * Method to determine whether a system resource (or collection) path has been registered.

@@ -87,7 +87,8 @@ public class JDBCDataAccessManager implements DataAccessManager {
                 }
 			} catch (NamingException e) {
 				// Problems!
-				log.error("Couldn't find dataSource '" + dataSourceName + "'", e);
+				log.error("Couldn't find dataSource '" + dataSourceName + "'",
+						e);
 			}
 		} else {
 			String configName = dataBaseConfiguration.getConfigName();

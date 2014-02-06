@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wso2.carbon.repository.exceptions;
+
 
 /**
  * This is thrown when a requested resource cannot be located in the Registry.

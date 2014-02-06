@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Element;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.registry.core.CommentImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
@@ -407,7 +406,7 @@ public class EmbeddedRegistryService implements RegistryService {
 	}
 
 	@Override
-	public boolean updateHandler(Element configElement,
+	public boolean updateHandler(OMElement configElement,
 			Registry registry, String lifecyclePhase) throws RepositoryException {
         boolean status = RegistryConfigurationProcessor.updateHandler(configElement,
                 InternalUtils.getRegistryContext(registry),

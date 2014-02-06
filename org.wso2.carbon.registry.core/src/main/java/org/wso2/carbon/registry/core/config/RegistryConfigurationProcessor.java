@@ -17,7 +17,6 @@
 package org.wso2.carbon.registry.core.config;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -27,6 +26,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -34,14 +34,15 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.CarbonException;
 import org.wso2.carbon.context.CarbonContext;
@@ -64,16 +65,13 @@ import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.securevault.SecretResolver;
 import org.wso2.securevault.SecretResolverFactory;
-import org.xml.sax.SAXException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Builds the registry configuration from xml document. Configuration has to be given as an input
  * stream. Registry configuration consists of details of data sources, handlers and aspects. These
  * information is extracted from the configuration populates the necessary components.
  */
-//@SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public class RegistryConfigurationProcessor {
 
     private static final Log log = LogFactory.getLog(RegistryConfigurationProcessor.class);
@@ -88,23 +86,24 @@ public class RegistryConfigurationProcessor {
      */
     public static void populateRegistryConfig(InputStream in, RegistryContext registryContext, RegistryService registryService)
             throws RepositoryException {
-    	
+//        if (in == null) {
+//            in = Thread.currentThread().getContextClassLoader().getResourceAsStream(
+//                    "org/wso2/carbon/registry/core/servlet/registry.xml");
+//            if (in == null) {
+//                return;
+//            }
+//        }
+
         try {
-        	InputStream replacedStream = CarbonUtils.replaceSystemVariablesInXml(in);
-        	DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        	DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-      
-        	Document document = documentBuilder.parse(replacedStream);
-        	Element documentElement = document.getDocumentElement() ;
-        	documentElement.normalize();
-        	
-        	NodeList rootLists = documentElement.getElementsByTagName("registryRoot");
-        	
-        	if(rootLists != null && rootLists.getLength() > 0) {
-        		Node node = rootLists.item(0);
-        		if(node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-        			String registryRoot = ((Element) node).getTextContent();
-        			
+            StAXOMBuilder builder = new StAXOMBuilder(
+                    CarbonUtils.replaceSystemVariablesInXml(in));
+            OMElement configElement = builder.getDocumentElement();
+            if (configElement != null) {
+
+                OMElement registryRootEle =
+                        configElement.getFirstChildWithName(new QName("registryRoot"));
+                if (registryRootEle != null) {
+                    String registryRoot = registryRootEle.getText();
                     if (registryRoot != null && !registryRoot.equals(RepositoryConstants.ROOT_PATH)) {
                         if (registryRoot.endsWith(RepositoryConstants.PATH_SEPARATOR)) {
                             registryRoot = registryRoot.substring(0, registryRoot.length() - 1);
@@ -114,341 +113,343 @@ public class RegistryConfigurationProcessor {
                     } else {
                         registryRoot = null;
                     }
-                    
                     registryContext.setRegistryRoot(registryRoot);
-//                    registryService.setRegistryRoot(registryRoot);
-//                    StaticConfiguration.setRegistryRoot(registryRoot);
-        		}
-        	}
-        	
-        	NodeList readOnlyElements = documentElement.getElementsByTagName("readOnly");
-        	
-        	if(readOnlyElements != null && readOnlyElements.getLength() > 0) {
-        		Node node = readOnlyElements.item(0);
-        		if(node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-        			String isReadOnly = ((Element) node).getTextContent();
-                    registryContext.setReadOnly(CarbonUtils.isReadOnlyNode() ||
-                            "true".equals(isReadOnly));
-//                    registryService.setReadOnly(CarbonUtils.isReadOnlyNode() ||
-//                            "true".equals(readOnlyEle.getText()));
-        		}
-        	}
-        	
-        	NodeList enableCacheElements = documentElement.getElementsByTagName("enableCache");
-        	
-        	if(enableCacheElements != null && enableCacheElements.getLength() > 0) {
-        		Node node = enableCacheElements.item(0);
-        		if(node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-        			String enableCacheElement = ((Element) node).getTextContent();
-                    registryContext.setCacheEnabled("true".equals(enableCacheElement));
-//                    registryService.setCacheEnabled("true".equals(enableCachingEle.getText()));
-        		}
-        	}
-        	
-        	SecretResolver secretResolver = SecretResolverFactory.create(documentElement, false);
-        	
-        	NodeList dbConfigElements = documentElement.getElementsByTagName("dbConfig");
-        	
-        	for( int index = 0 ; index < dbConfigElements.getLength() ; index++ ) {
-                Node dbConfig = dbConfigElements.item(index) ; 
-                DataBaseConfiguration dataBaseConfiguration = new DataBaseConfiguration();
+                    registryService.setRegistryRoot(registryRoot);
+                    StaticConfiguration.setRegistryRoot(registryRoot);
+                }
 
-                dataBaseConfiguration.setPasswordManager(secretResolver);
-                
-                if(dbConfig != null && dbConfig.getNodeType() == Node.ELEMENT_NODE) {
-                	Element dbConfigElement = (Element) dbConfig ;
-                	String dbName = dbConfigElement.getAttribute("name");
-                	
+                OMElement readOnlyEle =
+                        configElement.getFirstChildWithName(new QName("readOnly"));
+                if (readOnlyEle != null) {
+                    registryContext.setReadOnly(CarbonUtils.isReadOnlyNode() ||
+                            "true".equals(readOnlyEle.getText()));
+                    registryService.setReadOnly(CarbonUtils.isReadOnlyNode() ||
+                            "true".equals(readOnlyEle.getText()));
+                }
+
+                OMElement enableCachingEle =
+                        configElement.getFirstChildWithName(new QName("enableCache"));
+                if (enableCachingEle != null) {
+                    registryContext.setCacheEnabled("true".equals(enableCachingEle.getText()));
+                    registryService.setCacheEnabled("true".equals(enableCachingEle.getText()));
+                }
+
+                SecretResolver secretResolver = SecretResolverFactory.create(configElement, false);
+                Iterator dbConfigs = configElement.getChildrenWithName(new QName("dbConfig"));
+                // Read Database configurations
+                while (dbConfigs.hasNext()) {
+                    OMElement dbConfig = (OMElement) dbConfigs.next();
+                    DataBaseConfiguration dataBaseConfiguration = new DataBaseConfiguration();
+
+                    dataBaseConfiguration.setPasswordManager(secretResolver);
+                    String dbName = dbConfig.getAttributeValue(new QName("name"));
                     if (dbName == null) {
-                        throw new RepositoryConfigurationException("The database configuration name cannot be null.");
+                        throw new RepositoryConfigurationException("The database configuration name cannot be " +
+                                "null.");
                     }
-                    
                     dataBaseConfiguration.setConfigName(dbName);
-                    
-                    NodeList dbConfigDataSources = dbConfigElement.getChildNodes();
-                    
-                    for( int content = 0 ; content < dbConfigDataSources.getLength() ; content++ ) {
-                    	Node dbConfigNode = dbConfigDataSources.item(content) ;
-                    	
-                    	if(dbConfigNode != null && dbConfigNode.getNodeType() == Node.ELEMENT_NODE) {
-	                    	if(dbConfigNode.getNodeName() == "dataSource") {
-	                    		String dataSourceName = dbConfigNode.getTextContent();
-	                            dataBaseConfiguration.setDataSourceName(dataSourceName);
-	                            try {
-	                                Context context = new InitialContext();
-	                                Connection connection = null;
-	                                try {
-	                                    connection = ((DataSource) context.lookup(dataSourceName)).getConnection();
-	                                    DatabaseMetaData metaData = connection.getMetaData();
-	
-	                                    dataBaseConfiguration.setDbUrl(metaData.getURL());
-	                                    dataBaseConfiguration.setUserName(metaData.getUserName());
-	                                } finally {
-	                                    if (connection != null) {
-	                                        connection.close();
-	                                    }
-	                                }
-	                            } catch (NamingException ignored) {
-	                                log.warn("Unable to look-up JNDI name " + dataSourceName);
-	                            } catch (SQLException e) {
-	                                e.printStackTrace();
-	                                throw new RepositoryDBException("Unable to connect to Data Source", e);
-	                            }
-	                    	} else {
-	                    		if(dbConfigNode.getNodeName() == "userName") {
-	                    			dataBaseConfiguration.setUserName(dbConfigNode.getTextContent());
-	                    		} else if(dbConfigNode.getNodeName() == "password") {
-	                    			dataBaseConfiguration.setPassWord(dbConfigNode.getTextContent());
-	                    		} else if(dbConfigNode.getNodeName() == "url") {
-	                    			String dbUrl = dbConfigNode.getTextContent();
-	                    			
-		                            if (dbUrl != null) {
-		                                if (dbUrl.contains(CarbonConstants.CARBON_HOME_PARAMETER)) {
-		                                    File carbonHomeDir;
-		                                    carbonHomeDir = new File(CarbonUtils.getCarbonHome());
-		                                    String path = carbonHomeDir.getPath();
-		                                    path = path.replaceAll(Pattern.quote("\\"), "/");
-		                                    if (carbonHomeDir.exists() && carbonHomeDir.isDirectory()) {
-		                                        dbUrl = dbUrl.replaceAll(
-		                                                Pattern.quote(CarbonConstants.CARBON_HOME_PARAMETER),
-		                                                path);
-		                                    } else {
-		                                        log.warn("carbon home invalid");
-		                                        String[] tempStrings1 = dbUrl.split(
-		                                                Pattern.quote(CarbonConstants.CARBON_HOME_PARAMETER));
-		                                        String tempUrl = tempStrings1[1];
-		                                        String[] tempStrings2 = tempUrl.split("/");
-		                                        for (int i = 0; i < tempStrings2.length - 1; i++) {
-		                                            dbUrl = tempStrings1[0] + tempStrings2[i] + "/";
-		                                        }
-		                                        dbUrl = dbUrl + tempStrings2[tempStrings2.length - 1];
-		                                    }
-		                                }
-		                            }
-		                            dataBaseConfiguration.setDbUrl(dbUrl);
-	                    		} else if(dbConfigNode.getNodeName() == "maxWait") {
-	                    			dataBaseConfiguration.setMaxWait(dbConfigNode.getTextContent());
-	                    		} else if(dbConfigNode.getNodeName() == "maxActive") {
-	                    			dataBaseConfiguration.setMaxActive(dbConfigNode.getTextContent());
-	                    		} else if(dbConfigNode.getNodeName() == "minIdle") {
-	                    			dataBaseConfiguration.setMinIdle(dbConfigNode.getTextContent());
-	                    		} else if(dbConfigNode.getNodeName() == "driverName") {
-	                    			dataBaseConfiguration.setDriverName(dbConfigNode.getTextContent());
-	                    		}
-	                    	}
-                    	}
+                    OMElement dataSource = dbConfig.getFirstChildWithName(new QName("dataSource"));
+                    if (dataSource != null) {
+                        String dataSourceName = dataSource.getText();
+                        dataBaseConfiguration.setDataSourceName(dataSourceName);
+                        try {
+                            Context context = new InitialContext();
+                            Connection connection = null;
+                            try {
+                                connection = ((DataSource) context.lookup(
+                                        dataSourceName)).getConnection();
+                                DatabaseMetaData metaData = connection.getMetaData();
+
+                                // We need to obtain the connection URL and the username, which is
+                                // required for building the cache key.
+                                dataBaseConfiguration.setDbUrl(metaData.getURL());
+                                dataBaseConfiguration.setUserName(metaData.getUserName());
+                            } finally {
+                                if (connection != null) {
+                                    connection.close();
+                                }
+                            }
+                        } catch (NamingException ignored) {
+                            log.warn("Unable to look-up JNDI name " + dataSourceName);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                            throw new RepositoryDBException("Unable to connect to Data Source", e);
+                        }
+                    } else {		// Shazni - This else part will never be reached. These informations are read in different ways
+                        OMElement userName = dbConfig.getFirstChildWithName(new QName("userName"));
+                        if (userName != null) {
+                            dataBaseConfiguration.setUserName(userName.getText());
+                        }
+
+                        OMElement password = dbConfig.getFirstChildWithName(new QName("password"));
+                        if (password != null) {
+                            dataBaseConfiguration.setPassWord(password.getText());
+                        }
+
+                        OMElement url = dbConfig.getFirstChildWithName(new QName("url"));
+                        String dbUrl = url.getText();
+                        if (dbUrl != null) {
+                            // If the connection URL contains ${carbon.home}, replace it with the
+                            // corresponding value.
+                            if (dbUrl.contains(CarbonConstants.CARBON_HOME_PARAMETER)) {
+                                File carbonHomeDir;
+                                carbonHomeDir = new File(CarbonUtils.getCarbonHome());
+                                String path = carbonHomeDir.getPath();
+                                path = path.replaceAll(Pattern.quote("\\"), "/");
+                                if (carbonHomeDir.exists() && carbonHomeDir.isDirectory()) {
+                                    dbUrl = dbUrl.replaceAll(
+                                            Pattern.quote(CarbonConstants.CARBON_HOME_PARAMETER),
+                                            path);
+                                } else {
+                                    log.warn("carbon home invalid");
+                                    String[] tempStrings1 = dbUrl.split(
+                                            Pattern.quote(CarbonConstants.CARBON_HOME_PARAMETER));
+                                    String tempUrl = tempStrings1[1];
+                                    String[] tempStrings2 = tempUrl.split("/");
+                                    for (int i = 0; i < tempStrings2.length - 1; i++) {
+                                        dbUrl = tempStrings1[0] + tempStrings2[i] + "/";
+                                    }
+                                    dbUrl = dbUrl + tempStrings2[tempStrings2.length - 1];
+                                }
+
+                                url.setText(dbUrl);
+                            }
+                        }
+                        dataBaseConfiguration.setDbUrl(url.getText());
+
+
+                        OMElement driverName =
+                                dbConfig.getFirstChildWithName(new QName("driverName"));
+                        if (driverName != null) {
+                            dataBaseConfiguration.setDriverName(driverName.getText());
+                        }
+
+                        OMElement maxWait = dbConfig.getFirstChildWithName(new QName("maxWait"));
+                        if (maxWait != null) {
+                            dataBaseConfiguration.setMaxWait(maxWait.getText());
+                        }
+
+						OMElement testWhileIdle = dbConfig
+								.getFirstChildWithName(new QName(
+										"testWhileIdle"));
+						if (testWhileIdle != null) {
+							dataBaseConfiguration
+									.setTestWhileIdle(testWhileIdle
+											.getText());
+						}
+						
+						OMElement timeBetweenEvictionRunsMillis = dbConfig
+								.getFirstChildWithName(new QName(
+										"timeBetweenEvictionRunsMillis"));
+						if (timeBetweenEvictionRunsMillis != null) {
+							dataBaseConfiguration
+									.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis
+											.getText());
+						}
+						
+						OMElement minEvictableIdleTimeMillis = dbConfig
+								.getFirstChildWithName(new QName(
+										"minEvictableIdleTimeMillis"));
+						if (minEvictableIdleTimeMillis != null) {
+							dataBaseConfiguration
+									.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis
+											.getText());
+						}
+						
+						OMElement numTestsPerEvictionRun = dbConfig
+								.getFirstChildWithName(new QName(
+										"numTestsPerEvictionRun"));
+						if (numTestsPerEvictionRun != null) {
+							dataBaseConfiguration
+									.setNumTestsPerEvictionRun(numTestsPerEvictionRun
+											.getText());
+						}
+						
+                        OMElement maxActive =
+                                dbConfig.getFirstChildWithName(new QName("maxActive"));
+                        if (maxActive != null) {
+                            dataBaseConfiguration.setMaxActive(maxActive.getText());
+                        }
+
+                        OMElement maxIdle = dbConfig.getFirstChildWithName(new QName("maxIdle"));
+                        if (maxIdle != null) {
+                            dataBaseConfiguration.setMaxIdle(maxIdle.getText());
+                        }
+
+                        OMElement minIdle = dbConfig.getFirstChildWithName(new QName("minIdle"));
+                        if (minIdle != null) {
+                            dataBaseConfiguration.setMinIdle(minIdle.getText());
+                        }
+
+                        OMElement validationQuery =
+                                dbConfig.getFirstChildWithName(new QName("validationQuery"));
+                        if (validationQuery != null) {
+                            dataBaseConfiguration.setValidationQuery(validationQuery.getText());
+                        }
                     }
                     registryContext.addDBConfig(dbName, dataBaseConfiguration);
                 }
-        	}
 
-            	NodeList staticConfigNodes = documentElement.getElementsByTagName("staticConfiguration");
-            	if(staticConfigNodes != null && staticConfigNodes.getLength() > 0) {
-            		Node staticConfigNode = staticConfigNodes.item(0);
-            		NodeList staticConfigItems = staticConfigNode.getChildNodes();
-            		
-            		for(int index = 0 ; index < staticConfigItems.getLength() ; index++) {
-            			Node staticConfig = staticConfigItems.item(index);
-            			
-            			if(staticConfig != null && staticConfig.getNodeType() == Node.ELEMENT_NODE) {
-	                        if (staticConfig.getNodeName().equals("versioningProperties")) {
-	                            String versioningProperties = staticConfig.getTextContent();
-	                            StaticConfiguration
-	                                    .setVersioningProperties(versioningProperties.equals("true"));
-	                        } else if (staticConfig.getNodeName().equals("versioningComments")) {
-	                            String versioningComments = staticConfig.getTextContent();
-	                            StaticConfiguration
-	                                    .setVersioningComments(versioningComments.equals("true"));
-	                        } else if (staticConfig.getNodeName().equals("versioningTags")) {
-	                            String versioningTags = staticConfig.getTextContent();
-	                            StaticConfiguration.setVersioningTags(versioningTags.equals("true"));
-	                        } else if (staticConfig.getNodeName().equals("versioningRatings")) {
-	                            String versioningRatings = staticConfig.getTextContent();
-	                            StaticConfiguration
-	                                    .setVersioningRatings(versioningRatings.equals("true"));
-	                        } else if (staticConfig.getNodeName().equals("versioningAssociations")) {
-	                            String versioningAssociations = staticConfig.getTextContent();
-	                            StaticConfiguration.setVersioningAssociations(
-	                                    versioningAssociations.equals("true"));
-	                        } else if (staticConfig.getNodeName().equals("profilesPath")) {
-	                            String profilesPath = staticConfig.getTextContent();
-	                            if (!profilesPath.startsWith(
-	                                    RepositoryConstants.PATH_SEPARATOR)) {
-	                                //if user give the path like test or test/
-	                                profilesPath = RepositoryConstants.PATH_SEPARATOR + profilesPath;
-	                            }
-	                            if (profilesPath.endsWith(RepositoryConstants.PATH_SEPARATOR)) {
-	                                profilesPath = profilesPath.substring(0, (profilesPath.length() -
-	                                        1)); //if user give the path like this /test/
-	                            }
-	
-	                            if (profilesPath != null) {
-	                                if (profilesPath.startsWith(
-	                                        RepositoryConstants.CONFIG_REGISTRY_BASE_PATH)) {
-	                                    registryContext.setProfilesPath(profilesPath);
-	                                } else {
-	                                    registryContext.setProfilesPath(
-	                                            RepositoryConstants.CONFIG_REGISTRY_BASE_PATH +
-	                                                    profilesPath);
-	                                }
-	                            }
-	                        } else if (staticConfig.getNodeName().equals("servicePath")) {
-	                            String servicePath = staticConfig.getTextContent();
-	                            if (!servicePath.startsWith(
-	                                    RepositoryConstants.PATH_SEPARATOR)) {
-	                                //if user give the path like test or test/
-	                                servicePath = RepositoryConstants.PATH_SEPARATOR + servicePath;
-	                            }
-	                            if (servicePath.endsWith(RepositoryConstants.PATH_SEPARATOR)) {
-	                                servicePath = servicePath.substring(0, (servicePath.length() -
-	                                        1)); //if user give the path like this /test/
-	                            }
-	
-	                            if (servicePath != null) {
-	                                if (servicePath.startsWith(
-	                                        RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH)) {
-	                                    registryContext.setServicePath(servicePath);
-	                                } else {
-	                                    registryContext.setServicePath(
-	                                            RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH +
-	                                                    servicePath);
-	//                                    registryService.setServicePath(RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH +
-	//                                                    servicePath);
-	                                }
-	                            }
-	                        }
-            			}
-            		}
-            	}
-                  	
-            	NodeList currentDBConfigs = documentElement.getElementsByTagName("currentDBConfig");
-            	if(currentDBConfigs == null) {
-            		throw new RepositoryConfigurationException("The current database configuration is not defined.");
-            	} 
-            	
-            	String currentConfigName = currentDBConfigs.item(0).getTextContent();
+                // loading one-time start-up configurations
+                OMElement staticConfigElement =
+                        configElement.getFirstChildWithName(new QName("staticConfiguration"));
+                if (staticConfigElement != null) {
+                    Iterator staticConfigs = staticConfigElement.getChildElements();
+                    while (staticConfigs.hasNext()) {
+                        OMElement staticConfig = (OMElement) staticConfigs.next();
 
-//                String currentConfigName = currentConfigElement.getText();
-            	
-            	readRemoteInstances(documentElement, registryContext, secretResolver);
-//                readRemoteInstances(configElement, registryContext, secretResolver);
-            	
-            	readMounts(documentElement, registryContext);
-//                readMounts(configElement, registryContext);
-            	
-                DataBaseConfiguration dbConfiguration = registryContext.selectDBConfig(currentConfigName);
+                        if (staticConfig.getLocalName().equals("versioningProperties")) {
+                            String versioningProperties = staticConfig.getText();
+                            StaticConfiguration
+                                    .setVersioningProperties(versioningProperties.equals("true"));
+                        } else if (staticConfig.getLocalName().equals("versioningComments")) {
+                            String versioningComments = staticConfig.getText();
+                            StaticConfiguration
+                                    .setVersioningComments(versioningComments.equals("true"));
+                        } else if (staticConfig.getLocalName().equals("versioningTags")) {
+                            String versioningTags = staticConfig.getText();
+                            StaticConfiguration.setVersioningTags(versioningTags.equals("true"));
+                        } else if (staticConfig.getLocalName().equals("versioningRatings")) {
+                            String versioningRatings = staticConfig.getText();
+                            StaticConfiguration
+                                    .setVersioningRatings(versioningRatings.equals("true"));
+                        } else if (staticConfig.getLocalName().equals("versioningAssociations")) {
+                            String versioningAssociations = staticConfig.getText();
+                            StaticConfiguration.setVersioningAssociations(
+                                    versioningAssociations.equals("true"));
+                        } else if (staticConfig.getLocalName().equals("profilesPath")) {
+                            String profilesPath = staticConfig.getText();
+                            if (!profilesPath.startsWith(
+                                    RepositoryConstants.PATH_SEPARATOR)) {
+                                //if user give the path like test or test/
+                                profilesPath = RepositoryConstants.PATH_SEPARATOR + profilesPath;
+                            }
+                            if (profilesPath.endsWith(RepositoryConstants.PATH_SEPARATOR)) {
+                                profilesPath = profilesPath.substring(0, (profilesPath.length() -
+                                        1)); //if user give the path like this /test/
+                            }
+
+                            if (profilesPath != null) {
+                                if (profilesPath.startsWith(
+                                        RepositoryConstants.CONFIG_REGISTRY_BASE_PATH)) {
+                                    registryContext.setProfilesPath(profilesPath);
+                                } else {
+                                    registryContext.setProfilesPath(
+                                            RepositoryConstants.CONFIG_REGISTRY_BASE_PATH +
+                                                    profilesPath);
+                                }
+                            }
+                        } else if (staticConfig.getLocalName().equals("servicePath")) {
+                            String servicePath = staticConfig.getText();
+                            if (!servicePath.startsWith(
+                                    RepositoryConstants.PATH_SEPARATOR)) {
+                                //if user give the path like test or test/
+                                servicePath = RepositoryConstants.PATH_SEPARATOR + servicePath;
+                            }
+                            if (servicePath.endsWith(RepositoryConstants.PATH_SEPARATOR)) {
+                                servicePath = servicePath.substring(0, (servicePath.length() -
+                                        1)); //if user give the path like this /test/
+                            }
+
+                            if (servicePath != null) {
+                                if (servicePath.startsWith(
+                                        RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH)) {
+                                    registryContext.setServicePath(servicePath);
+                                } else {
+                                    registryContext.setServicePath(
+                                            RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH +
+                                                    servicePath);
+                                    registryService.setServicePath(RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH +
+                                                    servicePath);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                OMElement currentConfigElement =
+                        configElement.getFirstChildWithName(new QName("currentDBConfig"));
+                if (currentConfigElement == null) {
+                    throw new RepositoryConfigurationException("The current database configuration is not " +
+                            "defined.");
+                }
+
+                String currentConfigName = currentConfigElement.getText();
+                readRemoteInstances(configElement, registryContext, secretResolver);
+                readMounts(configElement, registryContext);
+                DataBaseConfiguration dbConfiguration =
+                        registryContext.selectDBConfig(currentConfigName);
                 registryContext.setDefaultDataBaseConfiguration(dbConfiguration);
 
-                NodeList versionConfigList = documentElement.getElementsByTagName("versionResourcesOnChange");
-                if(versionConfigList != null && versionConfigList.getLength() > 0) {
-                	Node versionConfig = versionConfigList.item(0);
-                	if (versionConfig != null && "true".equals(versionConfig.getTextContent())) {
-                        registryContext.setVersionOnChange(true);
-                    } else {
-                    	registryContext.setVersionOnChange(false);              
-                    }
+                OMElement versionConfig =
+                        configElement.getFirstChildWithName(new QName("versionResourcesOnChange"));
+                if (versionConfig != null && "true".equals(versionConfig.getText())) {
+                    registryContext.setVersionOnChange(true);
+                } else {
+                	registryContext.setVersionOnChange(false);              
                 }
-                
-//                OMElement versionConfig =
-//                        configElement.getFirstChildWithName(new QName("versionResourcesOnChange"));
-//                if (versionConfig != null && "true".equals(versionConfig.getText())) {
-//                    registryContext.setVersionOnChange(true);
-//                } else {
-//                	registryContext.setVersionOnChange(false);              
-//                }
-                
-                initializeHandlers(documentElement, registryContext);
-//                initializeHandlers(configElement, registryContext);
+                initializeHandlers(configElement, registryContext);
 
                 // process query processor config
-                NodeList queryProcessors = documentElement.getElementsByTagName("queryProcessor");
-                
-                for( int index = 0 ; index < queryProcessors.getLength() ; index++ ) {
-                    QueryProcessorConfiguration queryProcessorConfiguration = new QueryProcessorConfiguration();
+                Iterator queryProcessors = configElement.
+                        getChildrenWithName(new QName("queryProcessor"));
+                while (queryProcessors.hasNext()) {
 
-                    Node queryProcessorNode = queryProcessors.item(index);
-                    NodeList queryProcessorChildren = queryProcessorNode.getChildNodes();
-                    
-                    for( int childIndex = 0 ; childIndex < queryProcessorChildren.getLength() ; childIndex++ ) {
-                    	Node queryProcessorChild = queryProcessorChildren.item(childIndex);
-                    	
-                    	if(queryProcessorChild.getNodeName() == "queryType") {
-                    		queryProcessorConfiguration.setQueryType(queryProcessorChild.getTextContent());
-                    	} else if(queryProcessorChild.getNodeName() == "processor") {
-                    		queryProcessorConfiguration.setProcessorClassName(queryProcessorChild.getTextContent());
-                    	}
+                    QueryProcessorConfiguration queryProcessorConfiguration =
+                            new QueryProcessorConfiguration();
+
+                    OMElement queryProcessorElement = (OMElement) queryProcessors.next();
+                    OMElement queryType = queryProcessorElement.
+                            getFirstChildWithName(new QName("queryType"));
+                    if (queryType != null) {
+                        queryProcessorConfiguration.setQueryType(queryType.getText());
                     }
-                    
+
+                    OMElement processorName = queryProcessorElement.
+                            getFirstChildWithName(new QName("processor"));
+                    if (processorName != null) {
+                        queryProcessorConfiguration.
+                                setProcessorClassName(processorName.getText());
+                    }
+
                     registryContext.addQueryProcessor(queryProcessorConfiguration);
                 }
-                
-//                Iterator queryProcessors = configElement.
-//                        getChildrenWithName(new QName("queryProcessor"));
-//                while (queryProcessors.hasNext()) {
-//
-//                    QueryProcessorConfiguration queryProcessorConfiguration =
-//                            new QueryProcessorConfiguration();
-//
-//                    OMElement queryProcessorElement = (OMElement) queryProcessors.next();
-//                    OMElement queryType = queryProcessorElement.
-//                            getFirstChildWithName(new QName("queryType"));
-//                    if (queryType != null) {
-//                        queryProcessorConfiguration.setQueryType(queryType.getText());
-//                    }
-//
-//                    OMElement processorName = queryProcessorElement.
-//                            getFirstChildWithName(new QName("processor"));
-//                    if (processorName != null) {
-//                        queryProcessorConfiguration.
-//                                setProcessorClassName(processorName.getText());
-//                    }
-//
-//                    registryContext.addQueryProcessor(queryProcessorConfiguration);
-//                }
 
-                initializeAspects(documentElement, registryContext);
-//                initializeAspects(configElement, registryContext);
+                initializeAspects(configElement, registryContext);
 
-//            }
+            }
 
-        } catch (SAXException e1) {
-        	throw new RepositoryInitException(e1.getMessage());
-		} catch (IOException e1) {
-			throw new RepositoryInitException(e1.getMessage());
-		} catch (ParserConfigurationException e1) {
-        	throw new RepositoryInitException(e1.getMessage());
-		} catch (CarbonException e) {
+        } catch (XMLStreamException e) {
+            throw new RepositoryInitException(e.getMessage());
+        } catch (CarbonException e) {
             log.error("An error occurred during system variable replacement", e);
-        } 
+        }
     }
 
     // Creates and initializes a handler
-    private static void initializeHandlers(Element configElement, RegistryContext registryContext)
+    private static void initializeHandlers(OMElement configElement, RegistryContext registryContext)
             throws RepositoryException {
         // process handler configurations
         CustomEditManager customEditManager = registryContext.getCustomEditManager();
         try {
-        	NodeList handlerConfigs = configElement.getElementsByTagName("handler");
-        	String currentProfile = System.getProperty("profile", "default");
-        	
-        	for(int index = 0 ; index < handlerConfigs.getLength() ; index++ ) {
-        		Node handlerNode = handlerConfigs.item(index);
-        		
-        		if(handlerNode != null && handlerNode.getNodeType() == Node.ELEMENT_NODE) {
-        			Element handlerConfigElement = (Element) handlerNode ;
-                    String profileStr = handlerConfigElement.getAttribute("profiles");
-                    if (profileStr != null){
-                        String[] profiles = profileStr.split(",");
-                        for (String profile : profiles) {
-                            if (profile.trim().equals(currentProfile)) {
-                                buildHandler(registryContext, customEditManager, handlerConfigElement, null);
-                            }
+            @SuppressWarnings("unchecked")
+            Iterator<OMElement> handlerConfigs =
+                    configElement.getChildrenWithName(new QName("handler"));
+            String currentProfile = System.getProperty("profile", "default");
+            while (handlerConfigs.hasNext()) {
+                OMElement handlerConfigElement = handlerConfigs.next();
+                String profileStr = handlerConfigElement.getAttributeValue(new QName("profiles"));
+                if (profileStr != null){
+                    String[] profiles = profileStr.split(",");
+                    for (String profile : profiles) {
+                        if (profile.trim().equals(currentProfile)) {
+                            buildHandler(registryContext, customEditManager, handlerConfigElement, null);
                         }
-                    } else {
-                        buildHandler(registryContext, customEditManager, handlerConfigElement, null);
                     }
-        		}
-        	}
+                } else {
+                    buildHandler(registryContext, customEditManager, handlerConfigElement, null);
+                }
+            }
         } catch (Exception e) {
             String msg = "Could not initialize custom handlers. Caused by: " + e.getMessage();
             log.error(msg, e);
@@ -467,29 +468,18 @@ public class RegistryConfigurationProcessor {
      * @return Created handler
      * @throws RepositoryException if anything goes wrong.
      */
-    public static boolean updateHandler(Element configElement, RegistryContext registryContext,
+    public static boolean updateHandler(OMElement configElement, RegistryContext registryContext,
                                         String lifecyclePhase)
             throws RepositoryException {
         try {
-        	NodeList handlerConfigs = configElement.getElementsByTagName("handler");
-        	
-        	if(handlerConfigs != null && handlerConfigs.getLength() > 0) {
-        		Node handlerConfigNode = handlerConfigs.item(0);
-        		
-        		if(handlerConfigNode != null && handlerConfigNode.getNodeType() == Node.ELEMENT_NODE) {
-        			Element handlerConfigElement = (Element) handlerConfigNode ;
-        			return buildHandler(registryContext, null, handlerConfigElement, lifecyclePhase);
-        		}
-        	}
-        	
-//            Iterator handlerConfigs =
-//                    configElement.getChildrenWithName(new QName("handler"));
-//            if (handlerConfigs != null) {
-//                OMElement handlerConfigElement = (OMElement) handlerConfigs.next();
-//                // We won't be adding custom edit processors for handlers inserted through the UI.
-//                // This is because the CustomEditManager is not MT aware.
-//                return buildHandler(registryContext, null, handlerConfigElement, lifecyclePhase);
-//            }
+            Iterator handlerConfigs =
+                    configElement.getChildrenWithName(new QName("handler"));
+            if (handlerConfigs != null) {
+                OMElement handlerConfigElement = (OMElement) handlerConfigs.next();
+                // We won't be adding custom edit processors for handlers inserted through the UI.
+                // This is because the CustomEditManager is not MT aware.
+                return buildHandler(registryContext, null, handlerConfigElement, lifecyclePhase);
+            }
             return false;
         } catch (Exception e) {
             String msg = "Could not create custom handler. Caused by: " + e.getMessage();
@@ -501,7 +491,7 @@ public class RegistryConfigurationProcessor {
     // common method to build a handler
     private static boolean buildHandler(RegistryContext registryContext,
                                         CustomEditManager customEditManager,
-                                        Element handlerConfigElement,
+                                        OMElement handlerConfigElement,
                                         String lifecyclePhase)
             throws InstantiationException, IllegalAccessException,
             NoSuchMethodException, InvocationTargetException, UserStoreException {
@@ -539,83 +529,92 @@ public class RegistryConfigurationProcessor {
     }
 
     // reads remote instances from the configuration
-    private static void readRemoteInstances(Element configElement,
+    private static void readRemoteInstances(OMElement configElement,
                                             RegistryContext registryContext,
                                             SecretResolver secretResolver) throws RepositoryException {
         try {
-            NodeList remoteConfigs = configElement.getElementsByTagName("remoteInstance");
+            @SuppressWarnings("unchecked")
+            Iterator<OMElement> remoteConfigs =
+                    configElement.getChildrenWithName(new QName("remoteInstance"));
             List<String> idList = new ArrayList<String>();
 
-            for(int index = 0 ; index < remoteConfigs.getLength() ; index++) {
-            	Node remoteConfigNode = remoteConfigs.item(index);
-            	
-            	if(remoteConfigNode != null && remoteConfigNode.getNodeType() == Node.ELEMENT_NODE) {
-            		Element remoteConfigElement = (Element) remoteConfigNode ;
-            		
-            		String url = remoteConfigElement.getAttribute("url");
-            		
-            		NodeList remoteConfigItems = remoteConfigElement.getChildNodes() ;
-            		
-            		for( int itemNum = 0 ; itemNum < remoteConfigItems.getLength() ; itemNum++ ) {
-            			Node remoteChildItem = remoteConfigItems.item(itemNum);
-            			
-            			if(remoteChildItem != null && remoteChildItem.getNodeType() == Node.ELEMENT_NODE) {
-            			
-	            			String id = null;
-	            			String trustedUser = null;
-	            			String trustedPwd = null;
-	            			String type = null;
-	            			String dbConfig = null;
-	            			String readOnly = null;
-	            			String enableCache = null;
-	            			String cacheId = null;
-	            			String registryRoot = null;
-	            			
-	            			if(remoteChildItem.getNodeName() == "id") {
-	            				id = remoteChildItem.getTextContent();
-	            				
-	                            if (idList.contains(id)) {
-	                                String msg = "Two remote instances can't have the same id.";
-	                                log.error(msg);
-	                                throw new RepositoryConfigurationException(msg);
-	                            }
-	                            
-	                            idList.add(id);
-	            			} else if(remoteChildItem.getNodeName() == "username") {
-	            				trustedUser = remoteChildItem.getTextContent();
-	            			} else if(remoteChildItem.getNodeName() == "password") {
-	            				trustedPwd = remoteChildItem.getTextContent();
-	            			} else if(remoteChildItem.getNodeName() == "type") {
-	            				type = remoteChildItem.getTextContent();
-	            			} else if(remoteChildItem.getNodeName() == "dbConfig") {
-	            				dbConfig = remoteChildItem.getTextContent();
-	            			} else if(remoteChildItem.getNodeName() == "readOnly") {
-	            				readOnly = remoteChildItem.getTextContent();
-	            			} else if(remoteChildItem.getNodeName() == "enableCache") {
-	            				enableCache = remoteChildItem.getTextContent();
-	            			} else if(remoteChildItem.getNodeName() == "cacheId") {
-	            				cacheId = remoteChildItem.getTextContent();
-	            			} else if(remoteChildItem.getNodeName() == "registryRoot") {
-	            				registryRoot = remoteChildItem.getTextContent();
-	            			}
-	            			
-	                        RemoteConfiguration remoteConfiguration = new RemoteConfiguration();
-	                        remoteConfiguration.setPasswordManager(secretResolver);
-	                        remoteConfiguration.setId(id);
-	                        remoteConfiguration.setUrl(url);
-	                        remoteConfiguration.setTrustedUser(trustedUser);
-	                        remoteConfiguration.setTrustedPwd(trustedPwd);
-	                        remoteConfiguration.setType(type);
-	                        remoteConfiguration.setDbConfig(dbConfig);
-	                        remoteConfiguration.setReadOnly(readOnly);
-	                        remoteConfiguration.setCacheEnabled(enableCache);
-	                        remoteConfiguration.setCacheId(cacheId);
-	                        remoteConfiguration.setRegistryRoot(registryRoot);
-	
-	                        registryContext.getRemoteInstances().add(remoteConfiguration);
-            			}
-            		}
-            	}
+            while (remoteConfigs.hasNext()) {
+                OMElement remoteConfigElement = remoteConfigs.next();
+
+                String url = remoteConfigElement.getAttributeValue(new QName("url"));
+                String id = remoteConfigElement.getFirstChildWithName(new QName("id")).getText();
+
+                if (idList.contains(id)) {
+                    String msg = "Two remote instances can't have the same id.";
+                    log.error(msg);
+                    throw new RepositoryConfigurationException(msg);
+                }
+                idList.add(id);
+
+                String trustedUser = null;
+                if (remoteConfigElement.getFirstChildWithName(new QName("username")) != null) {
+                    trustedUser =
+                            remoteConfigElement.getFirstChildWithName(new QName("username"))
+                                    .getText();
+                }
+                String trustedPwd = null;
+                if (remoteConfigElement.getFirstChildWithName(new QName("password")) != null) {
+                    trustedPwd =
+                            remoteConfigElement.getFirstChildWithName(new QName("password"))
+                                    .getText();
+                }
+                String type = null;
+                if (remoteConfigElement.getFirstChildWithName(new QName("type")) != null) {
+                    type =
+                            remoteConfigElement.getFirstChildWithName(new QName("type"))
+                                    .getText();
+                }
+                String dbConfig = null;
+                if (remoteConfigElement.getFirstChildWithName(new QName("dbConfig")) != null) {
+                    dbConfig =
+                            remoteConfigElement.getFirstChildWithName(new QName("dbConfig"))
+                                    .getText();
+                }
+                String readOnly = null;
+                if (remoteConfigElement.getFirstChildWithName(new QName("readOnly")) != null) {
+                    readOnly =
+                            remoteConfigElement.getFirstChildWithName(new QName("readOnly"))
+                                    .getText();
+                }
+                String enableCache = null;
+                if (remoteConfigElement.getFirstChildWithName(new QName("enableCache")) != null) {
+                    enableCache =
+                            remoteConfigElement.getFirstChildWithName(new QName("enableCache"))
+                                    .getText();
+                }
+                String cacheId = null;
+                if (remoteConfigElement.getFirstChildWithName(new QName("cacheId")) != null) {
+                    cacheId =
+                            remoteConfigElement.getFirstChildWithName(new QName("cacheId"))
+                                    .getText();
+                }
+                String registryRoot = null;
+                if (remoteConfigElement.getFirstChildWithName(new QName("registryRoot")) != null) {
+                    registryRoot =
+                            remoteConfigElement.getFirstChildWithName(new QName("registryRoot"))
+                                    .getText();
+                }
+
+                RemoteConfiguration remoteConfiguration = new RemoteConfiguration();
+                remoteConfiguration.setPasswordManager(secretResolver);
+                remoteConfiguration.setId(id);
+                remoteConfiguration.setUrl(url);
+                remoteConfiguration.setTrustedUser(trustedUser);
+                remoteConfiguration.setTrustedPwd(trustedPwd);
+                remoteConfiguration.setType(type);
+                remoteConfiguration.setDbConfig(dbConfig);
+                remoteConfiguration.setReadOnly(readOnly);
+                remoteConfiguration.setCacheEnabled(enableCache);
+                remoteConfiguration.setCacheId(cacheId);
+                remoteConfiguration.setRegistryRoot(registryRoot);
+
+                registryContext.getRemoteInstances().add(remoteConfiguration);
+
             }
         } catch (Exception e) {
             String msg =
@@ -627,75 +626,66 @@ public class RegistryConfigurationProcessor {
     }
 
     // read mounts from configuration
-    private static void readMounts(Element configElement,
+    private static void readMounts(OMElement configElement,
                                    RegistryContext registryContext) throws RepositoryException {
         try {
-            NodeList mounts = configElement.getElementsByTagName("mount");
+            @SuppressWarnings("unchecked")
+            Iterator<OMElement> mounts =
+                    configElement.getChildrenWithName(new QName("mount"));
             List<String> pathList = new ArrayList<String>();
 
-            for( int mountItem = 0 ; mountItem < mounts.getLength() ; mountItem++ ) {
-            	Node mountNode = mounts.item(mountItem);
-            	
-            	if(mountNode != null && mountNode.getNodeType() == Node.ELEMENT_NODE) {
-            		Element mountElement = (Element) mountNode ;
-            		
-            		String path = mountElement.getAttribute("path");
-            		
-                    if (path == null) {
-                        String msg = "The path attribute was not specified for remote mount. " +
-                                "Skipping creation of remote mount. " +
-                                "Element: " + mountElement.toString();
-                        log.warn(msg);
-                        continue;    
-                    }
-                    if (pathList.contains(path)) {
-                        String msg = "Two remote instances can't have the same path.";
-                        log.error(msg);
-                        throw new RepositoryConfigurationException(msg);
-                    }
-                    
-                    NodeList mountChildren = mountElement.getChildNodes() ;
-                    
-                    String instanceId = null ;
-                    String targetPath = null ;
-                    
-                    for( int mountIndex = 0 ; mountIndex < mountChildren.getLength() ; mountIndex++ ) {
-                    	Node mountChild = mountChildren.item(mountIndex);
-                    	
-                    	if(mountChild != null && mountChild.getNodeType() == Node.ELEMENT_NODE) {
-	                    	if(mountChild.getNodeName() == "instanceid") {
-	                    		instanceId = mountChild.getTextContent();
-	                    	} else if(mountChild.getNodeName() == "targetPath") {
-	                    		targetPath = mountChild.getTextContent();
-	                    	} else {
-	                            String msg = "The instance identifier or targetPath is not specified for the mount: " + path;
-	                            log.warn(msg);
-	                            continue;
-	                    	}
-                    	}
-                    }
-                    
-                    pathList.add(path);
-                    
-                    String overwriteStr = mountElement.getAttribute("overwrite");
-                    boolean overwrite = false;
-                    boolean virtual = false;
-                    if (overwriteStr != null) {
-                        overwrite = Boolean.toString(true).equalsIgnoreCase(overwriteStr);
-                        if (!overwrite) {
-                            virtual = "virtual".equalsIgnoreCase(overwriteStr);
-                        }
-                    }
-                    
-                    Mount mount = new Mount();
-                    mount.setPath(path);
-                    mount.setOverwrite(overwrite);
-                    mount.setVirtual(virtual);
-                    mount.setInstanceId(instanceId);
-                    mount.setTargetPath(targetPath);
+            while (mounts.hasNext()) {
+                OMElement mountElement = mounts.next();
 
-                    registryContext.getMounts().add(mount);
-            	}
+                String path = mountElement.getAttributeValue(new QName("path"));
+                if (path == null) {
+                    String msg = "The path attribute was not specified for remote mount. " +
+                            "Skipping creation of remote mount. " +
+                            "Element: " + mountElement.toString();
+                    log.warn(msg);
+                    continue;    
+                }
+                if (pathList.contains(path)) {
+                    String msg = "Two remote instances can't have the same path.";
+                    log.error(msg);
+                    throw new RepositoryConfigurationException(msg);
+                }
+                OMElement instanceIdElement = mountElement.getFirstChildWithName(
+                        new QName("instanceId"));
+                if (instanceIdElement == null) {
+                    String msg = "The instance identifier was not specified for the mount: " + path;
+                    log.warn(msg);
+                    continue;
+                }
+                OMElement targetPathElement = mountElement.getFirstChildWithName(
+                        new QName("targetPath"));
+                if (targetPathElement == null) {
+                    String msg = "The target path was not specified for the mount: " + path;
+                    log.warn(msg);
+                    continue;
+                }
+                pathList.add(path);
+                String overwriteStr = mountElement.getAttributeValue(new QName("overwrite"));
+                boolean overwrite = false;
+                boolean virtual = false;
+                if (overwriteStr != null) {
+                    overwrite = Boolean.toString(true).equalsIgnoreCase(overwriteStr);
+                    if (!overwrite) {
+                        virtual = "virtual".equalsIgnoreCase(overwriteStr);
+                    }
+                }
+                String instanceId = instanceIdElement.getText();
+                String targetPath = targetPathElement.getText();
+
+                Mount mount = new Mount();
+                mount.setPath(path);
+                mount.setOverwrite(overwrite);
+                mount.setVirtual(virtual);
+                mount.setInstanceId(instanceId);
+                mount.setTargetPath(targetPath);
+
+                registryContext.getMounts().add(mount);
+
             }
         } catch (Exception e) {
             String msg =
@@ -727,7 +717,7 @@ public class RegistryConfigurationProcessor {
     public static class HandlerDefinitionObject {
 
         private CustomEditManager customEditManager;
-        private Element handlerConfigElement;
+        private OMElement handlerConfigElement;
         private List<String> methods;
         private Handler handler;
         private Filter filter;
@@ -740,7 +730,7 @@ public class RegistryConfigurationProcessor {
          * @param handlerConfigElement the handler configuration element.
          */
         public HandlerDefinitionObject(CustomEditManager customEditManager,
-                                       Element handlerConfigElement) {
+                                       OMElement handlerConfigElement) {
             this.customEditManager = customEditManager;
             this.handlerConfigElement = handlerConfigElement;
         }
@@ -750,7 +740,7 @@ public class RegistryConfigurationProcessor {
          *
          * @param handlerConfigElement the handler configuration element.
          */
-        public HandlerDefinitionObject(Element handlerConfigElement) {
+        public HandlerDefinitionObject(OMElement handlerConfigElement) {
             this.customEditManager = null;
             this.handlerConfigElement = handlerConfigElement;
         }
@@ -807,18 +797,17 @@ public class RegistryConfigurationProcessor {
          */
         public HandlerDefinitionObject invoke()
                 throws InstantiationException, IllegalAccessException,
-                NoSuchMethodException, InvocationTargetException, UserStoreException {        	
-            String handlerClassName = handlerConfigElement.getAttribute("class");
-            String methodsValue = handlerConfigElement.getAttribute("methods");
-            String tenantIdString = handlerConfigElement.getAttribute("tenant");
-        	
+                NoSuchMethodException, InvocationTargetException, UserStoreException {
+            String handlerClassName = handlerConfigElement.getAttributeValue(new QName("class"));
+            String methodsValue = handlerConfigElement.getAttributeValue(new QName("methods"));
+            String tenantIdString = handlerConfigElement.getAttributeValue(new QName("tenant"));
             tenantId = MultitenantConstants.INVALID_TENANT_ID;
             int tempTenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
             // if the tenant id was found from the carbon context, it will be greater than -1. If not, it will be equal
             // to -1. Therefore, we need to check whether the carbon context had a tenant id and use it if it did.
             if (tempTenantId != MultitenantConstants.INVALID_TENANT_ID) {
                 tenantId = tempTenantId;
-            } else if (tenantIdString != null && !tenantIdString.isEmpty()) {
+            } else if (tenantIdString != null) {
                 try {
                     tenantId = Integer.parseInt(tenantIdString);
                 } catch (NumberFormatException ignore) {
@@ -835,7 +824,7 @@ public class RegistryConfigurationProcessor {
             }
 
             String[] methods;
-            if (methodsValue != null && !methodsValue.isEmpty()) {
+            if (methodsValue != null) {
                 methods = methodsValue.split(",");
                 for (int i = 0; i < methods.length; i++) {
                     methods[i] = methods[i].trim();
@@ -845,6 +834,7 @@ public class RegistryConfigurationProcessor {
 
             Class handlerClass;
             try {
+//                handlerClass = RepositoryUtils.loadClass(handlerClassName);
             	handlerClass = Class.forName(handlerClassName); 
             } catch (ClassNotFoundException e) {
                 String msg = "Could not find the handler class " + handlerClassName +
@@ -856,52 +846,38 @@ public class RegistryConfigurationProcessor {
             handler = (Handler) handlerClass.newInstance();
 
             // set configured properties of the handler object
-          
-            NodeList handlerProps = handlerConfigElement.getElementsByTagName("property");
-            
-            for( int index = 0 ; index < handlerProps.getLength() ; index++ ) {
-            	Node handlerPropNode = handlerProps.item(index);
-            	
-            	if(handlerPropNode.getParentNode().getNodeName() == "handler") {
-	            	if(handlerPropNode != null && handlerPropNode.getNodeType() == Node.ELEMENT_NODE) {
-	            		Element propElement = (Element) handlerPropNode ;
-	            		
-	                    String propName = propElement.getAttribute("name");
-	                    String propType = propElement.getAttribute("type");
-	                    
-	                    try {
-		                    if (propType != null && "xml".equals(propType)) {
-		                        String setterName = getSetterName(propName);
-		                        Method setter = handlerClass.getMethod(setterName, Element.class);
-		                        setter.invoke(handler, propElement);
-		                    } else {
-		                        String setterName = getSetterName(propName);
-		                        Method setter = handlerClass.getMethod(setterName, String.class);
-		                        String propValue = propElement.getTextContent();
-		                        setter.invoke(handler, propValue);
-		                    }
-	                    } catch(NoSuchMethodException ex) {
-	                    	continue ;
-	                    }
-	            	}
-            	}
+            @SuppressWarnings("unchecked")
+            Iterator<OMElement> handlerProps =
+                    handlerConfigElement.getChildrenWithName(new QName("property"));
+            while (handlerProps.hasNext()) {
+                OMElement propElement = handlerProps.next();
+
+                String propName = propElement.getAttributeValue(new QName("name"));
+                String propType = propElement.getAttributeValue(new QName("type"));
+
+                if (propType != null && "xml".equals(propType)) {
+
+                    String setterName = getSetterName(propName);
+                    Method setter = handlerClass.getMethod(setterName, OMElement.class);
+                    setter.invoke(handler, propElement);
+
+                } else {
+
+                    String setterName = getSetterName(propName);
+                    Method setter = handlerClass.getMethod(setterName, String.class);
+                    String propValue = propElement.getText();
+                    setter.invoke(handler, propValue);
+                }
             }
 
-            NodeList filterElements = handlerConfigElement.getElementsByTagName("filter");
-            
-            String filterClassName = null ;
-            Element filterElement = null ;
-            
-            if(filterElements != null && filterElements.getLength() > 0) {
-            	Node filterNode = filterElements.item(0) ;
-            	if(filterNode != null && filterNode.getNodeType() == Node.ELEMENT_NODE) {
-            		filterElement = (Element) filterNode ;
-            		filterClassName = filterElement.getAttribute("class");
-            	}
-            }
+            // initialize and configure the filter for this handler
+            OMElement filterElement =
+                    handlerConfigElement.getFirstChildWithName(new QName("filter"));
+            String filterClassName = filterElement.getAttributeValue(new QName("class"));
 
             Class filterClass;
             try {
+//                filterClass = RepositoryUtils.loadClass(filterClassName);
             	filterClass = Class.forName(filterClassName);
             } catch (ClassNotFoundException e) {
                 String msg = "Could not find the filter class " +
@@ -913,59 +889,45 @@ public class RegistryConfigurationProcessor {
                 return this;
             }
             filter = (Filter) filterClass.newInstance();
-            
-            NodeList filterProps = filterElement.getElementsByTagName("property");
-            
-            for( int index = 0 ; index < filterProps.getLength() ; index++ ) {
-            	Node filterPropNode = filterProps.item(index);
-            	
-            	if(filterPropNode.getParentNode().getNodeName() == "filter") {
-	            	if(filterPropNode != null && filterPropNode.getNodeType() == Node.ELEMENT_NODE) {
-	            		Element propElement = (Element) filterPropNode ;
-	            		
-	                    String propName = propElement.getAttribute("name");
-	                    String propValue = propElement.getTextContent();
-	
-	                    String setterName = getSetterName(propName);
-	                    
-	                    try {
-		                    Method setter = filterClass.getMethod(setterName, String.class);
-		                    setter.invoke(filter, propValue);
-	                    } catch(NoSuchMethodException ex) {
-	                    	continue ;
-	                    }
-	            	}
-            	}
+
+            // set configured properties of the filter object
+            @SuppressWarnings("unchecked")
+            Iterator<OMElement> filterProps =
+                    filterElement.getChildrenWithName(new QName("property"));
+            while (filterProps.hasNext()) {
+                OMElement propElement = filterProps.next();
+
+                String propName = propElement.getAttributeValue(new QName("name"));
+                String propValue = propElement.getText();
+
+                String setterName = getSetterName(propName);
+                Method setter = filterClass.getMethod(setterName, String.class);
+                setter.invoke(filter, propValue);
             }
-
             if (customEditManager != null) {
-            	NodeList editElements = handlerConfigElement.getElementsByTagName("edit");
-            	
-            	if(editElements != null && editElements.getLength() > 0) {
-            		Node editNode = editElements.item(0);
-            		if(editNode != null && editNode.getNodeType() == Node.ELEMENT_NODE) {
-            			Element editElement = (Element) editNode ;
-            			
-                        String processorKey = editElement.getAttribute("processor");
-                        String processorClassName = editElement.getTextContent();
+                OMElement editElement =
+                        handlerConfigElement.getFirstChildWithName(new QName("edit"));
+                if (editElement != null) {
+                    String processorKey = editElement.getAttributeValue(new QName("processor"));
+                    String processorClassName = editElement.getText();
 
-                        Class editProcessorClass;
-                        try {
-                        	editProcessorClass = Class.forName(processorClassName); 
-                        } catch (ClassNotFoundException e) {
-                            String msg = "Could not find the edit processor class " +
-                                    processorClassName + ". " + handlerClassName +
-                                    " will not be registered. All configured handler, filter and " +
-                                    "edit processor classes should be in the class " +
-                                    "path of the Registry.";
-                            log.warn(msg);
-                            return this;
-                        }
-                        EditProcessor editProcessor = (EditProcessor) editProcessorClass.newInstance();
+                    Class editProcessorClass;
+                    try {
+//                        editProcessorClass = RepositoryUtils.loadClass(processorClassName);
+                    	editProcessorClass = Class.forName(processorClassName); 
+                    } catch (ClassNotFoundException e) {
+                        String msg = "Could not find the edit processor class " +
+                                processorClassName + ". " + handlerClassName +
+                                " will not be registered. All configured handler, filter and " +
+                                "edit processor classes should be in the class " +
+                                "path of the Registry.";
+                        log.warn(msg);
+                        return this;
+                    }
+                    EditProcessor editProcessor = (EditProcessor) editProcessorClass.newInstance();
 
-                        customEditManager.addProcessor(processorKey, editProcessor);
-            		}
-            	}
+                    customEditManager.addProcessor(processorKey, editProcessor);
+                }
             }
             return this;
         }
@@ -980,7 +942,6 @@ public class RegistryConfigurationProcessor {
      *
      * @return AXIOM element containing registry configuration.
      */
-    /*
     public static OMElement getRegistryConfigAsXML(RegistryContext registryContext) {
 
         OMFactory factory = OMAbstractFactory.getOMFactory();
@@ -1014,7 +975,6 @@ public class RegistryConfigurationProcessor {
         }
         return root;
     }
-    */
 
     /**
      * Creates and initializes an aspect.
@@ -1024,49 +984,43 @@ public class RegistryConfigurationProcessor {
      *
      * @throws RepositoryException if anything goes wrong.
      */
-    public static void initializeAspects(Element configElement, RegistryContext registryContext)
+    public static void initializeAspects(OMElement configElement, RegistryContext registryContext)
             throws RepositoryException {
-    	NodeList aspectElements = configElement.getElementsByTagName("aspect");
-    	
-    	for( int index = 0 ; index < aspectElements.getLength() ; index++ ) {
-    		Node aspectNode = aspectElements.item(index);
-    		if(aspectNode != null && aspectNode.getNodeType() == Node.ELEMENT_NODE) {
-    			Element aspectElement = (Element) aspectNode ;
-                String name = aspectElement.getAttribute("name");
-              registryContext.addAspect(name, buildAspect(aspectElement, name), MultitenantConstants.SUPER_TENANT_ID);
-    		}
-    	}
+        Iterator aspectElement = configElement.
+                getChildrenWithName(new QName("aspect"));
+        if (aspectElement != null) {
+            while (aspectElement.hasNext()) {
+                OMElement aspect = (OMElement) aspectElement.next();
+                String name = aspect.getAttributeValue(new QName("name"));
+//                Replacing  the hardcoded value with the constant
+                registryContext.addAspect(name, buildAspect(aspect, name), MultitenantConstants.SUPER_TENANT_ID);
+            }
+        }
     }
 
     // common method to build an aspect
-    private static Aspect buildAspect(Element aspect, String name) throws RepositoryException {
-        String clazz = aspect.getAttribute("class");
+    private static Aspect buildAspect(OMElement aspect, String name) throws RepositoryException {
+        String clazz = aspect.getAttributeValue(new QName("class"));
         Aspect aspectInstance = null;
         try {
             if (name == null || clazz == null) {
                 throw new RepositoryConfigurationException("Invalid aspect element , required " +
                         "values are missing " + aspect.toString());
             }
+//            Class handlerClass = RepositoryUtils.loadClass(clazz);
             Class handlerClass = Class.forName(clazz); 
-            
-            NodeList aspectChilderen = aspect.getChildNodes() ;
-            
-            for( int index = 0 ; index < aspectChilderen.getLength() ; index++ ) {
-            	Node aspectNode = aspectChilderen.item(index);
-            	
-            	if(aspectNode != null && aspectNode.getNodeType() == Node.ELEMENT_NODE) {
-	                try {
-	                    Constructor constructor =
-	                            handlerClass.getConstructor(Element.class);
-	                    try {
-	                        aspectInstance = (Aspect) constructor.newInstance(aspect);
-	                    } catch (Exception e) {
-	                        throw new RepositoryInitException("Couldn't instantiate", e);
-	                    }
-	                } catch (NoSuchMethodException e) {
-	                    // Throw error because the specified config won't be used?
-	                }
-            	}
+            if (aspect.getChildElements().hasNext()) {
+                try {
+                    Constructor constructor =
+                            handlerClass.getConstructor(OMElement.class);
+                    try {
+                        aspectInstance = (Aspect) constructor.newInstance(aspect);
+                    } catch (Exception e) {
+                        throw new RepositoryInitException("Couldn't instantiate", e);
+                    }
+                } catch (NoSuchMethodException e) {
+                    // Throw error because the specified config won't be used?
+                }
             }
 
             if (aspectInstance == null) {
@@ -1085,20 +1039,17 @@ public class RegistryConfigurationProcessor {
      *
      * @param configElement the aspect configuration element.
      *
-     * @return Created aspectupdateAspects(dummy)
+     * @return Created aspect
      * @throws RepositoryException if anything goes wrong.
      */
-    public static Aspect updateAspects(Element configElement) throws RepositoryException {     
-        NodeList aspectElements = configElement.getElementsByTagName("aspect");
-        
-        if(aspectElements != null && aspectElements.getLength() > 0) {
-        	Node aspectNode = aspectElements.item(0);
-        	if(aspectNode != null && aspectNode.getNodeType() == Node.ELEMENT_NODE) {
-        		Element aspect = (Element) aspectNode ;
-        		String name = aspect.getAttribute("name");
-        		return buildAspect(aspect, name);
-        	}
-        }        
+    public static Aspect updateAspects(OMElement configElement) throws RepositoryException {
+        Iterator aspectElement = configElement.
+                getChildrenWithName(new QName("aspect"));
+        if (aspectElement != null) {
+            OMElement aspect = (OMElement) aspectElement.next();
+            String name = aspect.getAttributeValue(new QName("name"));
+            return buildAspect(aspect, name);
+        }
         return null;
     }
 }

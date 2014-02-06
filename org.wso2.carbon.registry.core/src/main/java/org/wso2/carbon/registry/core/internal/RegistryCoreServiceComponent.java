@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.axis2.context.ConfigurationContext;
-import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -83,6 +81,7 @@ import org.wso2.carbon.user.core.listener.AuthorizationManagerListener;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.AbstractAxis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.AuthenticationObserver;
+import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.WaitBeforeShutdownObserver;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;

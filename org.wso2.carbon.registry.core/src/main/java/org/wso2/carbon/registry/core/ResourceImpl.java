@@ -200,6 +200,12 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
     protected boolean directory = false;
 
     /**
+     * Content of the resource, represented as a input stream.
+     */
+    //protected InputStream contentStream;
+
+
+    /**
      * The data access manager is to be used only by the resource implementation and users of the
      * resource are not needed to use this. Some attributes of the resource (e.g. content) is
      * fetched upon the first request to optimize the response time. Getters of such attributes use
@@ -685,6 +691,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      * @return List of values of the given property key.
      */
     @SuppressWarnings("unchecked")
+    // We are certain that we have a list of strings in this case.
     public List<String> getPropertyValues(String key) {
         return (List<String>) properties.get(key);
     }
@@ -864,8 +871,9 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      * A method to retrieve content from the original resource.
      * @throws RepositoryException if the operation failed.
      */
-    protected void pullContentFromOriginal() throws RepositoryException {	
+    protected void pullContentFromOriginal() throws RepositoryException {
         if (content == null && original != null) {
+            // if the content is not yet available, try to obtain it from the original resource.
             content = original.getContent();
         }
     }
@@ -877,6 +885,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      * @throws RepositoryException throws if the operation fail.
      */
     public InputStream getContentStream() throws RepositoryException {
+
         pullContentFromOriginal();
         if (content == null) {
             throw new RepositoryServerContentException("Resource content is empty.");
@@ -907,8 +916,10 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      *
      * @throws RepositoryException throws if the operation fail.
      */
-    public void setContentStream(InputStream contentStream) throws RepositoryException { 	
+    public void setContentStream(InputStream contentStream) throws RepositoryException {
+
         setContentStreamWithNoUpdate(contentStream);
+
         setContentModified(true);
     }
 
@@ -922,6 +933,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      * @throws RepositoryException throws if the operation fail.
      */
     public void setContentStreamWithNoUpdate(InputStream contentStream) throws RepositoryException {
+
         content = RepositoryUtils.getByteArray(contentStream);
     }
 
@@ -946,7 +958,9 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      * @throws RepositoryException throws if the operation fail.
      */
     public void setContent(Object content) throws RepositoryException {
+
         setContentWithNoUpdate(content);
+
         setContentModified(true);
     }
 
@@ -958,6 +972,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      * @throws RepositoryException throws if the operation fail.
      */
     public void setContentWithNoUpdate(Object content) throws RepositoryException {
+
         this.content = content;
     }
 
@@ -967,6 +982,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      * @throws RepositoryException throws if the operation fail.
      */
     public void prepareContentForPut() throws RepositoryException {
+
         if (content instanceof String) {
             content = RepositoryUtils.encodeString((String) content);
         } else if (content instanceof InputStream) {
@@ -982,10 +998,14 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      * @return the formatted path.
      */
     private String preparePath(String path) {
+
         String preparedPath = path;
 
-        if (!path.equals(RepositoryConstants.ROOT_PATH) && path.endsWith(RepositoryConstants.PATH_SEPARATOR)) {
-            preparedPath = path.substring(0, path.length() - RepositoryConstants.PATH_SEPARATOR.length());
+        // make sure that the path does not end with a "/"
+        if (!path.equals(RepositoryConstants.ROOT_PATH) &&
+                path.endsWith(RepositoryConstants.PATH_SEPARATOR)) {
+            preparedPath =
+                    path.substring(0, path.length() - RepositoryConstants.PATH_SEPARATOR.length());
         }
 
         return preparedPath;
@@ -1036,6 +1056,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      *
      * @return true if the properties modified, false otherwise.
      */
+    @SuppressWarnings("unused")
     public boolean isPropertiesModified() {
         return propertiesModified;
     }
@@ -1056,6 +1077,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.Resource {
      *
      * @param propertiesModified whether the properties modified or not.
      */
+    @SuppressWarnings("unused")
     public void setPropertiesModifiedWithNoUpdate(boolean propertiesModified) {
         this.propertiesModified = propertiesModified;
     }

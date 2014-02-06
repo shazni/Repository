@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.wso2.carbon.registry.core.test.jdbc.SimpleLifecycleTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.336 sec
