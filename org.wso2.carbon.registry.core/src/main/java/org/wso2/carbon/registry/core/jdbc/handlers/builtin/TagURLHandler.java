@@ -20,16 +20,13 @@ import java.util.Date;
 
 import org.wso2.carbon.registry.core.ResourceIDImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.registry.core.dao.ResourceDAO;
 import org.wso2.carbon.registry.core.dao.TagsDAO;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.TaggingDO;
-import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.repository.config.StaticConfiguration;
@@ -41,6 +38,7 @@ import org.wso2.carbon.repository.handlers.RequestContext;
  * Handles paths of the form <b>pure resource path</b>;tags:<b>tag name</b>:<b>username</b> e.g.
  * /projects/ids/config.xml;tags:foo:bar
  */
+@Deprecated
 public class TagURLHandler extends Handler {
 
     public Resource get(RequestContext requestContext) throws RepositoryException {
@@ -85,7 +83,7 @@ public class TagURLHandler extends Handler {
 
 
             ResourceImpl resource = new ResourceImpl();
-            resource.setMediaType(RepositoryConstants.TAG_MEDIA_TYPE);
+            resource.setMediaType(/*RepositoryConstants.*/ InternalConstants.TAG_MEDIA_TYPE);
             resource.setPath(resourcePath.getCompletePath());
             if (taggingDO != null) {
                 resource.setContent(taggingDO.getTagName());

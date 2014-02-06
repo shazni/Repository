@@ -16,16 +16,16 @@
 
 package org.wso2.carbon.registry.core;
 
+import java.util.Arrays;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.registry.core.dao.ResourceVersionDAO;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
 import org.wso2.carbon.registry.core.exceptions.RepositoryConfigurationException;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
 import org.wso2.carbon.registry.core.jdbc.utils.VersionRetriever;
-
-import java.util.Arrays;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * Implementation of CollectionImpl, Instance of this class is returned when requested for an early

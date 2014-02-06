@@ -18,45 +18,47 @@
  */
 package org.wso2.carbon.registry.core.jdbc.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.CarbonConstants;
+import org.wso2.carbon.registry.core.config.DataBaseConfiguration;
+import org.wso2.carbon.registry.core.config.Mount;
 import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.config.RemoteConfiguration;
 import org.wso2.carbon.registry.core.dao.LogsDAO;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
 import org.wso2.carbon.registry.core.exceptions.RepositoryDBException;
-import org.wso2.carbon.repository.Activity;
-import org.wso2.carbon.repository.RepositoryConstants;;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
 import org.wso2.carbon.registry.core.jdbc.DatabaseConstants;
 import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDataAccessManager;
 import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDatabaseTransaction;
+import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.pagination.PaginationConstants;
 import org.wso2.carbon.registry.core.pagination.PaginationContext;
 import org.wso2.carbon.registry.core.pagination.PaginationUtils;
 import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.LogRecord;
-
-import javax.sql.DataSource;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
-import org.wso2.carbon.registry.core.config.DataBaseConfiguration;
-import org.wso2.carbon.repository.config.RemoteConfiguration;
-import org.wso2.carbon.registry.core.config.Mount;
+import org.wso2.carbon.repository.Activity;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.user.core.UserRealm;
-import org.wso2.carbon.user.core.UserStoreManager;
-import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.user.core.UserStoreException;
+import org.wso2.carbon.user.core.UserStoreManager;
 
 /**
  * An implementation of the {@link LogsDAO} to store logs on a JDBC-based database.
@@ -192,7 +194,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -483,7 +485,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -700,7 +702,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -869,7 +871,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -951,7 +953,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1100,7 +1102,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }

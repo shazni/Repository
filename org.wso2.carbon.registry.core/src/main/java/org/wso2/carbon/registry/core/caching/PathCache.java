@@ -19,8 +19,8 @@ package org.wso2.carbon.registry.core.caching;
 import javax.cache.Cache;
 import javax.cache.CacheStatistics;
 
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
-import org.wso2.carbon.repository.RepositoryConstants;;
 
 /**
  * Implementation of caching for resource paths. This is based on {@link Cache}. The path cache
@@ -33,7 +33,7 @@ public class PathCache {
      * The path cache.
      */
     protected static Cache<RegistryCacheKey, RegistryCacheEntry> getCache() {
-        return InternalUtils.getResourcePathCache(RepositoryConstants.PATH_CACHE_ID);
+        return InternalUtils.getResourcePathCache(/*RepositoryConstants.*/ InternalConstants.PATH_CACHE_ID);
     }
 
     /**

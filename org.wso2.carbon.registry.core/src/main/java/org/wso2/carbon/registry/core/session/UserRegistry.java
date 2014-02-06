@@ -29,7 +29,6 @@ import org.wso2.carbon.registry.core.CollectionImpl;
 import org.wso2.carbon.registry.core.CollectionVersionImpl;
 import org.wso2.carbon.registry.core.CommentImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.registry.core.dao.ResourceDAO;
 import org.wso2.carbon.registry.core.exceptions.RepositoryInitException;
@@ -38,7 +37,7 @@ import org.wso2.carbon.registry.core.exceptions.RepositorySessionException;
 import org.wso2.carbon.registry.core.internal.RegistryCoreServiceComponent;
 import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
 import org.wso2.carbon.registry.core.jdbc.realm.RegistryRealm;
-import org.wso2.carbon.registry.core.service.RemoteRegistry;
+//import org.wso2.carbon.registry.core.service.RemoteRegistry;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Activity;
@@ -54,7 +53,6 @@ import org.wso2.carbon.repository.TaggedResourcePath;
 import org.wso2.carbon.repository.exceptions.RepositoryAuthException;
 import org.wso2.carbon.repository.exceptions.RepositoryErrorCodes;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.repository.utils.RepositoryUtils;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.user.core.UserStoreManager;
@@ -255,6 +253,7 @@ public class UserRegistry implements Registry {
     	RegistryContext registryContext = InternalUtils.getRegistryContext(registry);
     	RegistryService registryService = registry.getRegistryService() ;
 
+    	/*
         if (!disableCaching && registryContext != null && registryContext.isCacheEnabled() &&
                 registry instanceof EmbeddedRegistry)
 //        if (!disableCaching && registryService != null && registryService.isCacheEnabled() &&
@@ -263,7 +262,13 @@ public class UserRegistry implements Registry {
             this.coreRegistry = new CacheBackedRegistry(registry, tenantId);
         } else {
             this.coreRegistry = registry;
-        }
+        }*/
+    	
+    	if(registry instanceof EmbeddedRegistry) {
+    		((EmbeddedRegistry) registry).setTenantId(tenantId);
+    	}
+    	this.coreRegistry = registry;
+        
         this.isRemoteRegistry = !(registry instanceof EmbeddedRegistry);
         this.chrootWrapper = new ChrootWrapper(chroot);
         this.callerTenantId = tenantId;
@@ -492,8 +497,9 @@ public class UserRegistry implements Registry {
             setSessionInformation();
 //            return coreRegistry.getRegistryContext();
             // Shazni
-            RegistryContext context = isRemoteRegistry ? ((RemoteRegistry) coreRegistry).getRegistryContext()
-            		: InternalUtils.getRegistryContext(coreRegistry) ;
+//            RegistryContext context = isRemoteRegistry ? ((RemoteRegistry) coreRegistry).getRegistryContext()
+//            		: InternalUtils.getRegistryContext(coreRegistry) ;
+            RegistryContext context = InternalUtils.getRegistryContext(coreRegistry) ;
 //            RegistryContext context = isRemoteRegistry ? ((RemoteRegistry) coreRegistry).getRegistryContext()
 //            		: ((EmbeddedRegistry) coreRegistry).getRegistryContext() ;
             return context ;
@@ -554,7 +560,9 @@ public class UserRegistry implements Registry {
 //            ResourceImpl resource = (ResourceImpl) coreRegistry.get(chrootWrapper.getInPath(path));
             Resource resource = coreRegistry.get(chrootWrapper.getInPath(path));
             if (resource != null) {
-                if (coreRegistry instanceof CacheBackedRegistry) {
+//                if (coreRegistry instanceof CacheBackedRegistry) {
+            	if (getRegistryContext() != null && getRegistryContext().isCacheEnabled() &&
+            			coreRegistry instanceof EmbeddedRegistry) {
                     if (resource instanceof CollectionVersionImpl) {
                         resource = new CollectionVersionImpl((CollectionVersionImpl) resource);
                     } else if (resource instanceof CollectionImpl) {
@@ -623,8 +631,9 @@ public class UserRegistry implements Registry {
 
             Collection collection = coreRegistry.get(chrootWrapper.getInPath(path), start, pageSize);
             if (collection != null) {
-                if (coreRegistry instanceof CacheBackedRegistry
-                        ) {
+//                if (coreRegistry instanceof CacheBackedRegistry) {
+            	if(getRegistryContext() != null && getRegistryContext().isCacheEnabled() &&
+            			coreRegistry instanceof EmbeddedRegistry) {
                     if (collection instanceof CollectionVersionImpl) {
                         collection =
                                 new CollectionVersionImpl(((CollectionVersionImpl) collection));
@@ -906,6 +915,428 @@ public class UserRegistry implements Registry {
         }
     }
 
+    public void rateResource(String resourcePath, int rating) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation rate resource, " +
+                    "path: " + resourcePath + ", " +
+                    "rating: " + rating + ".");
+        }
+        // If this node is operating in read-only mode, do not rate the resource
+//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
+        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Cannot continue the operation rate resource, the coreRegistry is " +
+                        "read-only");
+            }
+            return;
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            coreRegistry.rateResource(chrootWrapper.getInPath(resourcePath), rating);
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public float getAverageRating(String resourcePath) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation get average ratings, " +
+                    "path: " + resourcePath + ".");
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            return coreRegistry.getAverageRating(chrootWrapper.getInPath(resourcePath));
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public int getRating(String path, String userName) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation get ratings, " +
+                    "path: " + path + ", " +
+                    "user name: " + userName + ".");
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            return coreRegistry.getRating(chrootWrapper.getInPath(path), userName);
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public Collection executeQuery(String path, Map parameters) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            String msg = "Preparing operation execute query, " +
+                    "path: " + path + ", " +
+                    "values: ";
+            Object[] paramValues = parameters.values().toArray();
+            StringBuilder sb = new StringBuilder(msg);
+            for (int i = 0; i < paramValues.length; i++) {
+                String value = (String) paramValues[i];
+                sb.append(value);
+                if (i != paramValues.length - 1) {
+                    sb.append(", ");
+                } else {
+                    sb.append(".");
+                }
+            }
+            log.trace(sb.toString());
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+            if (path != null) {
+                String newPath = chrootWrapper.getInPath(path);
+                if (newPath != null) {
+                    path = newPath.replace(RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH,
+                            RepositoryConstants.CONFIG_REGISTRY_BASE_PATH).replace(
+                            RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH,
+                            RepositoryConstants.CONFIG_REGISTRY_BASE_PATH);
+                    // The '/' path is used in the remote registry case as a workaround, instead of
+                    // passing null.
+                    if (!path.contains(RepositoryConstants.CONFIG_REGISTRY_BASE_PATH) &&
+                            !path.equals(chrootWrapper.getInPath(RepositoryConstants.ROOT_PATH))) {
+                        log.warn("Running Query in Backwards-Compatible mode. Queries must be " +
+                                "stored and accessed from the Configuration System Registry in " +
+                                "the new model. Path: " + path);
+                    }
+                } else {
+                    path = null;
+                }
+            }
+
+            // here the path will always be made to reside in the config registry.
+
+            Collection collection = coreRegistry.executeQuery(path, parameters);
+            if (collection != null) {
+                ResourceImpl resourceImpl = (ResourceImpl) collection;
+                resourceImpl.setUserName(userName);
+                resourceImpl.setTenantId(tenantId);
+                resourceImpl.setUserRealm(userRealm);
+
+                // removing the chrooted paths in returning values
+                collection = chrootWrapper.filterSearchResult(collection);
+                collection = (Collection) chrootWrapper.getOutResource(collection);
+            }
+            return collection;
+
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public Activity[] getLogs(
+            String resourcePath,
+            int action,
+            String userName,
+            Date from,
+            Date to,
+            boolean recentFirst)
+            throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation get logs, " +
+                    "resource path: " + resourcePath + ", " +
+                    "action: " + action + ", " +
+                    "user name: " + userName + ", " +
+                    "from: " + from + ", " +
+                    "to: " + to + ", " +
+                    "recent first: " + recentFirst + ".");
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            Activity[] logEntries = coreRegistry.getLogs(chrootWrapper.getInPath(resourcePath),
+                                        action, userName, from, to, recentFirst);
+            return chrootWrapper.fixLogEntries(logEntries);
+
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public String[] getAspectActions(String resourcePath, String aspectName)
+            throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation get aspect actions, " +
+                    "path: " + resourcePath + ", " +
+                    "aspect name: " + aspectName + ".");
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            return coreRegistry.getAspectActions(chrootWrapper.getInPath(resourcePath), aspectName);
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public Collection searchContent(String keywords) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation search content, " +
+                    "keywords: " + keywords + ".");
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            Collection collection = coreRegistry.searchContent(keywords);
+            if (collection != null) {
+                ResourceImpl resourceImpl = (ResourceImpl) collection;
+                resourceImpl.setUserName(userName);
+                resourceImpl.setTenantId(tenantId);
+                resourceImpl.setUserRealm(userRealm);
+
+                // removing the chrooted paths in returning values
+                collection = chrootWrapper.filterSearchResult(collection);
+                collection = (Collection) chrootWrapper.getOutResource(collection);
+            }
+            return collection;
+
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public void createLink(String path, String target) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation create link, " +
+                    "path: " + path + ", " +
+                    "target: " + target + ".");
+        }
+        // If this node is operating in read-only mode, do not create link
+//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
+        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
+            if (log.isTraceEnabled()) {
+                log.trace(
+                        "Cannot continue the operation create link, the coreRegistry is read-only");
+            }
+            return;
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            coreRegistry.createLink(chrootWrapper.getInPath(path), chrootWrapper.getInPath(target));
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public void createLink(String path, String target,
+                           String targetSubPath) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation create link, " +
+                    "path: " + path + ", " +
+                    "target: " + target + ", " +
+                    "target sub path: " + targetSubPath + ".");
+        }
+        // If this node is operating in read-only mode, do not create link
+//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
+        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
+            if (log.isTraceEnabled()) {
+                log.trace(
+                        "Cannot continue the operation create link, the coreRegistry is read-only");
+            }
+            return;
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            coreRegistry.createLink(chrootWrapper.getInPath(path), target, targetSubPath);
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public void removeLink(String path) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation remove link, " +
+                    "path: " + path + ".");
+        }
+        // If this node is operating in read-only mode, do not remove link
+//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
+        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
+            if (log.isTraceEnabled()) {
+                log.trace(
+                        "Cannot continue the operation remove link, the coreRegistry is read-only");
+            }
+            return;
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            coreRegistry.removeLink(chrootWrapper.getInPath(path));
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    ////////////////////////////////////////////////////////
+    // Check-in, check-out
+    ////////////////////////////////////////////////////////
+
+    public void restore(String path, Reader reader) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation restore dump, " +
+                    "path: " + path + ".");
+        }
+        // If this node is operating in read-only mode, do not restore dump
+//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
+        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
+            log.warn("Cannot continue the operation restore dump, the coreRegistry is " +
+                    "read-only");
+            return;
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            coreRegistry.restore(chrootWrapper.getInPath(path), reader);
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public void dump(String path, Writer writer) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation dump, " +
+                    "path: " + path + ".");
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            coreRegistry.dump(chrootWrapper.getInPath(path), writer);
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    public String getEventingServiceURL(String path) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation get eventing service url, " +
+                    "path: " + path + ".");
+        }
+        String eventingServiceURL = null;
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            eventingServiceURL = coreRegistry.getEventingServiceURL(chrootWrapper.getInPath(path));
+        } finally {
+            clearSessionInformation();
+        }
+        return eventingServiceURL;
+    }
+
+    public void setEventingServiceURL(String path, String eventingServiceURL)
+            throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Preparing operation set eventing service url, " +
+                    "path: " + path + ", " +
+                    "eventing service url: " + eventingServiceURL + ".");
+        }
+        // If this node is operating in read-only mode, do not set eventing service url
+//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
+        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Cannot continue the operation eventing service url, the coreRegistry " +
+                        "is read-only");
+            }
+            return;
+        }
+        try {
+            // setting session information + chrooted incoming paths
+            setSessionInformation();
+
+            coreRegistry.setEventingServiceURL(chrootWrapper.getInPath(path), eventingServiceURL);
+        } finally {
+            clearSessionInformation();
+        }
+    }
+
+    /**
+     * Method to set the information related to users in to the current session.
+     */
+    public final void setSessionInformation() {
+        if (log.isTraceEnabled()) {
+            log.trace("Setting the session for registry operation, " +
+                    "chroot: " + chrootWrapper.getBasePrefix() + ", " +
+                    "username: " + userName + ", " +
+                    "tenantId: " + tenantId + ", " +
+                    "callerTenantId: " + callerTenantId + ".");
+        }
+        CurrentSession.setUser(userName);
+        if (userRealm != null) {
+            CurrentSession.setUserRealm(userRealm);
+        }
+        CurrentSession.setTenantId(tenantId);
+        CurrentSession.setCallerTenantId(callerTenantId);
+        CurrentSession.setChroot(chrootWrapper.getBasePrefix());
+        CurrentSession.setUserRegistry(this);
+    }
+
+    /**
+     * Method to clear session information.
+     */
+    private final void clearSessionInformation() {
+
+        if (log.isTraceEnabled()) {
+            log.trace("Clearing the session for registry operation, " +
+                    "chroot: " + chrootWrapper.getBasePrefix() + ", " +
+                    "username: " + CurrentSession.getUser() + ", " +
+                    "tenantId: " + CurrentSession.getTenantId() + ".");
+        }
+        CurrentSession.removeUser();
+        CurrentSession.removeUserRealm();
+        CurrentSession.removeTenantId();
+        CurrentSession.removeCallerTenantId();
+        CurrentSession.removeChroot();
+        CurrentSession.removeUserRegistry();
+        if (CurrentSession.getUserRegistry() == null) {
+            CurrentSession.removeAttributes();
+        }
+    }
+    
+    public boolean removeVersionHistory(String path, long snapshotId)
+    		throws RepositoryException {
+
+//    	if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
+    	if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Cannot continue the operation removing the version history, the coreRegistry " +
+                        "is read-only");
+            }
+            return false;
+        }
+        try {
+            // setting session information
+            setSessionInformation();
+
+            return coreRegistry.removeVersionHistory(path, snapshotId);
+        } finally {
+            clearSessionInformation();            
+        }    	    	
+    }
+
+	@Override
+	public RegistryService getRegistryService() {
+		return coreRegistry.getRegistryService();
+	}
+	
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+	
     ////////////////////////////////////////////////////////
     // Associations
     ////////////////////////////////////////////////////////
@@ -1195,154 +1626,7 @@ public class UserRegistry implements Registry {
             clearSessionInformation();
         }
     }
-
-    public void rateResource(String resourcePath, int rating) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation rate resource, " +
-                    "path: " + resourcePath + ", " +
-                    "rating: " + rating + ".");
-        }
-        // If this node is operating in read-only mode, do not rate the resource
-//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
-        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
-            if (log.isTraceEnabled()) {
-                log.trace("Cannot continue the operation rate resource, the coreRegistry is " +
-                        "read-only");
-            }
-            return;
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            coreRegistry.rateResource(chrootWrapper.getInPath(resourcePath), rating);
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public float getAverageRating(String resourcePath) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation get average ratings, " +
-                    "path: " + resourcePath + ".");
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            return coreRegistry.getAverageRating(chrootWrapper.getInPath(resourcePath));
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public int getRating(String path, String userName) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation get ratings, " +
-                    "path: " + path + ", " +
-                    "user name: " + userName + ".");
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            return coreRegistry.getRating(chrootWrapper.getInPath(path), userName);
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public Collection executeQuery(String path, Map parameters) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            String msg = "Preparing operation execute query, " +
-                    "path: " + path + ", " +
-                    "values: ";
-            Object[] paramValues = parameters.values().toArray();
-            StringBuilder sb = new StringBuilder(msg);
-            for (int i = 0; i < paramValues.length; i++) {
-                String value = (String) paramValues[i];
-                sb.append(value);
-                if (i != paramValues.length - 1) {
-                    sb.append(", ");
-                } else {
-                    sb.append(".");
-                }
-            }
-            log.trace(sb.toString());
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-            if (path != null) {
-                String newPath = chrootWrapper.getInPath(path);
-                if (newPath != null) {
-                    path = newPath.replace(RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH,
-                            RepositoryConstants.CONFIG_REGISTRY_BASE_PATH).replace(
-                            RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH,
-                            RepositoryConstants.CONFIG_REGISTRY_BASE_PATH);
-                    // The '/' path is used in the remote registry case as a workaround, instead of
-                    // passing null.
-                    if (!path.contains(RepositoryConstants.CONFIG_REGISTRY_BASE_PATH) &&
-                            !path.equals(chrootWrapper.getInPath(RepositoryConstants.ROOT_PATH))) {
-                        log.warn("Running Query in Backwards-Compatible mode. Queries must be " +
-                                "stored and accessed from the Configuration System Registry in " +
-                                "the new model. Path: " + path);
-                    }
-                } else {
-                    path = null;
-                }
-            }
-
-            // here the path will always be made to reside in the config registry.
-
-            Collection collection = coreRegistry.executeQuery(path, parameters);
-            if (collection != null) {
-                ResourceImpl resourceImpl = (ResourceImpl) collection;
-                resourceImpl.setUserName(userName);
-                resourceImpl.setTenantId(tenantId);
-                resourceImpl.setUserRealm(userRealm);
-
-                // removing the chrooted paths in returning values
-                collection = chrootWrapper.filterSearchResult(collection);
-                collection = (Collection) chrootWrapper.getOutResource(collection);
-            }
-            return collection;
-
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public Activity[] getLogs(
-            String resourcePath,
-            int action,
-            String userName,
-            Date from,
-            Date to,
-            boolean recentFirst)
-            throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation get logs, " +
-                    "resource path: " + resourcePath + ", " +
-                    "action: " + action + ", " +
-                    "user name: " + userName + ", " +
-                    "from: " + from + ", " +
-                    "to: " + to + ", " +
-                    "recent first: " + recentFirst + ".");
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            Activity[] logEntries = coreRegistry.getLogs(chrootWrapper.getInPath(resourcePath),
-                                        action, userName, from, to, recentFirst);
-            return chrootWrapper.fixLogEntries(logEntries);
-
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
+	
     /*  // This method should no more be supported
     public LogEntryCollection getLogCollection(String resourcePath,
                                                int action,
@@ -1476,279 +1760,6 @@ public class UserRegistry implements Registry {
             clearSessionInformation();
         }
     }
-
-    public String[] getAspectActions(String resourcePath, String aspectName)
-            throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation get aspect actions, " +
-                    "path: " + resourcePath + ", " +
-                    "aspect name: " + aspectName + ".");
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            return coreRegistry.getAspectActions(chrootWrapper.getInPath(resourcePath), aspectName);
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public Collection searchContent(String keywords) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation search content, " +
-                    "keywords: " + keywords + ".");
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            Collection collection = coreRegistry.searchContent(keywords);
-            if (collection != null) {
-                ResourceImpl resourceImpl = (ResourceImpl) collection;
-                resourceImpl.setUserName(userName);
-                resourceImpl.setTenantId(tenantId);
-                resourceImpl.setUserRealm(userRealm);
-
-                // removing the chrooted paths in returning values
-                collection = chrootWrapper.filterSearchResult(collection);
-                collection = (Collection) chrootWrapper.getOutResource(collection);
-            }
-            return collection;
-
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public void createLink(String path, String target) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation create link, " +
-                    "path: " + path + ", " +
-                    "target: " + target + ".");
-        }
-        // If this node is operating in read-only mode, do not create link
-//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
-        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
-            if (log.isTraceEnabled()) {
-                log.trace(
-                        "Cannot continue the operation create link, the coreRegistry is read-only");
-            }
-            return;
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            coreRegistry.createLink(chrootWrapper.getInPath(path), chrootWrapper.getInPath(target));
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public void createLink(String path, String target,
-                           String targetSubPath) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation create link, " +
-                    "path: " + path + ", " +
-                    "target: " + target + ", " +
-                    "target sub path: " + targetSubPath + ".");
-        }
-        // If this node is operating in read-only mode, do not create link
-//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
-        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
-            if (log.isTraceEnabled()) {
-                log.trace(
-                        "Cannot continue the operation create link, the coreRegistry is read-only");
-            }
-            return;
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            coreRegistry.createLink(chrootWrapper.getInPath(path), target, targetSubPath);
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public void removeLink(String path) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation remove link, " +
-                    "path: " + path + ".");
-        }
-        // If this node is operating in read-only mode, do not remove link
-//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
-        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
-            if (log.isTraceEnabled()) {
-                log.trace(
-                        "Cannot continue the operation remove link, the coreRegistry is read-only");
-            }
-            return;
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            coreRegistry.removeLink(chrootWrapper.getInPath(path));
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    ////////////////////////////////////////////////////////
-    // Check-in, check-out
-    ////////////////////////////////////////////////////////
-
-    public void restore(String path, Reader reader) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation restore dump, " +
-                    "path: " + path + ".");
-        }
-        // If this node is operating in read-only mode, do not restore dump
-//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
-        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
-            log.warn("Cannot continue the operation restore dump, the coreRegistry is " +
-                    "read-only");
-            return;
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            coreRegistry.restore(chrootWrapper.getInPath(path), reader);
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public void dump(String path, Writer writer) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation dump, " +
-                    "path: " + path + ".");
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            coreRegistry.dump(chrootWrapper.getInPath(path), writer);
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    public String getEventingServiceURL(String path) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation get eventing service url, " +
-                    "path: " + path + ".");
-        }
-        String eventingServiceURL = null;
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            eventingServiceURL = coreRegistry.getEventingServiceURL(chrootWrapper.getInPath(path));
-        } finally {
-            clearSessionInformation();
-        }
-        return eventingServiceURL;
-    }
-
-    public void setEventingServiceURL(String path, String eventingServiceURL)
-            throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Preparing operation set eventing service url, " +
-                    "path: " + path + ", " +
-                    "eventing service url: " + eventingServiceURL + ".");
-        }
-        // If this node is operating in read-only mode, do not set eventing service url
-//        if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
-        if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
-            if (log.isTraceEnabled()) {
-                log.trace("Cannot continue the operation eventing service url, the coreRegistry " +
-                        "is read-only");
-            }
-            return;
-        }
-        try {
-            // setting session information + chrooted incoming paths
-            setSessionInformation();
-
-            coreRegistry.setEventingServiceURL(chrootWrapper.getInPath(path), eventingServiceURL);
-        } finally {
-            clearSessionInformation();
-        }
-    }
-
-    /**
-     * Method to set the information related to users in to the current session.
-     */
-    public final void setSessionInformation() {
-        if (log.isTraceEnabled()) {
-            log.trace("Setting the session for registry operation, " +
-                    "chroot: " + chrootWrapper.getBasePrefix() + ", " +
-                    "username: " + userName + ", " +
-                    "tenantId: " + tenantId + ", " +
-                    "callerTenantId: " + callerTenantId + ".");
-        }
-        CurrentSession.setUser(userName);
-        if (userRealm != null) {
-            CurrentSession.setUserRealm(userRealm);
-        }
-        CurrentSession.setTenantId(tenantId);
-        CurrentSession.setCallerTenantId(callerTenantId);
-        CurrentSession.setChroot(chrootWrapper.getBasePrefix());
-        CurrentSession.setUserRegistry(this);
-    }
-
-    /**
-     * Method to clear session information.
-     */
-    private final void clearSessionInformation() {
-
-        if (log.isTraceEnabled()) {
-            log.trace("Clearing the session for registry operation, " +
-                    "chroot: " + chrootWrapper.getBasePrefix() + ", " +
-                    "username: " + CurrentSession.getUser() + ", " +
-                    "tenantId: " + CurrentSession.getTenantId() + ".");
-        }
-        CurrentSession.removeUser();
-        CurrentSession.removeUserRealm();
-        CurrentSession.removeTenantId();
-        CurrentSession.removeCallerTenantId();
-        CurrentSession.removeChroot();
-        CurrentSession.removeUserRegistry();
-        if (CurrentSession.getUserRegistry() == null) {
-            CurrentSession.removeAttributes();
-        }
-    }
-    
-    public boolean removeVersionHistory(String path, long snapshotId)
-    		throws RepositoryException {
-
-//    	if (InternalUtils.isRegistryReadOnly(coreRegistry.getRegistryContext())) {
-    	if (InternalUtils.isRegistryReadOnly(coreRegistry)) {
-            if (log.isTraceEnabled()) {
-                log.trace("Cannot continue the operation removing the version history, the coreRegistry " +
-                        "is read-only");
-            }
-            return false;
-        }
-        try {
-            // setting session information
-            setSessionInformation();
-
-            return coreRegistry.removeVersionHistory(path, snapshotId);
-        } finally {
-            clearSessionInformation();            
-        }    	    	
-    }
-
-	@Override
-	public RegistryService getRegistryService() {
-		return coreRegistry.getRegistryService();
-	}
 
 	@Override
 	public String getResourceMediaTypes() throws RepositoryException {

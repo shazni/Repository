@@ -26,11 +26,6 @@ import java.util.Date;
  */
 public class Activity {
 
-    ////////////////////////////////////////////////////////
-    // Filters for log queries - these represent the
-    // possible actions that get logged.
-    ////////////////////////////////////////////////////////
-
     /**
      * The log action to filter with. All is for don't filter at all.
      */

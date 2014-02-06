@@ -16,15 +16,15 @@
 
 package org.wso2.carbon.registry.core.dao;
 
+import java.io.InputStream;
+
 import org.wso2.carbon.registry.core.CollectionImpl;
 import org.wso2.carbon.registry.core.ResourceIDImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
 import org.wso2.carbon.registry.core.jdbc.utils.VersionRetriever;
-
-import java.io.InputStream;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * Data Access Object for Resources when versioning for resources has been enabled.

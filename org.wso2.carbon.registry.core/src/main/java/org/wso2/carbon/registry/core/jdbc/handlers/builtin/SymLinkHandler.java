@@ -23,13 +23,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.registry.core.CollectionImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.registry.core.exceptions.RepositoryServerContentException;
 import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
 import org.wso2.carbon.registry.core.jdbc.handlers.HandlerLifecycleManager;
+import org.wso2.carbon.registry.core.jdbc.handlers.HandlerManager;
 import org.wso2.carbon.registry.core.session.CurrentSession;
-import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Association;
 import org.wso2.carbon.repository.Collection;
@@ -40,7 +40,6 @@ import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.Tag;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.Handler;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.repository.handlers.RequestContext;
 
 /**
@@ -163,7 +162,7 @@ public class SymLinkHandler extends Handler {
         }
         ((ResourceImpl) tempResource).addPropertyWithNoUpdate(RepositoryConstants.REGISTRY_LINK, "true");
         ((ResourceImpl) tempResource).removePropertyWithNoUpdate(RepositoryConstants.REGISTRY_NON_RECURSIVE);
-        ((ResourceImpl) tempResource).removePropertyWithNoUpdate(RepositoryConstants.REGISTRY_LINK_RESTORATION);
+        ((ResourceImpl) tempResource).removePropertyWithNoUpdate(/*RepositoryConstants.*/ InternalConstants.REGISTRY_LINK_RESTORATION);
         // ensure that a symlink to a remote link will not become a remote link.
         ((ResourceImpl) tempResource).removePropertyWithNoUpdate(RepositoryConstants.REGISTRY_REAL_PATH);
         ((ResourceImpl) tempResource).addPropertyWithNoUpdate(RepositoryConstants.REGISTRY_MOUNT_POINT, this.mountPoint);
@@ -318,149 +317,6 @@ public class SymLinkHandler extends Handler {
         return fullTargetPath;
     }
 
-    public float getAverageRating(RequestContext requestContext) throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-        float rating = requestContext.getRegistry().getAverageRating(actualPath);
-        requestContext.setProcessingComplete(true);
-
-        return rating;
-    }
-
-    public int getRating(RequestContext requestContext) throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-        int rating =
-                requestContext.getRegistry().getRating(actualPath, requestContext.getUserName());
-        requestContext.setProcessingComplete(true);
-
-        return rating;
-    }
-
-    public void rateResource(RequestContext requestContext) throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-        requestContext.getRegistry().rateResource(actualPath, requestContext.getRating());
-        requestContext.setProcessingComplete(true);
-    }
-
-    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-        Comment[] comments = requestContext.getRegistry().getComments(actualPath);
-        requestContext.setProcessingComplete(true);
-
-        return comments;
-    }
-
-    public String addComment(RequestContext requestContext) throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-        String commentPath = requestContext.getRegistry().addComment(actualPath,
-                requestContext.getComment());
-
-        requestContext.setProcessingComplete(true);
-        return commentPath;
-    }
-
-    public Tag[] getTags(RequestContext requestContext) throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-        Tag[] tags = requestContext.getRegistry().getTags(actualPath);
-        requestContext.setProcessingComplete(true);
-
-        return tags;
-    }
-
-    public void applyTag(RequestContext requestContext) throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-        requestContext.getRegistry().applyTag(actualPath,
-                requestContext.getTag());
-        requestContext.setProcessingComplete(true);
-    }
-
-    public Association[] getAllAssociations(RequestContext requestContext)
-            throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-//        Association[] associations = requestContext.getRegistryContext().getDataAccessManager().
-//                getDAOManager().getAssociationDAO().getAllAssociations(actualPath);
-        Association[] associations = requestContext.getRegistry().getAllAssociations(actualPath);
-        String sourcePath;
-        String destinationPath;
-        for (Association association : associations) {
-            sourcePath = association.getSourcePath();
-            destinationPath = association.getDestinationPath();
-            // either source path or destination path should be equal to the actual path
-            // we are changing that path to the rewritten (symbolic linking) path
-            if (sourcePath.equals(actualPath)) {
-                association.setSourcePath(fullPath);
-            }
-            if (destinationPath.equals(actualPath)) {
-                association.setDestinationPath(fullPath);
-            }
-        }
-        requestContext.setProcessingComplete(true);
-        return associations;
-    }
-
-    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
-//        registerHandler(requestContext.getSystemRegistry());
-    	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = getActualPath(fullPath);
-
-        Association[] associations = requestContext.getRegistry().getAssociations(actualPath,
-                requestContext.getAssociationType());
-        String sourcePath, destinationPath;
-        for (Association association : associations) {
-            sourcePath = association.getSourcePath();
-            if (sourcePath.substring(sourcePath.lastIndexOf('/'),sourcePath.length()).equals(fullPath)) {
-                if (this.targetPoint.equals(RepositoryConstants.PATH_SEPARATOR)) {
-                    association.setSourcePath(this.mountPoint + sourcePath);
-                } else {
-                    association.setSourcePath(this.mountPoint + sourcePath.substring(
-                            this.targetPoint.length(), sourcePath.length()));
-                }
-            } else {
-                destinationPath = association.getDestinationPath();
-                if (this.targetPoint.equals(RepositoryConstants.PATH_SEPARATOR)) {
-                    association.setDestinationPath(this.mountPoint + destinationPath);
-                } else {
-                    association.setDestinationPath(this.mountPoint + destinationPath.substring(
-                            this.targetPoint.length(), destinationPath.length()));
-                }
-            }
-        }
-        requestContext.setProcessingComplete(true);
-        return associations;
-    }
-
     public void addAssociation(RequestContext requestContext) throws RepositoryException {
 //        registerHandler(requestContext.getSystemRegistry());
     	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
@@ -488,7 +344,7 @@ public class SymLinkHandler extends Handler {
 
 
     public void removeLink(RequestContext requestContext) {
-        requestContext.setProperty(RepositoryConstants.SYMLINK_TO_REMOVE_PROPERTY_NAME, this);
+        requestContext.setProperty(/*RepositoryConstants.*/ InternalConstants.SYMLINK_TO_REMOVE_PROPERTY_NAME, this);
         // we are not setting the processing complete true, as the basic registry itself
         // has the operation to do in removing permanent entries.
     }
@@ -596,4 +452,148 @@ public class SymLinkHandler extends Handler {
         requestContext.setProcessingComplete(true);
     }
 
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    public float getAverageRating(RequestContext requestContext) throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+      float rating = requestContext.getRegistry().getAverageRating(actualPath);
+      requestContext.setProcessingComplete(true);
+
+      return rating;
+  }
+
+  public int getRating(RequestContext requestContext) throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+      int rating =
+              requestContext.getRegistry().getRating(actualPath, requestContext.getUserName());
+      requestContext.setProcessingComplete(true);
+
+      return rating;
+  }
+
+  public void rateResource(RequestContext requestContext) throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+      requestContext.getRegistry().rateResource(actualPath, requestContext.getRating());
+      requestContext.setProcessingComplete(true);
+  }
+
+  public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+      Comment[] comments = requestContext.getRegistry().getComments(actualPath);
+      requestContext.setProcessingComplete(true);
+
+      return comments;
+  }
+
+  public String addComment(RequestContext requestContext) throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+      String commentPath = requestContext.getRegistry().addComment(actualPath,
+              requestContext.getComment());
+
+      requestContext.setProcessingComplete(true);
+      return commentPath;
+  }
+
+  public Tag[] getTags(RequestContext requestContext) throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+      Tag[] tags = requestContext.getRegistry().getTags(actualPath);
+      requestContext.setProcessingComplete(true);
+
+      return tags;
+  }
+
+  public void applyTag(RequestContext requestContext) throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+      requestContext.getRegistry().applyTag(actualPath,
+              requestContext.getTag());
+      requestContext.setProcessingComplete(true);
+  }
+
+  public Association[] getAllAssociations(RequestContext requestContext)
+          throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+//      Association[] associations = requestContext.getRegistryContext().getDataAccessManager().
+//              getDAOManager().getAssociationDAO().getAllAssociations(actualPath);
+      Association[] associations = requestContext.getRegistry().getAllAssociations(actualPath);
+      String sourcePath;
+      String destinationPath;
+      for (Association association : associations) {
+          sourcePath = association.getSourcePath();
+          destinationPath = association.getDestinationPath();
+          // either source path or destination path should be equal to the actual path
+          // we are changing that path to the rewritten (symbolic linking) path
+          if (sourcePath.equals(actualPath)) {
+              association.setSourcePath(fullPath);
+          }
+          if (destinationPath.equals(actualPath)) {
+              association.setDestinationPath(fullPath);
+          }
+      }
+      requestContext.setProcessingComplete(true);
+      return associations;
+  }
+
+  public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
+//      registerHandler(requestContext.getSystemRegistry());
+  	registerHandler(InternalUtils.getSystemRegistry(requestContext.getRegistry()));
+      String fullPath = requestContext.getResourcePath().getPath();
+      String actualPath = getActualPath(fullPath);
+
+      Association[] associations = requestContext.getRegistry().getAssociations(actualPath,
+              requestContext.getAssociationType());
+      String sourcePath, destinationPath;
+      for (Association association : associations) {
+          sourcePath = association.getSourcePath();
+          if (sourcePath.substring(sourcePath.lastIndexOf('/'),sourcePath.length()).equals(fullPath)) {
+              if (this.targetPoint.equals(RepositoryConstants.PATH_SEPARATOR)) {
+                  association.setSourcePath(this.mountPoint + sourcePath);
+              } else {
+                  association.setSourcePath(this.mountPoint + sourcePath.substring(
+                          this.targetPoint.length(), sourcePath.length()));
+              }
+          } else {
+              destinationPath = association.getDestinationPath();
+              if (this.targetPoint.equals(RepositoryConstants.PATH_SEPARATOR)) {
+                  association.setDestinationPath(this.mountPoint + destinationPath);
+              } else {
+                  association.setDestinationPath(this.mountPoint + destinationPath.substring(
+                          this.targetPoint.length(), destinationPath.length()));
+              }
+          }
+      }
+      requestContext.setProcessingComplete(true);
+      return associations;
+  }
 }

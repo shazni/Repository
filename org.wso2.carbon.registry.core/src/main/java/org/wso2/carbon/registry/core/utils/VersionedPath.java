@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.registry.core.utils;
 
-import org.wso2.carbon.repository.RepositoryConstants;;
+import org.wso2.carbon.repository.RepositoryConstants;
 
 /**
  * This class is used to represent a path with a version (a versioned path).

@@ -26,18 +26,20 @@ import java.util.regex.Pattern;
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Element;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.registry.core.CommentImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.registry.core.config.DataBaseConfiguration;
 import org.wso2.carbon.registry.core.config.RegistryConfigurationProcessor;
 import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.config.RemoteConfiguration;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
 import org.wso2.carbon.registry.core.exceptions.RepositoryDBException;
 import org.wso2.carbon.registry.core.exceptions.RepositoryInitException;
 import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
 import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDataAccessManager;
-import org.wso2.carbon.registry.core.jdbc.handlers.HandlerLifecycleManager;
+import org.wso2.carbon.registry.core.jdbc.handlers.HandlerManager;
 import org.wso2.carbon.registry.core.jdbc.realm.RegistryRealm;
 import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.service.RegistryService;
@@ -48,9 +50,9 @@ import org.wso2.carbon.repository.Comment;
 import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.repository.config.RemoteConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.repository.handlers.HandlerManager;
+import org.wso2.carbon.repository.handlers.Handler;
+import org.wso2.carbon.repository.handlers.filters.Filter;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.user.core.service.RealmService;
@@ -270,6 +272,301 @@ public class EmbeddedRegistryService implements RegistryService {
         }
     }
 
+    public UserRealm getUserRealm(int tenantId) throws RepositoryException {
+        try {
+            UserRealm realm = (UserRealm) realmService.getTenantUserRealm(tenantId);
+            RegistryRealm regRealm = new RegistryRealm(realm);
+            return regRealm;
+        } catch (UserStoreException e) {
+            log.error(e.getMessage(), e);
+            throw new RepositoryServerException(e.getMessage(), e);
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.wso2.carbon.registry.core.service.RegistryService#setRegistryRoot(java.lang.String)
+     * This method is not needed
+     */
+    public void setRegistryRoot(String registryRoot) {
+    	chroot = registryRoot;
+    }
+    
+    public String getRegistryRoot() {
+    	return chroot;
+    }
+    
+    public void setServicePath(String servicePath) {
+    	this.servicePath = servicePath;
+    }
+    
+    public String getServicePath() {
+    	return servicePath;
+    }
+    
+    public HandlerManager getHandlerManager() {
+    	return handlerManager;
+    }
+    
+    /**
+     * Method to determine whether caching is disabled for the given path.
+     *
+     * @param path the path to test
+     *
+     * @return true if caching is disabled or false if not.
+     */
+    public boolean isNoCachePath(String path) {
+        for (Pattern noCachePath : noCachePaths) {
+            if (noCachePath.matcher(path).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Method to register a no-cache path. If caching is disabled for a collection, all downstream
+     * resources and collections won't be cached.
+     *
+     * @param path the path of a resource (or collection) for which caching is disabled.
+     */
+    public void registerNoCachePath(String path) {
+        noCachePaths.add(Pattern.compile(Pattern.quote(path) + "($|" +
+                RepositoryConstants.PATH_SEPARATOR + ".*|" +
+                RepositoryConstants.URL_SEPARATOR + ".*)"));
+    }
+    
+    public Collection newCollection(String[] paths) {
+    	return (Collection) new org.wso2.carbon.registry.core.CollectionImpl(paths) ;
+    }
+    
+    public void setReadOnly(boolean readOnly) {
+    	this.readOnly = readOnly ;
+    }
+    
+    public boolean isReadOnly() {
+    	return readOnly ;
+    }
+    
+    /**
+     * Set list of remote instances.
+     *
+     * @param remoteInstances the list of remote instances to be set.
+     */
+    public void setRemoteInstances(List<RemoteConfiguration> remoteInstances) {
+        this.remoteInstances = remoteInstances;
+    }
+    
+    public List<String> getRemoteInstanceIds() {
+    	List<String> remoteInstanceIds = new ArrayList<String>() ;
+    	
+    	for(int i=0; i < remoteInstances.size(); i++) {
+    		remoteInstanceIds.add(remoteInstances.get(i).getId());
+    	}
+    	
+    	return remoteInstanceIds ;
+    	//return remoteInstances ;
+    }
+    
+    /**
+     * Return whether the registry caching is enabled or not.
+     *
+     * @return true if enabled, false otherwise.
+     */
+    public boolean isCacheEnabled() {
+        return enableCache;
+    }
+
+    /**
+     * Set whether the registry caching is enabled or not.
+     *
+     * @param enableCache the enable-cache flag
+     */
+    public void setCacheEnabled(boolean enableCache) {
+        this.enableCache = enableCache;
+    }
+
+	@Override
+	public Resource newResource() {
+		return new ResourceImpl();
+	}
+
+	@Override
+	public boolean isClone() {
+		return clone;
+	}
+
+	@Override
+	public void setIsClone(boolean isClone) {
+		clone = isClone ;
+	}
+
+	@Override
+	public RealmService getRealmService() {
+		return realmService;
+	}
+
+	@Override
+	public boolean updateHandler(Element configElement,
+			Registry registry, String lifecyclePhase) throws RepositoryException {
+        boolean status = RegistryConfigurationProcessor.updateHandler(configElement,
+                InternalUtils.getRegistryContext(registry),
+                lifecyclePhase);
+		return status;
+	}
+	
+    /**
+     * Method to determine whether a system resource (or collection) path has been registered.
+     *
+     * @param absolutePath the absolute path of the system resource (or collection)
+     *
+     * @return true if the system resource (or collection) path is registered or false if not.
+     */
+    public boolean isSystemResourcePathRegistered(String absolutePath) {
+    	return registryContext.isSystemResourcePathRegistered(absolutePath);
+    }
+
+    /**
+     * Method to register a system resource (or collection) path.
+     *
+     * @param absolutePath the absolute path of the system resource (or collection)
+     */
+    public void registerSystemResourcePath(String absolutePath) {
+    	registryContext.registerSystemResourcePath(absolutePath);
+    }
+
+	@Override
+	public void addHandler(String[] methods, Filter filter, Handler handler) {
+		getHandlerManager().addHandler(methods, filter, handler);
+	}
+
+	@Override
+	public void addHandler(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+		getHandlerManager().addHandler(methods, filter, handler, lifecyclePhase);
+	}
+
+	@Override
+	public void removeHandler(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+		getHandlerManager().removeHandler(methods, filter, handler, lifecyclePhase);
+	}
+
+	@Override
+	public void removeHandler(Handler handler, String lifecyclePhase) {
+		getHandlerManager().removeHandler(handler, lifecyclePhase);
+	}
+	
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+	
+	@Override
+	public Comment newComment(String comment) {
+		return new CommentImpl(comment);
+	}
+	
+	// ----- What about the following ------------------
+	
+    public UserRegistry getRegistry(String userName, int tenantId, String chroot)
+            throws RepositoryException {
+        return getUserRegistry(userName, tenantId, chroot);
+    }
+
+    public UserRegistry getRegistry(String userName, String password, int tenantId, String chroot)
+            throws RepositoryException {
+        return getUserRegistry(userName, password, tenantId, chroot);
+    }
+
+    public UserRegistry getRegistry() throws RepositoryException {
+        return getRegistry(CarbonConstants.REGISTRY_ANONNYMOUS_USERNAME);
+    }
+
+    public UserRegistry getRegistry(String userName) throws RepositoryException {
+        return getRegistry(userName, MultitenantConstants.SUPER_TENANT_ID);
+    }
+
+    public UserRegistry getRegistry(String userName, int tenantId) throws RepositoryException {
+        return getRegistry(userName, tenantId, null);
+    }
+
+    public UserRegistry getRegistry(String userName, String password) throws RepositoryException {
+        return getRegistry(userName, password, MultitenantConstants.SUPER_TENANT_ID);
+    }
+
+    public UserRegistry getRegistry(String userName, String password, int tenantId)
+            throws RepositoryException {
+        return getRegistry(userName, password, tenantId, null);
+    }
+
+    public UserRegistry getLocalRepository() throws RepositoryException {
+        return getLocalRepository(MultitenantConstants.SUPER_TENANT_ID);
+    }
+
+    public UserRegistry getLocalRepository(int tenantId) throws RepositoryException {
+        return getSystemRegistry(tenantId, RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH);
+    }
+
+    public UserRegistry getConfigSystemRegistry(int tenantId) throws RepositoryException {
+        return getSystemRegistry(tenantId, RepositoryConstants.CONFIG_REGISTRY_BASE_PATH);
+    }
+
+    public UserRegistry getConfigSystemRegistry() throws RepositoryException {
+        return getConfigSystemRegistry(MultitenantConstants.SUPER_TENANT_ID);
+    }
+
+    public UserRegistry getConfigUserRegistry(String userName, int tenantId)
+            throws RepositoryException {
+        return getRegistry(userName, tenantId, RepositoryConstants.CONFIG_REGISTRY_BASE_PATH);
+    }
+
+    public UserRegistry getConfigUserRegistry(String userName, String password, int tenantId)
+            throws RepositoryException {
+        return getRegistry(userName, password, tenantId,
+                RepositoryConstants.CONFIG_REGISTRY_BASE_PATH);
+    }
+
+    public UserRegistry getConfigUserRegistry() throws RepositoryException {
+        return getConfigUserRegistry(CarbonConstants.REGISTRY_ANONNYMOUS_USERNAME);
+    }
+
+    public UserRegistry getConfigUserRegistry(String userName) throws RepositoryException {
+        return getConfigUserRegistry(userName, MultitenantConstants.SUPER_TENANT_ID);
+    }
+
+    public UserRegistry getConfigUserRegistry(String userName, String password)
+            throws RepositoryException {
+        return getConfigUserRegistry(userName, password, MultitenantConstants.SUPER_TENANT_ID);
+    }
+
+    public UserRegistry getGovernanceSystemRegistry(int tenantId) throws RepositoryException {
+        return getSystemRegistry(tenantId, RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH);
+    }
+
+    public UserRegistry getGovernanceSystemRegistry() throws RepositoryException {
+        return getGovernanceSystemRegistry(MultitenantConstants.SUPER_TENANT_ID);
+    }
+
+    public UserRegistry getGovernanceUserRegistry(String userName, int tenantId)
+            throws RepositoryException {
+        return getRegistry(userName, tenantId, RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH);
+    }
+
+    public UserRegistry getGovernanceUserRegistry(String userName, String password, int tenantId)
+            throws RepositoryException {
+        return getRegistry(userName, password, tenantId,
+                RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH);
+    }
+
+    public UserRegistry getGovernanceUserRegistry() throws RepositoryException {
+        return getGovernanceUserRegistry(CarbonConstants.REGISTRY_ANONNYMOUS_USERNAME);
+    }
+
+    public UserRegistry getGovernanceUserRegistry(String userName) throws RepositoryException {
+        return getGovernanceUserRegistry(userName, MultitenantConstants.SUPER_TENANT_ID);
+    }
+
+    public UserRegistry getGovernanceUserRegistry(String userName, String password)
+            throws RepositoryException {
+        return getGovernanceUserRegistry(userName, password, MultitenantConstants.SUPER_TENANT_ID);
+    }
+    
     /**
      * Creates a UserRegistry instance for anonymous user. Permissions set for anonymous user will
      * be applied for all operations performed using this instance.
@@ -460,269 +757,5 @@ public class EmbeddedRegistryService implements RegistryService {
                 embeddedRegistry,
                 realmService,
                 concatenatedChroot);
-    }
-
-    public UserRealm getUserRealm(int tenantId) throws RepositoryException {
-        try {
-            UserRealm realm = (UserRealm) realmService.getTenantUserRealm(tenantId);
-            RegistryRealm regRealm = new RegistryRealm(realm);
-            return regRealm;
-        } catch (UserStoreException e) {
-            log.error(e.getMessage(), e);
-            throw new RepositoryServerException(e.getMessage(), e);
-        }
-    }
-
-    public UserRegistry getRegistry(String userName, int tenantId, String chroot)
-            throws RepositoryException {
-        return getUserRegistry(userName, tenantId, chroot);
-    }
-
-    public UserRegistry getRegistry(String userName, String password, int tenantId, String chroot)
-            throws RepositoryException {
-        return getUserRegistry(userName, password, tenantId, chroot);
-    }
-
-    public UserRegistry getRegistry() throws RepositoryException {
-        return getRegistry(CarbonConstants.REGISTRY_ANONNYMOUS_USERNAME);
-    }
-
-    public UserRegistry getRegistry(String userName) throws RepositoryException {
-        return getRegistry(userName, MultitenantConstants.SUPER_TENANT_ID);
-    }
-
-    public UserRegistry getRegistry(String userName, int tenantId) throws RepositoryException {
-        return getRegistry(userName, tenantId, null);
-    }
-
-    public UserRegistry getRegistry(String userName, String password) throws RepositoryException {
-        return getRegistry(userName, password, MultitenantConstants.SUPER_TENANT_ID);
-    }
-
-    public UserRegistry getRegistry(String userName, String password, int tenantId)
-            throws RepositoryException {
-        return getRegistry(userName, password, tenantId, null);
-    }
-
-    public UserRegistry getLocalRepository() throws RepositoryException {
-        return getLocalRepository(MultitenantConstants.SUPER_TENANT_ID);
-    }
-
-    public UserRegistry getLocalRepository(int tenantId) throws RepositoryException {
-        return getSystemRegistry(tenantId, RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH);
-    }
-
-    public UserRegistry getConfigSystemRegistry(int tenantId) throws RepositoryException {
-        return getSystemRegistry(tenantId, RepositoryConstants.CONFIG_REGISTRY_BASE_PATH);
-    }
-
-    public UserRegistry getConfigSystemRegistry() throws RepositoryException {
-        return getConfigSystemRegistry(MultitenantConstants.SUPER_TENANT_ID);
-    }
-
-    public UserRegistry getConfigUserRegistry(String userName, int tenantId)
-            throws RepositoryException {
-        return getRegistry(userName, tenantId, RepositoryConstants.CONFIG_REGISTRY_BASE_PATH);
-    }
-
-    public UserRegistry getConfigUserRegistry(String userName, String password, int tenantId)
-            throws RepositoryException {
-        return getRegistry(userName, password, tenantId,
-                RepositoryConstants.CONFIG_REGISTRY_BASE_PATH);
-    }
-
-    public UserRegistry getConfigUserRegistry() throws RepositoryException {
-        return getConfigUserRegistry(CarbonConstants.REGISTRY_ANONNYMOUS_USERNAME);
-    }
-
-    public UserRegistry getConfigUserRegistry(String userName) throws RepositoryException {
-        return getConfigUserRegistry(userName, MultitenantConstants.SUPER_TENANT_ID);
-    }
-
-    public UserRegistry getConfigUserRegistry(String userName, String password)
-            throws RepositoryException {
-        return getConfigUserRegistry(userName, password, MultitenantConstants.SUPER_TENANT_ID);
-    }
-
-    public UserRegistry getGovernanceSystemRegistry(int tenantId) throws RepositoryException {
-        return getSystemRegistry(tenantId, RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH);
-    }
-
-    public UserRegistry getGovernanceSystemRegistry() throws RepositoryException {
-        return getGovernanceSystemRegistry(MultitenantConstants.SUPER_TENANT_ID);
-    }
-
-    public UserRegistry getGovernanceUserRegistry(String userName, int tenantId)
-            throws RepositoryException {
-        return getRegistry(userName, tenantId, RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH);
-    }
-
-    public UserRegistry getGovernanceUserRegistry(String userName, String password, int tenantId)
-            throws RepositoryException {
-        return getRegistry(userName, password, tenantId,
-                RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH);
-    }
-
-    public UserRegistry getGovernanceUserRegistry() throws RepositoryException {
-        return getGovernanceUserRegistry(CarbonConstants.REGISTRY_ANONNYMOUS_USERNAME);
-    }
-
-    public UserRegistry getGovernanceUserRegistry(String userName) throws RepositoryException {
-        return getGovernanceUserRegistry(userName, MultitenantConstants.SUPER_TENANT_ID);
-    }
-
-    public UserRegistry getGovernanceUserRegistry(String userName, String password)
-            throws RepositoryException {
-        return getGovernanceUserRegistry(userName, password, MultitenantConstants.SUPER_TENANT_ID);
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.wso2.carbon.registry.core.service.RegistryService#setRegistryRoot(java.lang.String)
-     * This method is not needed
-     */
-    public void setRegistryRoot(String registryRoot) {
-    	chroot = registryRoot;
-    }
-    
-    public String getRegistryRoot() {
-    	return chroot;
-    }
-    
-    public void setServicePath(String servicePath) {
-    	this.servicePath = servicePath;
-    }
-    
-    public String getServicePath() {
-    	return servicePath;
-    }
-    
-    public HandlerManager getHandlerManager() {
-    	return handlerManager;
-    }
-    
-    /**
-     * Method to determine whether caching is disabled for the given path.
-     *
-     * @param path the path to test
-     *
-     * @return true if caching is disabled or false if not.
-     */
-    public boolean isNoCachePath(String path) {
-        for (Pattern noCachePath : noCachePaths) {
-            if (noCachePath.matcher(path).matches()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Method to register a no-cache path. If caching is disabled for a collection, all downstream
-     * resources and collections won't be cached.
-     *
-     * @param path the path of a resource (or collection) for which caching is disabled.
-     */
-    public void registerNoCachePath(String path) {
-        noCachePaths.add(Pattern.compile(Pattern.quote(path) + "($|" +
-                RepositoryConstants.PATH_SEPARATOR + ".*|" +
-                RepositoryConstants.URL_SEPARATOR + ".*)"));
-    }
-    
-    public Collection newCollection(String[] paths) {
-    	return (Collection) new org.wso2.carbon.registry.core.CollectionImpl(paths) ;
-    }
-    
-    public void setReadOnly(boolean readOnly) {
-    	this.readOnly = readOnly ;
-    }
-    
-    public boolean isReadOnly() {
-    	return readOnly ;
-    }
-    
-    /**
-     * Set list of remote instances.
-     *
-     * @param remoteInstances the list of remote instances to be set.
-     */
-    public void setRemoteInstances(List<RemoteConfiguration> remoteInstances) {
-        this.remoteInstances = remoteInstances;
-    }
-    
-    public List<RemoteConfiguration> getRemoteInstances() {
-    	return remoteInstances ;
-    }
-    
-    /**
-     * Return whether the registry caching is enabled or not.
-     *
-     * @return true if enabled, false otherwise.
-     */
-    public boolean isCacheEnabled() {
-        return enableCache;
-    }
-
-    /**
-     * Set whether the registry caching is enabled or not.
-     *
-     * @param enableCache the enable-cache flag
-     */
-    public void setCacheEnabled(boolean enableCache) {
-        this.enableCache = enableCache;
-    }
-
-	@Override
-	public Resource newResource() {
-		return new ResourceImpl();
-	}
-
-	@Override
-	public Comment newComment(String comment) {
-		return new CommentImpl(comment);
-	}
-
-	@Override
-	public boolean isClone() {
-		return clone;
-	}
-
-	@Override
-	public void setIsClone(boolean isClone) {
-		clone = isClone ;
-	}
-
-	@Override
-	public RealmService getRealmService() {
-		return realmService;
-	}
-
-	@Override
-	public boolean updateHandler(OMElement configElement,
-			Registry registry, String lifecyclePhase) throws RepositoryException {
-        boolean status = RegistryConfigurationProcessor.updateHandler(configElement,
-                InternalUtils.getRegistryContext(registry),
-                lifecyclePhase);
-		return status;
-	}
-	
-    /**
-     * Method to determine whether a system resource (or collection) path has been registered.
-     *
-     * @param absolutePath the absolute path of the system resource (or collection)
-     *
-     * @return true if the system resource (or collection) path is registered or false if not.
-     */
-    public boolean isSystemResourcePathRegistered(String absolutePath) {
-    	return registryContext.isSystemResourcePathRegistered(absolutePath);
-    }
-
-    /**
-     * Method to register a system resource (or collection) path.
-     *
-     * @param absolutePath the absolute path of the system resource (or collection)
-     */
-    public void registerSystemResourcePath(String absolutePath) {
-    	registryContext.registerSystemResourcePath(absolutePath);
     }
 }

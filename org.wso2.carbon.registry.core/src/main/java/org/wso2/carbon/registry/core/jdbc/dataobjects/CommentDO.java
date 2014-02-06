@@ -18,6 +18,7 @@ package org.wso2.carbon.registry.core.jdbc.dataobjects;
 /**
  * The data object maps with a comment
  */
+@Deprecated
 public class CommentDO {
 
     private String commentedUser;

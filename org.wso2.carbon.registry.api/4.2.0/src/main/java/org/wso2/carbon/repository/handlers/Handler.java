@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.repository.handlers;
 
-//import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.repository.Association;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;
@@ -219,6 +218,162 @@ public abstract class Handler {
      */
     public void importChild(RequestContext requestContext) throws RepositoryException {
     }
+    
+    /**
+     * Gets called when executing Queries.
+     *
+     * @param requestContext Information about the current request. requestContext.resourcePath:
+     *                       Path of Resource requestContext.queryParameters: Map of query
+     *                       parameters.
+     *
+     * @return A collection containing results as its child resources if the handler processed the
+     *         EXECUTE_QUERY action successfully.
+     * @throws RepositoryException If the media type handler is supposed to handle the executeQuery on
+     *                           the media type and if the executeQuery fails due a handler specific
+     *                           error
+     */
+    public Collection executeQuery(RequestContext requestContext) throws RepositoryException {
+        return null;
+    }
+
+    /**
+     * Gets called when searching for content.
+     *
+     * @param requestContext Information about the current request. requestContext.keywords: Search
+     *                       keywords.
+     *
+     * @return The result set as a collection if the handler processed the SEARCH_CONTENT action
+     *         successfully.
+     * @throws RepositoryException If the media type handler is supposed to handle the searchContent
+     *                           on the media type and if the searchContent fails due a handler
+     *                           specific error
+     */
+    public Collection searchContent(RequestContext requestContext) throws RepositoryException {
+        return null;
+    }
+
+    /**
+     * Gets called when searching for existence of resource.
+     *
+     * @param requestContext Information about the current request.
+     *
+     * @return True if the resource exists and false if not  if the handler processed the
+     *         RESOURCE_EXISTS action successfully.
+     * @throws RepositoryException If the media type handler is supposed to handle the resourceExists
+     *                           on the media type and if the resourceExists fails due a handler
+     *                           specific error
+     */
+    public boolean resourceExists(RequestContext requestContext) throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Gets called when obtaining the registry context.
+     *
+     * @param requestContext Information about the current request.
+     *
+     * @return An instance of the corresponding registry context.
+     */
+//    public RegistryContext getRegistryContext(RequestContext requestContext) {
+//        return null;
+//    }
+
+    /**
+     * Gets called when dumping an path
+     *
+     * @param requestContext Information about the current request. requestContext.keywords: Search
+     *                       keywords.
+     *
+     * @throws RepositoryException If the media type handler is supposed to handle the resourceExists
+     *                           on the media type and if the resourceExists fails due a handler
+     *                           specific error
+     */
+    public void dump(RequestContext requestContext) throws RepositoryException {
+    }
+
+    /**
+     * Gets called when restoring a path
+     *
+     * @param requestContext Information about the current request. requestContext.keywords: Search
+     *                       keywords.
+     *
+     * @throws RepositoryException If the media type handler is supposed to handle the resourceExists
+     *                           on the media type and if the resourceExists fails due a handler
+     *                           specific error
+     */
+    public void restore(RequestContext requestContext) throws RepositoryException {
+    }
+    
+    /**
+     * Gets called when restoring a version.
+     *
+     * @param requestContext Information about the current request. requestContext.versionPath: Path
+     *                       of Resource with version This can be used to derive the path of the
+     *                       resource as well.
+     *
+     * @throws RepositoryException If the media type handler is supposed to handle the restoreVersion
+     *                           on the media type and if the restoreVersion fails due a handler
+     *                           specific error
+     */
+    public void restoreVersion(RequestContext requestContext) throws RepositoryException {
+    }
+
+    /**
+     * Gets called when creating a version.
+     *
+     * @param requestContext Information about the current request. requestContext.resourcePath:
+     *                       Path of Resource
+     *
+     * @throws RepositoryException If the media type handler is supposed to handle the createVersion
+     *                           on the media type and if the createVersion fails due a handler
+     *                           specific error
+     */
+    public void createVersion(RequestContext requestContext) throws RepositoryException {
+    }
+    
+    /**
+     * Gets called when getting versions.
+     *
+     * @param requestContext Information about the current request. requestContext.resourcePath:
+     *                       Path of Resource
+     *
+     * @return an array of Version paths are returned in the form /projects/resource?v=12 if the
+     *         handler processed the GET_VERSIONS action successfully.
+     * @throws RepositoryException If the media type handler is supposed to handle the getVersions on
+     *                           the media type and if the getVersions fails due a handler specific
+     *                           error
+     */
+    public String[] getVersions(RequestContext requestContext) throws RepositoryException {
+        return null;
+    }
+
+    /**
+     * This overrides the default hash code implementation for handler objects, to make sure that
+     * each handler of the same type will have identical hash codes unless otherwise it has its own
+     * extension.
+     *
+     * @return hash code for this handler type.
+     */
+    public int hashCode() {
+        // As per contract for hashCode, If two objects are equal according to the equals(Object)
+        // method, then calling the hashCode method on each of the two objects must produce the same
+        // integer result. Therefore, two Handler objects having the same class name will have
+        // identical hash codes.
+        return getClass().getName().hashCode();
+    }
+
+    /**
+     * Revised implementation of the equals comparison to suite the modified hashCode method.
+     *
+     * @param obj object to compare for equality.
+     *
+     * @return whether equal or not.
+     */
+    public boolean equals(Object obj) {
+        return (obj != null && obj instanceof Handler && obj.getClass().getName().equals(getClass().getName()));
+    }
+    
+    // ------------- Following will eventually move out of the kernel ----------------------------------------------------
 
     /**
      * Gets called when an Associated Aspect gets invoked.
@@ -334,33 +489,6 @@ public abstract class Handler {
     }
 
     /**
-     * Gets called when restoring a version.
-     *
-     * @param requestContext Information about the current request. requestContext.versionPath: Path
-     *                       of Resource with version This can be used to derive the path of the
-     *                       resource as well.
-     *
-     * @throws RepositoryException If the media type handler is supposed to handle the restoreVersion
-     *                           on the media type and if the restoreVersion fails due a handler
-     *                           specific error
-     */
-    public void restoreVersion(RequestContext requestContext) throws RepositoryException {
-    }
-
-    /**
-     * Gets called when creating a version.
-     *
-     * @param requestContext Information about the current request. requestContext.resourcePath:
-     *                       Path of Resource
-     *
-     * @throws RepositoryException If the media type handler is supposed to handle the createVersion
-     *                           on the media type and if the createVersion fails due a handler
-     *                           specific error
-     */
-    public void createVersion(RequestContext requestContext) throws RepositoryException {
-    }
-
-    /**
      * Gets called when editing a comment.
      *
      * @param requestContext Information about the current request. requestContext.comment: The
@@ -450,22 +578,6 @@ public abstract class Handler {
     }
 
     /**
-     * Gets called when getting versions.
-     *
-     * @param requestContext Information about the current request. requestContext.resourcePath:
-     *                       Path of Resource
-     *
-     * @return an array of Version paths are returned in the form /projects/resource?v=12 if the
-     *         handler processed the GET_VERSIONS action successfully.
-     * @throws RepositoryException If the media type handler is supposed to handle the getVersions on
-     *                           the media type and if the getVersions fails due a handler specific
-     *                           error
-     */
-    public String[] getVersions(RequestContext requestContext) throws RepositoryException {
-        return null;
-    }
-
-    /**
      * Gets called when getting tags.
      *
      * @param requestContext Information about the current request. requestContext.resourcePath:
@@ -494,116 +606,5 @@ public abstract class Handler {
     public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
             throws RepositoryException {
         return null;
-    }
-
-    /**
-     * Gets called when executing Queries.
-     *
-     * @param requestContext Information about the current request. requestContext.resourcePath:
-     *                       Path of Resource requestContext.queryParameters: Map of query
-     *                       parameters.
-     *
-     * @return A collection containing results as its child resources if the handler processed the
-     *         EXECUTE_QUERY action successfully.
-     * @throws RepositoryException If the media type handler is supposed to handle the executeQuery on
-     *                           the media type and if the executeQuery fails due a handler specific
-     *                           error
-     */
-    public Collection executeQuery(RequestContext requestContext) throws RepositoryException {
-        return null;
-    }
-
-    /**
-     * Gets called when searching for content.
-     *
-     * @param requestContext Information about the current request. requestContext.keywords: Search
-     *                       keywords.
-     *
-     * @return The result set as a collection if the handler processed the SEARCH_CONTENT action
-     *         successfully.
-     * @throws RepositoryException If the media type handler is supposed to handle the searchContent
-     *                           on the media type and if the searchContent fails due a handler
-     *                           specific error
-     */
-    public Collection searchContent(RequestContext requestContext) throws RepositoryException {
-        return null;
-    }
-
-    /**
-     * Gets called when searching for existence of resource.
-     *
-     * @param requestContext Information about the current request.
-     *
-     * @return True if the resource exists and false if not  if the handler processed the
-     *         RESOURCE_EXISTS action successfully.
-     * @throws RepositoryException If the media type handler is supposed to handle the resourceExists
-     *                           on the media type and if the resourceExists fails due a handler
-     *                           specific error
-     */
-    public boolean resourceExists(RequestContext requestContext) throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Gets called when obtaining the registry context.
-     *
-     * @param requestContext Information about the current request.
-     *
-     * @return An instance of the corresponding registry context.
-     */
-//    public RegistryContext getRegistryContext(RequestContext requestContext) {
-//        return null;
-//    }
-
-    /**
-     * Gets called when dumping an path
-     *
-     * @param requestContext Information about the current request. requestContext.keywords: Search
-     *                       keywords.
-     *
-     * @throws RepositoryException If the media type handler is supposed to handle the resourceExists
-     *                           on the media type and if the resourceExists fails due a handler
-     *                           specific error
-     */
-    public void dump(RequestContext requestContext) throws RepositoryException {
-    }
-
-    /**
-     * Gets called when restoring a path
-     *
-     * @param requestContext Information about the current request. requestContext.keywords: Search
-     *                       keywords.
-     *
-     * @throws RepositoryException If the media type handler is supposed to handle the resourceExists
-     *                           on the media type and if the resourceExists fails due a handler
-     *                           specific error
-     */
-    public void restore(RequestContext requestContext) throws RepositoryException {
-    }
-
-    /**
-     * This overrides the default hash code implementation for handler objects, to make sure that
-     * each handler of the same type will have identical hash codes unless otherwise it has its own
-     * extension.
-     *
-     * @return hash code for this handler type.
-     */
-    public int hashCode() {
-        // As per contract for hashCode, If two objects are equal according to the equals(Object)
-        // method, then calling the hashCode method on each of the two objects must produce the same
-        // integer result. Therefore, two Handler objects having the same class name will have
-        // identical hash codes.
-        return getClass().getName().hashCode();
-    }
-
-    /**
-     * Revised implementation of the equals comparison to suite the modified hashCode method.
-     *
-     * @param obj object to compare for equality.
-     *
-     * @return whether equal or not.
-     */
-    public boolean equals(Object obj) {
-        return (obj != null && obj instanceof Handler && obj.getClass().getName().equals(getClass().getName()));
     }
 }

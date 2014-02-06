@@ -16,16 +16,22 @@
 
 package org.wso2.carbon.registry.core.jdbc;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.registry.core.*;
-import org.wso2.carbon.registry.core.dao.*;
+import org.wso2.carbon.registry.core.CollectionImpl;
+import org.wso2.carbon.registry.core.ResourceIDImpl;
+import org.wso2.carbon.registry.core.ResourceImpl;
+import org.wso2.carbon.registry.core.dao.AssociationDAO;
+import org.wso2.carbon.registry.core.dao.CommentsDAO;
+import org.wso2.carbon.registry.core.dao.RatingsDAO;
+import org.wso2.carbon.registry.core.dao.ResourceDAO;
+import org.wso2.carbon.registry.core.dao.ResourceVersionDAO;
+import org.wso2.carbon.registry.core.dao.TagsDAO;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
-import org.wso2.carbon.repository.ActionConstants;
-import org.wso2.carbon.repository.Collection;
-import org.wso2.carbon.repository.RepositoryConstants;;
-import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.registry.core.exceptions.RepositoryServerContentException;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
 import org.wso2.carbon.registry.core.jdbc.utils.VersionInputStream;
@@ -34,17 +40,17 @@ import org.wso2.carbon.registry.core.session.CurrentSession;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.registry.core.utils.VersionedPath;
+import org.wso2.carbon.repository.ActionConstants;
+import org.wso2.carbon.repository.Collection;
+import org.wso2.carbon.repository.RepositoryConstants;
+import org.wso2.carbon.repository.Resource;
+import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.repository.config.StaticConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryAuthException;
 import org.wso2.carbon.repository.exceptions.RepositoryErrorCodes;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.exceptions.RepositoryResourceNotFoundException;
 import org.wso2.carbon.repository.exceptions.RepositoryUserContentException;
-import org.wso2.carbon.repository.RepositoryConstants;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Repository for versioned resources.
@@ -509,4 +515,6 @@ public class VersionRepository {
     	
     	return true;    
   }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
 }

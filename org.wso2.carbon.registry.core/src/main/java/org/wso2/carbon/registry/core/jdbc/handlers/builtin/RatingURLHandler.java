@@ -19,16 +19,13 @@ package org.wso2.carbon.registry.core.jdbc.handlers.builtin;
 import java.util.Date;
 
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.registry.core.dao.RatingsDAO;
 import org.wso2.carbon.registry.core.dao.ResourceDAO;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.RatingDO;
-import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.repository.config.StaticConfiguration;
@@ -40,6 +37,7 @@ import org.wso2.carbon.repository.handlers.RequestContext;
  * Handles paths of the form <b>pure resource path</b>;ratings:<b>username</b> e.g.
  * /projects/ids/config.xml;ratings:foo
  */
+@Deprecated
 public class RatingURLHandler extends Handler {
 
     public Resource get(RequestContext requestContext) throws RepositoryException {
@@ -69,7 +67,7 @@ public class RatingURLHandler extends Handler {
             Date ratedTime = ratingDO.getRatedTime();
 
             ResourceImpl resource = new ResourceImpl();
-            resource.setMediaType(RepositoryConstants.RATING_MEDIA_TYPE);
+            resource.setMediaType(/*RepositoryConstants.*/ InternalConstants.RATING_MEDIA_TYPE);
             resource.setContent(rating);
             resource.setAuthorUserName(ratedUserName);
             resource.setPath(resourcePath.getCompletePath());

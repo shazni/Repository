@@ -19,12 +19,9 @@ package org.wso2.carbon.registry.core.jdbc.handlers.builtin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.registry.core.CommentImpl;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.registry.core.dao.CommentsDAO;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
 import org.wso2.carbon.registry.core.session.CurrentSession;
-import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.ActionConstants;
@@ -45,6 +42,7 @@ import org.wso2.carbon.user.core.UserStoreException;
  * Handles paths of the form <b>pure resource path</b>;comments:<b>comment ID</b> e.g.
  * /projects/ids/config.xml;comments:2
  */
+@Deprecated
 public class CommentURLHandler extends Handler {
 
     private static final Log log = LogFactory.getLog(CommentURLHandler.class);

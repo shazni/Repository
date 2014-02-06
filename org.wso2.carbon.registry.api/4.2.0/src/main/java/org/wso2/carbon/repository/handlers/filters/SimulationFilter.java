@@ -106,14 +106,6 @@ public class SimulationFilter extends Filter {
     }
 
     /**
-     * Handles the invoke aspect operation
-     */
-    @Override
-    public boolean handleInvokeAspect(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
      * Handles the move operation
      */
     @Override
@@ -154,63 +146,6 @@ public class SimulationFilter extends Filter {
     }
 
     /**
-     * Handles the add association operation
-     */
-    @Override
-    public boolean handleAddAssociation(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the remove association operation
-     */
-    @Override
-    public boolean handleRemoveAssociation(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the get all association operation
-     */
-    @Override
-    public boolean handleGetAllAssociations(RequestContext requestContext)
-            throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the get association operation
-     */
-    @Override
-    public boolean handleGetAssociations(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the apply tag operation
-     */
-    @Override
-    public boolean handleApplyTag(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the remove tag operation
-     */
-    @Override
-    public boolean handleRemoveTag(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the rate resource operation
-     */
-    @Override
-    public boolean handleRateResource(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
      * Handles the restore version operation
      */
     @Override
@@ -226,6 +161,56 @@ public class SimulationFilter extends Filter {
         return isSimulation();
     }
 
+    /**
+     * Handles the get versions operation
+     */
+    @Override
+    public boolean handleGetVersions(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the execute query operation
+     */
+    @Override
+    public boolean handleExecuteQuery(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+    
+    /**
+     * Handles the search operation
+     */
+    @Override
+    public boolean handleSearchContent(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the resource exists operation
+     */
+    @Override
+    public boolean handleResourceExists(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the dump operation
+     */
+    @Override
+    public boolean handleDump(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the resource operation
+     */
+    @Override
+    public boolean handleRestore(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+    
+    // ------------- Following will eventually move out of the kernel ----------------------------------------------------
+    
     /**
      * Handles the edit comments operation
      */
@@ -290,52 +275,69 @@ public class SimulationFilter extends Filter {
     public boolean handleGetRating(RequestContext requestContext) throws RepositoryException {
         return isSimulation();
     }
-
+    
     /**
-     * Handles the get versions operation
+     * Handles the add association operation
      */
     @Override
-    public boolean handleGetVersions(RequestContext requestContext) throws RepositoryException {
+    public boolean handleAddAssociation(RequestContext requestContext) throws RepositoryException {
         return isSimulation();
     }
 
     /**
-     * Handles the execute query operation
+     * Handles the remove association operation
      */
     @Override
-    public boolean handleExecuteQuery(RequestContext requestContext) throws RepositoryException {
+    public boolean handleRemoveAssociation(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the get all association operation
+     */
+    @Override
+    public boolean handleGetAllAssociations(RequestContext requestContext)
+            throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the get association operation
+     */
+    @Override
+    public boolean handleGetAssociations(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the apply tag operation
+     */
+    @Override
+    public boolean handleApplyTag(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the remove tag operation
+     */
+    @Override
+    public boolean handleRemoveTag(RequestContext requestContext) throws RepositoryException {
+        return isSimulation();
+    }
+
+    /**
+     * Handles the rate resource operation
+     */
+    @Override
+    public boolean handleRateResource(RequestContext requestContext) throws RepositoryException {
         return isSimulation();
     }
     
     /**
-     * Handles the search operation
+     * Handles the invoke aspect operation
      */
     @Override
-    public boolean handleSearchContent(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the resource exists operation
-     */
-    @Override
-    public boolean handleResourceExists(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the dump operation
-     */
-    @Override
-    public boolean handleDump(RequestContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the resource operation
-     */
-    @Override
-    public boolean handleRestore(RequestContext requestContext) throws RepositoryException {
+    public boolean handleInvokeAspect(RequestContext requestContext) throws RepositoryException {
         return isSimulation();
     }
 }

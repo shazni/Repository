@@ -31,7 +31,6 @@ import org.wso2.carbon.repository.Tag;
 import org.wso2.carbon.repository.TaggedResourcePath;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.Handler;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.repository.handlers.RequestContext;
 import org.wso2.carbon.repository.handlers.filters.Filter;
 
@@ -113,68 +112,6 @@ public class UserDefinedHandlerManager extends HandlerManager {
     @Override
     public void restoreVersion(RequestContext requestContext) throws RepositoryException {
         getUserHandlerManager().restoreVersion(requestContext);
-    }
-
-    @Override
-    public void rateResource(RequestContext requestContext) throws RepositoryException {
-        getUserHandlerManager().rateResource(requestContext);
-    }
-
-    @Override
-    public void removeTag(RequestContext requestContext) throws RepositoryException {
-        getUserHandlerManager().removeTag(requestContext);
-    }
-
-    @Override
-    public void applyTag(RequestContext requestContext) throws RepositoryException {
-        getUserHandlerManager().applyTag(requestContext);
-    }
-
-    @Override
-    public void removeAssociation(RequestContext requestContext) throws RepositoryException {
-        getUserHandlerManager().removeAssociation(requestContext);
-    }
-
-    @Override
-    public void addAssociation(RequestContext requestContext) throws RepositoryException {
-        getUserHandlerManager().addAssociation(requestContext);
-    }
-
-    @Override
-    public Association[] getAllAssociations(RequestContext requestContext)
-            throws RepositoryException {
-        return getUserHandlerManager().getAllAssociations(requestContext);
-    }
-
-    @Override
-    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
-        return getUserHandlerManager().getAssociations(requestContext);
-    }
-
-    @Override
-    public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
-            throws RepositoryException {
-        return getUserHandlerManager().getResourcePathsWithTag(requestContext);
-    }
-
-    @Override
-    public Tag[] getTags(RequestContext requestContext) throws RepositoryException {
-        return getUserHandlerManager().getTags(requestContext);
-    }
-
-    @Override
-    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
-        return getUserHandlerManager().getComments(requestContext);
-    }
-
-    @Override
-    public float getAverageRating(RequestContext requestContext) throws RepositoryException {
-        return getUserHandlerManager().getAverageRating(requestContext);
-    }
-
-    @Override
-    public int getRating(RequestContext requestContext) throws RepositoryException {
-        return getUserHandlerManager().getRating(requestContext);
     }
 
     @Override
@@ -280,5 +217,69 @@ public class UserDefinedHandlerManager extends HandlerManager {
     @Override
     public void setEvaluateAllHandlers(boolean evaluateAllHandlers) {
         getUserHandlerManager().setEvaluateAllHandlers(evaluateAllHandlers);
+    }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    @Override
+    public void rateResource(RequestContext requestContext) throws RepositoryException {
+        getUserHandlerManager().rateResource(requestContext);
+    }
+
+    @Override
+    public void removeTag(RequestContext requestContext) throws RepositoryException {
+        getUserHandlerManager().removeTag(requestContext);
+    }
+
+    @Override
+    public void applyTag(RequestContext requestContext) throws RepositoryException {
+        getUserHandlerManager().applyTag(requestContext);
+    }
+
+    @Override
+    public void removeAssociation(RequestContext requestContext) throws RepositoryException {
+        getUserHandlerManager().removeAssociation(requestContext);
+    }
+
+    @Override
+    public void addAssociation(RequestContext requestContext) throws RepositoryException {
+        getUserHandlerManager().addAssociation(requestContext);
+    }
+
+    @Override
+    public Association[] getAllAssociations(RequestContext requestContext)
+            throws RepositoryException {
+        return getUserHandlerManager().getAllAssociations(requestContext);
+    }
+
+    @Override
+    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
+        return getUserHandlerManager().getAssociations(requestContext);
+    }
+
+    @Override
+    public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
+            throws RepositoryException {
+        return getUserHandlerManager().getResourcePathsWithTag(requestContext);
+    }
+
+    @Override
+    public Tag[] getTags(RequestContext requestContext) throws RepositoryException {
+        return getUserHandlerManager().getTags(requestContext);
+    }
+
+    @Override
+    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
+        return getUserHandlerManager().getComments(requestContext);
+    }
+
+    @Override
+    public float getAverageRating(RequestContext requestContext) throws RepositoryException {
+        return getUserHandlerManager().getAverageRating(requestContext);
+    }
+
+    @Override
+    public int getRating(RequestContext requestContext) throws RepositoryException {
+        return getUserHandlerManager().getRating(requestContext);
     }
 }

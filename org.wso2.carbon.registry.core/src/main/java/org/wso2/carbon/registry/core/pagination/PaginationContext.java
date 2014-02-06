@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.registry.core.pagination;
 
-
 /**
  * This contains the details that is required for resource pagination.
  */
@@ -121,6 +120,4 @@ public class PaginationContext {
     public void setLength(int length) {
         this.length = length;
     }
-
-
 }

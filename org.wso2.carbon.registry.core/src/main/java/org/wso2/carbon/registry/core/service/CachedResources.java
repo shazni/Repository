@@ -14,9 +14,7 @@
 * limitations under the License.
 */
 
-
 package org.wso2.carbon.registry.core.service;
-
 
 import java.util.HashMap;
 import java.util.Map;

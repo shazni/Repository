@@ -16,16 +16,21 @@
 
 package org.wso2.carbon.registry.core.config;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
-import org.wso2.carbon.repository.Aspect;
-import org.wso2.carbon.repository.RegistryService;
-import org.wso2.carbon.repository.RepositoryConstants;
-import org.wso2.carbon.repository.StatisticsCollector;
-import org.wso2.carbon.repository.config.RemoteConfiguration;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.registry.core.exceptions.RepositoryInitException;
 import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
 import org.wso2.carbon.registry.core.jdbc.Repository;
@@ -33,15 +38,19 @@ import org.wso2.carbon.registry.core.jdbc.VersionRepository;
 import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDataAccessManager;
 import org.wso2.carbon.registry.core.jdbc.handlers.CustomEditManager;
 import org.wso2.carbon.registry.core.jdbc.handlers.HandlerLifecycleManager;
+import org.wso2.carbon.registry.core.jdbc.handlers.HandlerManager;
 import org.wso2.carbon.registry.core.jdbc.queries.QueryProcessorManager;
 import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.LogQueue;
 import org.wso2.carbon.registry.core.utils.LogWriter;
+import org.wso2.carbon.repository.Aspect;
+import org.wso2.carbon.repository.RegistryService;
+import org.wso2.carbon.repository.RepositoryConstants;
+import org.wso2.carbon.repository.StatisticsCollector;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.user.core.service.RealmService;
-
-import java.io.InputStream;
-import java.util.*;
-import java.util.regex.Pattern;
+import org.wso2.carbon.repository.config.StaticConfiguration;
 
 /**
  * This class provides access to core registry configurations. Registry context is associated with
@@ -97,15 +106,14 @@ public class RegistryContext {
     private CustomEditManager customEditManager = new CustomEditManager();
     private Map aspects = new HashMap();
     private boolean versionOnChange;
-    private int maxCache;
+//    private int maxCache;
     private List<RemoteConfiguration> remoteInstances = new ArrayList<RemoteConfiguration>();
     private List<Mount> mounts = new ArrayList<Mount>();
     private List<QueryProcessorConfiguration> queryProcessors =
             new ArrayList<QueryProcessorConfiguration>();
     private String profilesPath = RepositoryConstants.CONFIG_REGISTRY_BASE_PATH +
             RepositoryConstants.PROFILES_PATH;
-    private String servicePath = RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH +
-            RepositoryConstants.GOVERNANCE_SERVICE_PATH;
+    private String servicePath = RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH + /*RepositoryConstants.*/ InternalConstants.GOVERNANCE_SERVICE_PATH;
     //OSGi bundle context
     private LogWriter logWriter = null;
     private boolean enableCache = false;
@@ -270,7 +278,9 @@ public class RegistryContext {
     /**
      * Return a singleton object of the base registry context with custom realm service If a
      * registry context doesn't exist, it will create a new one and return it. Otherwise it will
-     * create the current base registry context
+     * create the current base registry context                    registryContext.setRegistryRoot(registryRoot);
+                    registryService.setRegistryRoot(registryRoot);
+                    StaticConfiguration.setRegistryRoot(registryRoot);
      *
      * @param realmService realm service
      *
@@ -382,6 +392,10 @@ public class RegistryContext {
      */
     public void setRegistryRoot(String registryRoot) {
         this.registryRoot = registryRoot;
+        
+        // This is moved into this method from above
+        registryService.setRegistryRoot(registryRoot);
+        StaticConfiguration.setRegistryRoot(registryRoot);
     }
 
     /**
@@ -400,6 +414,9 @@ public class RegistryContext {
      */
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+        
+        // This is moved inside
+        registryService.setReadOnly(readOnly);
     }
 
     /**
@@ -418,6 +435,9 @@ public class RegistryContext {
      */
     public void setCacheEnabled(boolean enableCache) {
         this.enableCache = enableCache;
+        
+        // Following is from RegistryConfProcessor
+        registryService.setCacheEnabled(enableCache);
     }
 
     /**
@@ -498,7 +518,7 @@ public class RegistryContext {
             this.customEditManager = baseContext.customEditManager;
             this.aspects = baseContext.aspects;
             this.versionOnChange = baseContext.versionOnChange;
-            this.maxCache = baseContext.maxCache;
+//            this.maxCache = baseContext.maxCache;
             this.profilesPath = baseContext.profilesPath;
             this.remoteInstances = baseContext.remoteInstances;
             this.mounts = baseContext.mounts;
@@ -521,25 +541,25 @@ public class RegistryContext {
         return realmService;
     }
 
-    /**
+/*    *//**
      * Set a maximum entries for cache value
      *
      * @param maxCache the maximum number for cache value.
-     */
+     *//*
     @Deprecated
     public void setMaxCache(int maxCache) {
         this.maxCache = maxCache;
     }
 
-    /**
+    *//**
      * Get the number of maximum cache entries
      *
      * @return number of maximum cache entries
-     */
+     *//*
     @Deprecated
     public int getMaxCache() {
         return this.maxCache;
-    }
+    }*/
 
     /**
      * Return the repository object, which provides an interface to put, get resources to the
@@ -725,79 +745,6 @@ public class RegistryContext {
             config.setDbUrl(url.replace("$basedir$", getBasePath()));
         }
         dbConfigs.put(name, config);
-    }
-
-    /**
-     * Add an aspect of the name for a given tenant id
-     *
-     * @param name     name of the aspect
-     * @param aspect   Aspect object
-     * @param tenantId tenant id
-     */
-    @SuppressWarnings("unchecked")
-    public void addAspect(String name, Aspect aspect, int tenantId) {
-        Map tenantAspect = (Map) aspects.get(tenantId);
-        if (tenantAspect == null) {
-            tenantAspect = new HashMap();
-        }
-        tenantAspect.put(name, aspect);
-        aspects.put(tenantId, tenantAspect);
-    }
-
-    /**
-     * Remove an aspect with the given name for a given tenant id
-     *
-     * @param name     Name of the aspect
-     * @param tenantId tenant id
-     *
-     * @return true if the aspect existed and removed, false otherwise
-     */
-    public boolean removeAspect(String name, int tenantId) {
-        Map tenantAspect = (Map) aspects.get(tenantId);
-        if (tenantAspect != null) {
-            if (tenantAspect.get(name) == null) {
-                return false;
-            }
-            tenantAspect.remove(name);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Return an aspect of given name and given tenant id.
-     *
-     * @param name     name of the aspect
-     * @param tenantId tenant id
-     *
-     * @return the aspect object.
-     */
-    public Aspect getAspect(String name, int tenantId) {
-        Map tenantAspect = (Map) aspects.get(tenantId);
-        if (tenantAspect != null) {
-            return (Aspect) tenantAspect.get(name);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Return engaged aspect names for a given tenant
-     *
-     * @param tenantId tenant id
-     *
-     * @return the array of aspects.
-     */
-    @SuppressWarnings("unchecked")
-    public String[] getAspectNames(int tenantId) {
-        Map tenantAspect = (Map) aspects.get(tenantId);
-        if (tenantAspect != null) {
-            final Set aspectNames = tenantAspect.keySet();
-            return (String[]) aspectNames.toArray(new String[aspectNames.size()]);
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -988,6 +935,9 @@ public class RegistryContext {
      */
     public void setServicePath(String servicePath) {
         this.servicePath = servicePath;
+        
+        // From RegConf
+        registryService.setServicePath(servicePath);
     }   
 
     /**
@@ -1085,6 +1035,81 @@ public class RegistryContext {
      */
     public void removeStatisticsCollector(StatisticsCollector statisticsCollector) {
         statisticsCollectors.remove(statisticsCollector);
+    }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    /**
+     * Add an aspect of the name for a given tenant id
+     *
+     * @param name     name of the aspect
+     * @param aspect   Aspect object
+     * @param tenantId tenant id
+     */
+    @SuppressWarnings("unchecked")
+    public void addAspect(String name, Aspect aspect, int tenantId) {
+        Map tenantAspect = (Map) aspects.get(tenantId);
+        if (tenantAspect == null) {
+            tenantAspect = new HashMap();
+        }
+        tenantAspect.put(name, aspect);
+        aspects.put(tenantId, tenantAspect);
+    }
+
+    /**
+     * Remove an aspect with the given name for a given tenant id
+     *
+     * @param name     Name of the aspect
+     * @param tenantId tenant id
+     *
+     * @return true if the aspect existed and removed, false otherwise
+     */
+    public boolean removeAspect(String name, int tenantId) {
+        Map tenantAspect = (Map) aspects.get(tenantId);
+        if (tenantAspect != null) {
+            if (tenantAspect.get(name) == null) {
+                return false;
+            }
+            tenantAspect.remove(name);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Return an aspect of given name and given tenant id.
+     *
+     * @param name     name of the aspect
+     * @param tenantId tenant id
+     *
+     * @return the aspect object.
+     */
+    public Aspect getAspect(String name, int tenantId) {
+        Map tenantAspect = (Map) aspects.get(tenantId);
+        if (tenantAspect != null) {
+            return (Aspect) tenantAspect.get(name);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return engaged aspect names for a given tenant
+     *
+     * @param tenantId tenant id
+     *
+     * @return the array of aspects.
+     */
+    @SuppressWarnings("unchecked")
+    public String[] getAspectNames(int tenantId) {
+        Map tenantAspect = (Map) aspects.get(tenantId);
+        if (tenantAspect != null) {
+            final Set aspectNames = tenantAspect.keySet();
+            return (String[]) aspectNames.toArray(new String[aspectNames.size()]);
+        } else {
+            return null;
+        }
     }
 
 }

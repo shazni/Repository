@@ -42,8 +42,8 @@ import org.wso2.carbon.registry.core.pagination.PaginationConstants;
 import org.wso2.carbon.registry.core.pagination.PaginationContext;
 import org.wso2.carbon.registry.core.pagination.PaginationUtils;
 import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
-import org.wso2.carbon.repository.RepositoryConstants;;
 import org.wso2.carbon.repository.Tag;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.utils.DBUtils;
@@ -52,6 +52,7 @@ import org.wso2.carbon.utils.DBUtils;
  * An extension of {@link JDBCTagsDAO} implements {@link TagsDAO} to store tags on a JDBC-based
  * database, when versioning for tags has been enabled.
  */
+@Deprecated
 public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
 
     private static final Log log = LogFactory.getLog(JDBCTagsVersionDAO.class);
@@ -160,7 +161,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -239,7 +240,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                         }
                     }
                 } catch (SQLException ex) {
-                    String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                    String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                     log.error(msg, ex);
                 }
             }
@@ -325,7 +326,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -382,7 +383,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -443,7 +444,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -525,7 +526,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -593,7 +594,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -716,7 +717,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -811,7 +812,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -881,7 +882,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -961,7 +962,7 @@ public class JDBCTagsVersionDAO extends JDBCTagsDAO implements TagsDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }

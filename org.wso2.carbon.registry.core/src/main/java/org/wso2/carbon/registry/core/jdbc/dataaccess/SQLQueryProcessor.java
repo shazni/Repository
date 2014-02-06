@@ -45,6 +45,7 @@ import org.wso2.carbon.registry.core.jdbc.dataobjects.RatingDO;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.TaggingDO;
 import org.wso2.carbon.registry.core.session.CurrentSession;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.repository.ActionConstants;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Registry;
@@ -205,10 +206,10 @@ public class SQLQueryProcessor implements QueryProcessor {
 
                 resultCollection = fillResourcesCollection(results);
 
-            } else if (resultType.equals(RepositoryConstants.RESOURCE_UUID_RESULT_TYPE)) {
+            } else if (resultType.equals(/*RepositoryConstants.*/ InternalConstants.RESOURCE_UUID_RESULT_TYPE)) {
                 resultCollection = fillResourceUUIDCollection(results);
 
-            } else if (resultType.equals(RepositoryConstants.COMMENTS_RESULT_TYPE)) {
+            } else if (resultType.equals(/*RepositoryConstants.*/ InternalConstants.COMMENTS_RESULT_TYPE)) {
 
                 resultCollection = fillCommentsCollection(results, conn);
 
@@ -219,7 +220,7 @@ public class SQLQueryProcessor implements QueryProcessor {
             } else if (resultType.equals(RepositoryConstants.TAGS_RESULT_TYPE)) {
 
                 resultCollection = fillTagsCollection(results);
-            } else if (resultType.equals(RepositoryConstants.TAG_SUMMARY_RESULT_TYPE)){
+            } else if (resultType.equals(/*RepositoryConstants.*/ InternalConstants.TAG_SUMMARY_RESULT_TYPE)){
                 resultCollection = fillTagSummaryCollection(results);
 
                 // Result is in the form of (tag, number of taggings) tuples

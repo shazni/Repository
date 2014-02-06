@@ -38,8 +38,8 @@ import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.exceptions.RepositoryErrorCodes;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.exceptions.RepositoryUserContentException;
-import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.repository.utils.RepositoryUtils;
+import org.wso2.carbon.utils.CarbonUtils;
 
 /**
  * Utility class for managing and fetching media types.

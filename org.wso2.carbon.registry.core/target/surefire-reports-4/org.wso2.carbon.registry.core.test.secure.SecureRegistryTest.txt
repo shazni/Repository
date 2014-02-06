@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.wso2.carbon.registry.core.test.secure.SecureRegistryTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.08 sec
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.289 sec

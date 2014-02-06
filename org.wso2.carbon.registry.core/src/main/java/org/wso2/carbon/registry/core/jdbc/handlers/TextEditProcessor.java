@@ -19,8 +19,8 @@ package org.wso2.carbon.registry.core.jdbc.handlers;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 
@@ -47,7 +47,7 @@ public class TextEditProcessor extends EditProcessor {
             HttpServletRequest request,
             HttpServletResponse response) throws RepositoryException {
 
-        String textContent = request.getParameter(RepositoryConstants.TEXT_INPUT_NAME);
+        String textContent = request.getParameter(/*RepositoryConstants.*/ InternalConstants.TEXT_INPUT_NAME);
 
         Registry registry = getRegistry(request);
         Resource resource = registry.get(path);

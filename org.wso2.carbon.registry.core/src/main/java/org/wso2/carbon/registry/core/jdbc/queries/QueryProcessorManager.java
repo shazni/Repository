@@ -28,7 +28,7 @@ import org.wso2.carbon.registry.core.exceptions.RepositoryDBException;
 import org.wso2.carbon.registry.core.exceptions.RepositoryInitException;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;;
+import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.dataaccess.QueryProcessor;
 import org.wso2.carbon.repository.exceptions.RepositoryException;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="3.556" errors="0" skipped="0" tests="2" name="org.wso2.carbon.registry.core.test.jdbc.TagsTest">
+<testsuite failures="0" time="6.918" errors="0" skipped="0" tests="2" name="org.wso2.carbon.registry.core.test.jdbc.TagsTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,6 +58,6 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="3.364" classname="org.wso2.carbon.registry.core.test.jdbc.TagsTest" name="testTagging"/>
-  <testcase time="0.192" classname="org.wso2.carbon.registry.core.test.jdbc.TagsTest" name="testMultipleUserTags"/>
+  <testcase time="6.753" classname="org.wso2.carbon.registry.core.test.jdbc.TagsTest" name="testTagging"/>
+  <testcase time="0.165" classname="org.wso2.carbon.registry.core.test.jdbc.TagsTest" name="testMultipleUserTags"/>
 </testsuite>

@@ -29,7 +29,7 @@ import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.repository.Activity;
 import org.wso2.carbon.repository.Association;
 import org.wso2.carbon.repository.Collection;
-import org.wso2.carbon.repository.RepositoryConstants;;
+import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.TaggedResourcePath;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
@@ -223,68 +223,6 @@ public class ChrootWrapper {
     }
 
     /**
-     * Return the associations array with converting all to relative paths.
-     *
-     * @param associations the associations that are in absolute paths.
-     *
-     * @return the associations after converting to the relative paths.
-     */
-    public Association[] getOutAssociations(Association[] associations) {
-        if (basePrefix == null || basePrefix.length() == 0) {
-            return associations;
-        }
-        for (Association association : associations) {
-            if (association != null) {
-                association.setSourcePath(getOutPath(association.getSourcePath()));
-                // Don't fix target path if it is not an external URL.
-                if (!association.getDestinationPath().matches("^[a-zA-Z]+://.*")) {
-                    association.setDestinationPath(getOutPath(
-                            association.getDestinationPath()).replace("//", "/"));
-                }
-            }
-        }
-        return associations;
-    }
-
-    /**
-     * Method to return the tagged resource after converting to relative paths
-     *
-     * @param taggedResourcePaths the set of tagged resource paths.
-     *
-     * @return the tagged resource paths after making them relative.
-     */
-    public TaggedResourcePath[] getOutTaggedResourcePaths(
-            TaggedResourcePath[] taggedResourcePaths) {
-        if (basePrefix == null || basePrefix.length() == 0) {
-            return taggedResourcePaths;
-        }
-        for (TaggedResourcePath trp : taggedResourcePaths) {
-            String path = trp.getResourcePath();
-            trp.setResourcePath(getOutPath(path));
-        }
-        return taggedResourcePaths;
-    }
-
-    /**
-     * Method to return the comments with relative paths set.
-     *
-     * @param comments the comments with absolute paths
-     *
-     * @return the comments after converting to the relative paths.
-     */
-    public CommentImpl[] getOutComments(CommentImpl[] comments) {
-        if (basePrefix == null || basePrefix.length() == 0) {
-            return comments;
-        }
-        for (CommentImpl comment : comments) {
-            comment.setPath(getOutPath(comment.getPath()));
-            comment.setResourcePath(getOutPath(comment.getResourcePath()));
-            comment.setCommentPath(getOutPath(comment.getCommentPath()));
-        }
-        return comments;
-    }
-
-    /**
      * Filter search results, so the results outside the base prefix will be ignored and results
      * inside the base prefix will be converted to relative paths.
      *
@@ -398,5 +336,69 @@ public class ChrootWrapper {
             fixedLogEntries.add(logEntry);
         }
         return fixedLogEntries.toArray(new Activity[fixedLogEntries.size()]);
+    }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    /**
+     * Return the associations array with converting all to relative paths.
+     *
+     * @param associations the associations that are in absolute paths.
+     *
+     * @return the associations after converting to the relative paths.
+     */
+    public Association[] getOutAssociations(Association[] associations) {
+        if (basePrefix == null || basePrefix.length() == 0) {
+            return associations;
+        }
+        for (Association association : associations) {
+            if (association != null) {
+                association.setSourcePath(getOutPath(association.getSourcePath()));
+                // Don't fix target path if it is not an external URL.
+                if (!association.getDestinationPath().matches("^[a-zA-Z]+://.*")) {
+                    association.setDestinationPath(getOutPath(
+                            association.getDestinationPath()).replace("//", "/"));
+                }
+            }
+        }
+        return associations;
+    }
+
+    /**
+     * Method to return the tagged resource after converting to relative paths
+     *
+     * @param taggedResourcePaths the set of tagged resource paths.
+     *
+     * @return the tagged resource paths after making them relative.
+     */
+    public TaggedResourcePath[] getOutTaggedResourcePaths(
+            TaggedResourcePath[] taggedResourcePaths) {
+        if (basePrefix == null || basePrefix.length() == 0) {
+            return taggedResourcePaths;
+        }
+        for (TaggedResourcePath trp : taggedResourcePaths) {
+            String path = trp.getResourcePath();
+            trp.setResourcePath(getOutPath(path));
+        }
+        return taggedResourcePaths;
+    }
+
+    /**
+     * Method to return the comments with relative paths set.
+     *
+     * @param comments the comments with absolute paths
+     *
+     * @return the comments after converting to the relative paths.
+     */
+    public CommentImpl[] getOutComments(CommentImpl[] comments) {
+        if (basePrefix == null || basePrefix.length() == 0) {
+            return comments;
+        }
+        for (CommentImpl comment : comments) {
+            comment.setPath(getOutPath(comment.getPath()));
+            comment.setResourcePath(getOutPath(comment.getResourcePath()));
+            comment.setCommentPath(getOutPath(comment.getCommentPath()));
+        }
+        return comments;
     }
 }

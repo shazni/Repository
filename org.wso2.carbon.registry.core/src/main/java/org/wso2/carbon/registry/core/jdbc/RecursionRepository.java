@@ -18,16 +18,16 @@
  */
 package org.wso2.carbon.registry.core.jdbc;
 
-import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;;
-import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.repository.ResourcePath;
-import org.wso2.carbon.registry.core.ResourceIDImpl;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
-
 import java.io.Reader;
 import java.io.Writer;
+
+import org.wso2.carbon.registry.core.ResourceIDImpl;
+import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
+import org.wso2.carbon.repository.Registry;
+import org.wso2.carbon.repository.RepositoryConstants;
+import org.wso2.carbon.repository.Resource;
+import org.wso2.carbon.repository.ResourcePath;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * This is used to handle recursive repository operations that might need calling registry methods

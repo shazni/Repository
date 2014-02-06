@@ -1,20 +1,18 @@
 Manifest-Version: 1.0
 Export-Package: org.wso2.carbon.repository.handlers;uses:="org.wso2.ca
  rbon.repository,org.wso2.carbon.repository.exceptions,org.wso2.carbon
- .repository.handlers.filters,org.apache.commons.logging,org.wso2.carb
- on.repository.utils,org.apache.axiom.om";version="1.0.1",org.wso2.car
- bon.repository.handlers.filters;uses:="org.wso2.carbon.repository.han
- dlers,org.wso2.carbon.repository.exceptions";version="1.0.1",org.wso2
- .carbon.repository.config;version="1.0.1",org.wso2.carbon.repository.
- utils;uses:="org.apache.commons.logging,org.wso2.carbon.repository.co
- nfig,org.wso2.carbon.repository,org.wso2.carbon.repository.exceptions
- ";version="1.0.1",org.wso2.carbon.repository;uses:="org.wso2.carbon.r
- epository.handlers,org.wso2.carbon.repository.exceptions,org.wso2.car
- bon.repository.config,org.apache.axiom.om";version="1.0.1",org.wso2.c
- arbon.repository.exceptions;version="1.0.1",org.wso2.carbon.repositor
- y.dataaccess;uses:="org.wso2.carbon.repository,org.wso2.carbon.reposi
- tory.exceptions";version="1.0.1"
-Ignore-Package: org.wso2.securevault
+ .repository.handlers.filters";version="1.0.1",org.wso2.carbon.reposit
+ ory.handlers.filters;uses:="org.wso2.carbon.repository.handlers,org.w
+ so2.carbon.repository.exceptions";version="1.0.1",org.wso2.carbon.rep
+ ository.config;version="1.0.1",org.wso2.carbon.repository.utils;uses:
+ ="org.apache.commons.logging,org.wso2.carbon.repository.config,org.ws
+ o2.carbon.repository,org.wso2.carbon.repository.exceptions";version="
+ 1.0.1",org.wso2.carbon.repository;uses:="org.wso2.carbon.repository.h
+ andlers,org.wso2.carbon.repository.exceptions,org.wso2.carbon.reposit
+ ory.handlers.filters,org.w3c.dom";version="1.0.1",org.wso2.carbon.rep
+ ository.exceptions;version="1.0.1",org.wso2.carbon.repository.dataacc
+ ess;uses:="org.wso2.carbon.repository,org.wso2.carbon.repository.exce
+ ptions";version="1.0.1"
 Built-By: shazni
 Tool: Bnd-1.43.0
 Bundle-Name: org.wso2.carbon.repository
@@ -22,12 +20,11 @@ Created-By: Apache Maven Bundle Plugin
 Bundle-Vendor: WSO2 Inc
 Build-Jdk: 1.6.0_43
 Bundle-Version: 4.2.0
-Bnd-LastModified: 1390883210967
+Bnd-LastModified: 1391597749656
 Bundle-ManifestVersion: 2
 Bundle-Description: OSGi Bundle for WSO2 Registry API
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
-Import-Package: org.apache.axiom.om;version="[1.2.11.wso2v4,1.3.0)",or
- g.apache.commons.logging
+Import-Package: org.apache.commons.logging,org.w3c.dom
 Bundle-DocURL: http://wso2.com
 Bundle-SymbolicName: org.wso2.carbon.repository
 

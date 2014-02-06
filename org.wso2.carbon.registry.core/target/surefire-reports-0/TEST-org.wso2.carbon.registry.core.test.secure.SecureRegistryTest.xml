@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="3.144" errors="0" skipped="0" tests="2" name="org.wso2.carbon.registry.core.test.secure.SecureRegistryTest">
+<testsuite failures="0" time="7.202" errors="0" skipped="0" tests="2" name="org.wso2.carbon.registry.core.test.secure.SecureRegistryTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,6 +58,6 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="3.015" classname="org.wso2.carbon.registry.core.test.secure.SecureRegistryTest" name="testUserBasedAuthorization"/>
-  <testcase time="0.129" classname="org.wso2.carbon.registry.core.test.secure.SecureRegistryTest" name="testRoleBasedAuthorization"/>
+  <testcase time="7.053" classname="org.wso2.carbon.registry.core.test.secure.SecureRegistryTest" name="testUserBasedAuthorization"/>
+  <testcase time="0.149" classname="org.wso2.carbon.registry.core.test.secure.SecureRegistryTest" name="testRoleBasedAuthorization"/>
 </testsuite>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="2.97" errors="0" skipped="0" tests="4" name="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest">
+<testsuite failures="0" time="13.607" errors="0" skipped="0" tests="4" name="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,8 +58,8 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="2.488" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest" name="testVersioningProperties"/>
-  <testcase time="0.185" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest" name="testVersioningComments"/>
-  <testcase time="0.139" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest" name="testVersioningTags"/>
-  <testcase time="0.158" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest" name="testVersioningRatings"/>
+  <testcase time="13.173" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest" name="testVersioningProperties"/>
+  <testcase time="0.187" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest" name="testVersioningComments"/>
+  <testcase time="0.122" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest" name="testVersioningTags"/>
+  <testcase time="0.125" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationTrueTest" name="testVersioningRatings"/>
 </testsuite>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="4.676" errors="0" skipped="0" tests="4" name="org.wso2.carbon.registry.core.test.jdbc.CopyTest">
+<testsuite failures="0" time="6.858" errors="0" skipped="0" tests="4" name="org.wso2.carbon.registry.core.test.jdbc.CopyTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,8 +58,8 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="4.297" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest" name="testResourceCopy"/>
-  <testcase time="0.178" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest" name="testCollectionCopy"/>
-  <testcase time="0.1" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest" name="testResourceCopyWithComments"/>
-  <testcase time="0.101" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest" name="testResourceCopyWithTags"/>
+  <testcase time="6.474" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest" name="testResourceCopy"/>
+  <testcase time="0.188" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest" name="testCollectionCopy"/>
+  <testcase time="0.096" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest" name="testResourceCopyWithComments"/>
+  <testcase time="0.1" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest" name="testResourceCopyWithTags"/>
 </testsuite>

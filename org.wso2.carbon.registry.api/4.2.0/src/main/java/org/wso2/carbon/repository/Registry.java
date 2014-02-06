@@ -199,181 +199,6 @@ public interface Registry extends TransactionManager {
     void restoreVersion(String versionPath) throws RepositoryException;
 
     /**
-     * Adds an association stating that the resource at "associationPath" associate on the resource
-     * at "associationPath". Paths may be the resource paths of the current versions or paths of the
-     * old versions. If a path refers to the current version, it should contain the path in the form
-     * /c1/c2/r1. If it refers to an old version, it should be in the form /c1/c2/r1?v=2.
-     *
-     * @param sourcePath      Path of the source resource
-     * @param targetPath      Path of the target resource
-     * @param associationType Type of the association
-     *
-     * @throws RepositoryException Depends on the implementation
-     */
-    void addAssociation(String sourcePath, String targetPath, String associationType) throws RepositoryException;
-
-    /**
-     * To remove an association for a given resource
-     *
-     * @param sourcePath      Path of the source resource
-     * @param targetPath      Path of the target resource
-     * @param associationType Type of the association
-     *
-     * @throws RepositoryException Depends on the implementation
-     */
-    void removeAssociation(String sourcePath, String targetPath, String associationType) throws RepositoryException;
-
-    /**
-     * Get all associations of the given resource. This is a chain of association starting from the
-     * given resource both upwards (source to destination) and downwards (destination to source). T
-     * his is useful to analyze how changes to other resources would affect the given resource.
-     *
-     * @param resourcePath Path of the resource to analyze associations.
-     *
-     * @return List of Association
-     * @throws RepositoryException If something went wrong
-     */
-    Association[] getAllAssociations(String resourcePath) throws RepositoryException;
-
-    /**
-     * Get all associations of the given resource for a give association type. This is a chain of
-     * association starting from the given resource both upwards (source to destination) and
-     * downwards (destination to source). T his is useful to analyze how changes to other resources
-     * would affect the given resource.
-     *
-     * @param resourcePath    Path of the resource to analyze associations.
-     * @param associationType Type of the association , that could be dependency, or some other
-     *                        type.
-     *
-     * @return List of Association
-     * @throws RepositoryException If something went wrong
-     */
-    Association[] getAssociations(String resourcePath, String associationType) throws RepositoryException;
-
-    /**
-     * Applies the given tag to the resource in the given path. If the given tag is not defined in
-     * the repository, it will be defined.
-     *
-     * @param resourcePath Path of the resource to be tagged.
-     * @param tag          Tag. Any string can be used for the tag.
-     *
-     * @throws RepositoryException is thrown if a resource does not exist in the given path.
-     */
-    void applyTag(String resourcePath, String tag) throws RepositoryException;
-
-    /**
-     * Returns the paths of all Resources that are tagged with the given tag.
-     *
-     * @param tag the tag to search for
-     *
-     * @return an array of TaggedResourcePaths
-     * @throws RepositoryException if an error occurs
-     */
-    TaggedResourcePath[] getResourcePathsWithTag(String tag) throws RepositoryException;
-
-    /**
-     * Returns all tags used for tagging the given resource.
-     *
-     * @param resourcePath Path of the resource
-     *
-     * @return Tags tag names
-     * @throws RepositoryException is thrown if a resource does not exist in the given path.
-     */
-    Tag[] getTags(String resourcePath) throws RepositoryException;
-
-    /**
-     * Removes a tag on a resource. If the resource at the path is owned by the current user, all
-     * tagging done using the given tag will be removed. If the resource is not owned by the
-     * current user, only the tagging done by the current user will be removed.
-     *
-     * @param path Resource path tagged with the given tag.
-     * @param tag  Name of the tag to be removed.
-     *
-     * @throws RepositoryException if there's a problem
-     */
-    void removeTag(String path, String tag) throws RepositoryException;
-
-    /**
-     * Adds a comment to a resource.
-     *
-     * @param resourcePath Path of the resource to add the comment.
-     * @param comment      Comment instance for the new comment.
-     *
-     * @return the path of the new comment.
-     * @throws RepositoryException is thrown if a resource does not exist in the given path.
-     */
-    String addComment(String resourcePath, Comment comment) throws RepositoryException;
-
-    /**
-     * Change the text of an existing comment.
-     *
-     * @param commentPath path to comment resource ("..foo/r1;comment:1")
-     * @param text        new text for the comment.
-     *
-     * @throws RepositoryException Registry implementations may handle exceptions and throw
-     *                           RegistryException if the exception has to be propagated to the
-     *                           client.
-     */
-    void editComment(String commentPath, String text) throws RepositoryException;
-
-    /**
-     * Delete an existing comment.
-     *
-     * @param commentPath path to comment resource ("..foo/r1;comment:1")
-     *
-     * @throws RepositoryException Registry implementations may handle exceptions and throw
-     *                           RegistryException if the exception has to be propagated to the
-     *                           client.
-     */
-    void removeComment(String commentPath) throws RepositoryException;
-
-    /**
-     * Get all comments for the given resource.
-     *
-     * @param resourcePath path of the resource.
-     *
-     * @return an array of Comment objects.
-     * @throws RepositoryException Registry implementations may handle exceptions and throw
-     *                           RegistryException if the exception has to be propagated to the
-     *                           client.
-     */
-    Comment[] getComments(String resourcePath) throws RepositoryException;
-
-    /**
-     * Rate the given resource.
-     *
-     * @param resourcePath Path of the resource.
-     * @param rating       Rating value between 1 and 5.
-     *
-     * @throws RepositoryException Registry implementations may handle exceptions and throw
-     *                           RegistryException if the exception has to be propagated to the
-     *                           client.
-     */
-    void rateResource(String resourcePath, int rating) throws RepositoryException;
-
-    /**
-     * Returns the average rating for the given resource. This is the average of all ratings done by
-     * all users for the given resource.
-     *
-     * @param resourcePath Path of the resource.
-     *
-     * @return Average rating between 1 and 5.
-     * @throws RepositoryException if an error occurs
-     */
-    float getAverageRating(String resourcePath) throws RepositoryException;
-
-    /**
-     * Returns the rating given to the specified resource by the given user
-     *
-     * @param path     Path of the resource
-     * @param userName username of the user
-     *
-     * @return rating given by the given user
-     * @throws RepositoryException if there is a problem
-     */
-    int getRating(String path, String userName) throws RepositoryException;
-
-    /**
      * Executes a custom query which lives at the given path in the Registry.
      *
      * @param path       Path of the query to execute.
@@ -405,65 +230,6 @@ public interface Registry extends TransactionManager {
      * @see Activity Accepted values for action parameter
      */
     Activity[] getLogs(String resourcePath, int action, String userName, Date from, Date to, boolean recentFirst) throws RepositoryException;
-    
-    /**
-     * Get a list of the available Aspects for this Registry
-     *
-     * @return a String array containing available Aspect names
-     */
-    String[] getAvailableAspects();
-
-    /**
-     * Associate an Aspect with a resource.
-     *
-     * @param resourcePath Path of the resource
-     * @param aspect       Name of the aspect
-     *
-     * @throws RepositoryException If some thing went wrong while doing associating the phase
-     */
-    void associateAspect(String resourcePath, String aspect) throws RepositoryException;
-
-    /**
-     * This invokes an action on a specified Aspect, which must be associated with the Resource at
-     * the given path.
-     *
-     * @param resourcePath Path of the resource
-     * @param aspectName   Name of the aspect
-     * @param action       Which action was selected - actions are aspect-specific
-     *
-     * @throws RepositoryException if the Aspect isn't associated with the Resource, or the action
-     *                           isn't valid, or an Aspect-specific problem occurs.
-     */
-    void invokeAspect(String resourcePath, String aspectName, String action) throws RepositoryException;
-    
-    /**
-     * This invokes an action on a specified Aspect, which must be associated with the Resource at
-     * the given path.
-     *
-     * @param resourcePath Path of the resource
-     * @param aspectName   Name of the aspect
-     * @param action       Which action was selected - actions are aspect-specific
-     * @param parameters   Parameters to be used for the operation
-     *
-     * @throws RepositoryException if the Aspect isn't associated with the Resource, or the action
-     *                           isn't valid, or an Aspect-specific problem occurs.
-     */
-     void invokeAspect(String resourcePath, String aspectName, String action, Map<String, String> parameters) throws RepositoryException;
-
-    /**
-     * Obtain a list of the available actions on a given resource for a given Aspect.  The Aspect
-     * must be associated with the Resource (@see associateAspect).  The actions are determined by
-     * asking the Aspect itself, so they may change depending on the state of the Resource, the user
-     * who's asking, etc)
-     *
-     * @param resourcePath path of the Resource
-     * @param aspectName   name of the Aspect to query for available actions
-     *
-     * @return a String[] of action names
-     * @throws RepositoryException if the Aspect isn't associated or an Aspect-specific problem
-     *                           occurs
-     */
-    String[] getAspectActions(String resourcePath, String aspectName) throws RepositoryException;
     
     /**
      * Search the content of resources
@@ -524,26 +290,6 @@ public interface Registry extends TransactionManager {
      * @throws RepositoryException throws if the operation fail
      */
     void dump(String path, Writer writer) throws RepositoryException;
-
-    /**
-     * Gets the URL of the WS-Eventing Service.
-     *
-     * @param path the path to which the WS-Eventing Service URL is required
-     *
-     * @return the URL of the WS-Eventing Service
-     * @throws RepositoryException throws if the operation fail
-     */
-    String getEventingServiceURL(String path) throws RepositoryException;
-
-    /**
-     * Sets the URL of the WS-Eventing Service.
-     *
-     * @param path               the path to which the WS-Eventing Service URL is associated
-     * @param eventingServiceURL the URL of the WS-Eventing Service
-     *
-     * @throws RepositoryException throws if the operation fail
-     */
-    void setEventingServiceURL(String path, String eventingServiceURL) throws RepositoryException;
     
     /**
      * Removes a given version history of a resource.
@@ -562,6 +308,28 @@ public interface Registry extends TransactionManager {
       * @return RegistryService instance of the registry
       */
      RegistryService getRegistryService();
+     
+     // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+     
+     /**
+      * Gets the URL of the WS-Eventing Service.
+      *
+      * @param path the path to which the WS-Eventing Service URL is required
+      *
+      * @return the URL of the WS-Eventing Service
+      * @throws RepositoryException throws if the operation fail
+      */
+     String getEventingServiceURL(String path) throws RepositoryException;
+
+     /**
+      * Sets the URL of the WS-Eventing Service.
+      *
+      * @param path               the path to which the WS-Eventing Service URL is associated
+      * @param eventingServiceURL the URL of the WS-Eventing Service
+      *
+      * @throws RepositoryException throws if the operation fail
+      */
+     void setEventingServiceURL(String path, String eventingServiceURL) throws RepositoryException;
      
      /**
       * Method to obtain resource media types.
@@ -606,6 +374,65 @@ public interface Registry extends TransactionManager {
      public void setCustomUIMediaTypes(String customUIMediaTypes) throws RepositoryException;
      
      /**
+      * Get a list of the available Aspects for this Registry
+      *
+      * @return a String array containing available Aspect names
+      */
+     String[] getAvailableAspects();
+
+     /**
+      * Associate an Aspect with a resource.
+      *
+      * @param resourcePath Path of the resource
+      * @param aspect       Name of the aspect
+      *
+      * @throws RepositoryException If some thing went wrong while doing associating the phase
+      */
+     void associateAspect(String resourcePath, String aspect) throws RepositoryException;
+
+     /**
+      * This invokes an action on a specified Aspect, which must be associated with the Resource at
+      * the given path.
+      *
+      * @param resourcePath Path of the resource
+      * @param aspectName   Name of the aspect
+      * @param action       Which action was selected - actions are aspect-specific
+      *
+      * @throws RepositoryException if the Aspect isn't associated with the Resource, or the action
+      *                           isn't valid, or an Aspect-specific problem occurs.
+      */
+     void invokeAspect(String resourcePath, String aspectName, String action) throws RepositoryException;
+     
+     /**
+      * This invokes an action on a specified Aspect, which must be associated with the Resource at
+      * the given path.
+      *
+      * @param resourcePath Path of the resource
+      * @param aspectName   Name of the aspect
+      * @param action       Which action was selected - actions are aspect-specific
+      * @param parameters   Parameters to be used for the operation
+      *
+      * @throws RepositoryException if the Aspect isn't associated with the Resource, or the action
+      *                           isn't valid, or an Aspect-specific problem occurs.
+      */
+      void invokeAspect(String resourcePath, String aspectName, String action, Map<String, String> parameters) throws RepositoryException;
+
+     /**
+      * Obtain a list of the available actions on a given resource for a given Aspect.  The Aspect
+      * must be associated with the Resource (@see associateAspect).  The actions are determined by
+      * asking the Aspect itself, so they may change depending on the state of the Resource, the user
+      * who's asking, etc)
+      *
+      * @param resourcePath path of the Resource
+      * @param aspectName   name of the Aspect to query for available actions
+      *
+      * @return a String[] of action names
+      * @throws RepositoryException if the Aspect isn't associated or an Aspect-specific problem
+      *                           occurs
+      */
+     String[] getAspectActions(String resourcePath, String aspectName) throws RepositoryException;
+     
+     /**
       * @param name name of the aspect
       * 
       * @param aspect instance of the Aspect
@@ -624,4 +451,179 @@ public interface Registry extends TransactionManager {
       * @throws RegistryException throws if the operation fail
       */
      public boolean removeAspect(String name) throws RepositoryException;
+     
+     /**
+      * Adds an association stating that the resource at "associationPath" associate on the resource
+      * at "associationPath". Paths may be the resource paths of the current versions or paths of the
+      * old versions. If a path refers to the current version, it should contain the path in the form
+      * /c1/c2/r1. If it refers to an old version, it should be in the form /c1/c2/r1?v=2.
+      *
+      * @param sourcePath      Path of the source resource
+      * @param targetPath      Path of the target resource
+      * @param associationType Type of the association
+      *
+      * @throws RepositoryException Depends on the implementation
+      */
+     void addAssociation(String sourcePath, String targetPath, String associationType) throws RepositoryException;
+
+     /**
+      * To remove an association for a given resource
+      *
+      * @param sourcePath      Path of the source resource
+      * @param targetPath      Path of the target resource
+      * @param associationType Type of the association
+      *
+      * @throws RepositoryException Depends on the implementation
+      */
+     void removeAssociation(String sourcePath, String targetPath, String associationType) throws RepositoryException;
+
+     /**
+      * Get all associations of the given resource. This is a chain of association starting from the
+      * given resource both upwards (source to destination) and downwards (destination to source). T
+      * his is useful to analyze how changes to other resources would affect the given resource.
+      *
+      * @param resourcePath Path of the resource to analyze associations.
+      *
+      * @return List of Association
+      * @throws RepositoryException If something went wrong
+      */
+     Association[] getAllAssociations(String resourcePath) throws RepositoryException;
+
+     /**
+      * Get all associations of the given resource for a give association type. This is a chain of
+      * association starting from the given resource both upwards (source to destination) and
+      * downwards (destination to source). T his is useful to analyze how changes to other resources
+      * would affect the given resource.
+      *
+      * @param resourcePath    Path of the resource to analyze associations.
+      * @param associationType Type of the association , that could be dependency, or some other
+      *                        type.
+      *
+      * @return List of Association
+      * @throws RepositoryException If something went wrong
+      */
+     Association[] getAssociations(String resourcePath, String associationType) throws RepositoryException;
+
+     /**
+      * Applies the given tag to the resource in the given path. If the given tag is not defined in
+      * the repository, it will be defined.
+      *
+      * @param resourcePath Path of the resource to be tagged.
+      * @param tag          Tag. Any string can be used for the tag.
+      *
+      * @throws RepositoryException is thrown if a resource does not exist in the given path.
+      */
+     void applyTag(String resourcePath, String tag) throws RepositoryException;
+
+     /**
+      * Returns the paths of all Resources that are tagged with the given tag.
+      *
+      * @param tag the tag to search for
+      *
+      * @return an array of TaggedResourcePaths
+      * @throws RepositoryException if an error occurs
+      */
+     TaggedResourcePath[] getResourcePathsWithTag(String tag) throws RepositoryException;
+
+     /**
+      * Returns all tags used for tagging the given resource.
+      *
+      * @param resourcePath Path of the resource
+      *
+      * @return Tags tag names
+      * @throws RepositoryException is thrown if a resource does not exist in the given path.
+      */
+     Tag[] getTags(String resourcePath) throws RepositoryException;
+
+     /**
+      * Removes a tag on a resource. If the resource at the path is owned by the current user, all
+      * tagging done using the given tag will be removed. If the resource is not owned by the
+      * current user, only the tagging done by the current user will be removed.
+      *
+      * @param path Resource path tagged with the given tag.
+      * @param tag  Name of the tag to be removed.
+      *
+      * @throws RepositoryException if there's a problem
+      */
+     void removeTag(String path, String tag) throws RepositoryException;
+
+     /**
+      * Adds a comment to a resource.
+      *
+      * @param resourcePath Path of the resource to add the comment.
+      * @param comment      Comment instance for the new comment.
+      *
+      * @return the path of the new comment.
+      * @throws RepositoryException is thrown if a resource does not exist in the given path.
+      */
+     String addComment(String resourcePath, Comment comment) throws RepositoryException;
+
+     /**
+      * Change the text of an existing comment.
+      *
+      * @param commentPath path to comment resource ("..foo/r1;comment:1")
+      * @param text        new text for the comment.
+      *
+      * @throws RepositoryException Registry implementations may handle exceptions and throw
+      *                           RegistryException if the exception has to be propagated to the
+      *                           client.
+      */
+     void editComment(String commentPath, String text) throws RepositoryException;
+
+     /**
+      * Delete an existing comment.
+      *
+      * @param commentPath path to comment resource ("..foo/r1;comment:1")
+      *
+      * @throws RepositoryException Registry implementations may handle exceptions and throw
+      *                           RegistryException if the exception has to be propagated to the
+      *                           client.
+      */
+     void removeComment(String commentPath) throws RepositoryException;
+
+     /**
+      * Get all comments for the given resource.
+      *
+      * @param resourcePath path of the resource.
+      *
+      * @return an array of Comment objects.
+      * @throws RepositoryException Registry implementations may handle exceptions and throw
+      *                           RegistryException if the exception has to be propagated to the
+      *                           client.
+      */
+     Comment[] getComments(String resourcePath) throws RepositoryException;
+
+     /**
+      * Rate the given resource.
+      *
+      * @param resourcePath Path of the resource.
+      * @param rating       Rating value between 1 and 5.
+      *
+      * @throws RepositoryException Registry implementations may handle exceptions and throw
+      *                           RegistryException if the exception has to be propagated to the
+      *                           client.
+      */
+     void rateResource(String resourcePath, int rating) throws RepositoryException;
+
+     /**
+      * Returns the average rating for the given resource. This is the average of all ratings done by
+      * all users for the given resource.
+      *
+      * @param resourcePath Path of the resource.
+      *
+      * @return Average rating between 1 and 5.
+      * @throws RepositoryException if an error occurs
+      */
+     float getAverageRating(String resourcePath) throws RepositoryException;
+
+     /**
+      * Returns the rating given to the specified resource by the given user
+      *
+      * @param path     Path of the resource
+      * @param userName username of the user
+      *
+      * @return rating given by the given user
+      * @throws RepositoryException if there is a problem
+      */
+     int getRating(String path, String userName) throws RepositoryException;
 }

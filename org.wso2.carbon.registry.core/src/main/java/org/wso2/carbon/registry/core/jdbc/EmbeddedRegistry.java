@@ -16,35 +16,46 @@
 
 package org.wso2.carbon.registry.core.jdbc;
 
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
+
+import javax.cache.Cache;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
-import org.wso2.carbon.repository.ActionConstants;
-import org.wso2.carbon.repository.Activity;
-import org.wso2.carbon.repository.Aspect;
-import org.wso2.carbon.repository.Association;
-import org.wso2.carbon.repository.Collection;
-import org.wso2.carbon.repository.Comment;
-import org.wso2.carbon.repository.RegistryService;
-import org.wso2.carbon.repository.RepositoryConstants;
-import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.repository.ResourcePath;
-import org.wso2.carbon.repository.Tag;
-import org.wso2.carbon.repository.TaggedResourcePath;
+import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.registry.core.CollectionImpl;
 import org.wso2.carbon.registry.core.CommentImpl;
-//import org.wso2.carbon.registry.core.LogEntryCollection;
 import org.wso2.carbon.registry.core.ResourceImpl;
+import org.wso2.carbon.registry.core.caching.RegistryCacheKey;
+import org.wso2.carbon.registry.core.config.DataBaseConfiguration;
+import org.wso2.carbon.registry.core.config.Mount;
 import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.config.RemoteConfiguration;
 import org.wso2.carbon.registry.core.dao.AssociationDAO;
+import org.wso2.carbon.registry.core.dao.CommentsDAO;
 import org.wso2.carbon.registry.core.dao.LogsDAO;
 import org.wso2.carbon.registry.core.dao.RatingsDAO;
 import org.wso2.carbon.registry.core.dao.TagsDAO;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
 import org.wso2.carbon.registry.core.exceptions.RepositoryServerContentException;
 import org.wso2.carbon.registry.core.exceptions.RepositorySessionException;
-import org.wso2.carbon.registry.core.dao.CommentsDAO;
 import org.wso2.carbon.registry.core.jdbc.handlers.HandlerLifecycleManager;
+import org.wso2.carbon.registry.core.jdbc.handlers.HandlerManager;
 import org.wso2.carbon.registry.core.jdbc.queries.QueryProcessorManager;
 import org.wso2.carbon.registry.core.jdbc.utils.DumpReader;
 import org.wso2.carbon.registry.core.session.CurrentSession;
@@ -52,8 +63,23 @@ import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.registry.core.statistics.query.DBQueryStatisticsLog;
 import org.wso2.carbon.registry.core.statistics.query.StatisticsRecord;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.registry.core.utils.VersionedPath;
+import org.wso2.carbon.repository.ActionConstants;
+import org.wso2.carbon.repository.Activity;
+import org.wso2.carbon.repository.Aspect;
+import org.wso2.carbon.repository.Association;
+import org.wso2.carbon.repository.Collection;
+import org.wso2.carbon.repository.Comment;
+import org.wso2.carbon.repository.GhostResource;
+import org.wso2.carbon.repository.Registry;
+import org.wso2.carbon.repository.RegistryService;
+import org.wso2.carbon.repository.RepositoryConstants;
+import org.wso2.carbon.repository.Resource;
+import org.wso2.carbon.repository.ResourcePath;
+import org.wso2.carbon.repository.Tag;
+import org.wso2.carbon.repository.TaggedResourcePath;
 import org.wso2.carbon.repository.config.StaticConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryAuthException;
 import org.wso2.carbon.repository.exceptions.RepositoryErrorCodes;
@@ -61,21 +87,13 @@ import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.exceptions.RepositoryResourceNotFoundException;
 import org.wso2.carbon.repository.exceptions.RepositoryUserContentException;
 import org.wso2.carbon.repository.handlers.Handler;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.repository.handlers.RequestContext;
 import org.wso2.carbon.repository.utils.RepositoryUtils;
 import org.wso2.carbon.user.api.RealmConfiguration;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.user.core.UserStoreException;
 import org.wso2.carbon.user.core.service.RealmService;
-import org.wso2.carbon.repository.Registry;
-
-import java.io.Reader;
-import java.io.Writer;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 /**
  * This is a core class of the Embedded JDBC Based implementation of the Registry. This will be used
@@ -157,6 +175,16 @@ public class EmbeddedRegistry implements Registry {
     private String resourceMediaTypes = null;
     private String collectionMediaTypes = null;
     private String customUIMediaTypes = null;
+    
+    // Following are for CacheBackRegistry
+    
+    private Map<String, String> cacheIds = new HashMap<String, String>();
+    private Map<String, DataBaseConfiguration> dbConfigs = new HashMap<String, DataBaseConfiguration>();
+    private Map<String, String> pathMap = new HashMap<String, String>();
+    
+    private int tenantId = MultitenantConstants.INVALID_TENANT_ID; 
+    
+    // -------------------------------------
 
     /**
      * jdbcDir uses in content indexing
@@ -287,6 +315,27 @@ public class EmbeddedRegistry implements Registry {
             log.trace("Main registry initialized successfully.");
         }
         endDBQueryLog(2);
+        
+        // For Caching ------------------------------------------------------------------
+        
+        //RegistryContext registryContext = RegistryContext.getBaseInstance();
+    	
+        if (registryContext != null && registryContext.isCacheEnabled()) {
+	        for (Mount mount : registryContext.getMounts()) {
+	            for(RemoteConfiguration configuration : registryContext.getRemoteInstances()) {
+	                if (configuration.getDbConfig() != null &&
+	                        mount.getInstanceId().equals(configuration.getId())) {
+	                    dbConfigs.put(mount.getPath(),
+	                            registryContext.getDBConfig(configuration.getDbConfig()));
+	                    pathMap.put(mount.getPath(), mount.getTargetPath());
+	                } else if (configuration.getCacheId() != null &&
+	                        mount.getInstanceId().equals(configuration.getId())) {
+	                    cacheIds.put(mount.getPath(), configuration.getCacheId());
+	                    pathMap.put(mount.getPath(), mount.getTargetPath());
+	                }
+	            }
+	        }
+        }
     }
 
     // Starts logging database query statistics.
@@ -513,7 +562,7 @@ public class EmbeddedRegistry implements Registry {
         }
     }
 
-    public Resource get(String path) throws RepositoryException {
+    private Resource getResource(String path) throws RepositoryException {    // Renamed to getResource from get. Made to private
         boolean transactionSucceeded = false;
 //        RequestContext context = new RequestContext(this, repository, versionRepository);
         RequestContext context = new RequestContext(this);
@@ -611,7 +660,7 @@ public class EmbeddedRegistry implements Registry {
 //        return importResource(suggestedPath, sourceURL, (Resource) resource);
 //    }
 
-    public Collection get(String path, int start, int pageSize) throws RepositoryException {
+    private Collection getCollection(String path, int start, int pageSize) throws RepositoryException { // Renamed to getCollection from get. Made to private
         boolean transactionSucceeded = false;
         try {
             // starting the transactional operation wrapper
@@ -640,7 +689,7 @@ public class EmbeddedRegistry implements Registry {
         }
     }
 
-    public boolean resourceExists(String path) throws RepositoryException {
+    private boolean checkResourceExists(String path) throws RepositoryException { // Renamed to checkResourceExists from resourceExist and made to private
         boolean transactionSucceeded = false;
 //        RequestContext context = new RequestContext(this, repository, versionRepository);
         RequestContext context = new RequestContext(this);
@@ -1169,6 +1218,791 @@ public class EmbeddedRegistry implements Registry {
     }
 
     ////////////////////////////////////////////////////////
+    // Extensible searching API
+    ////////////////////////////////////////////////////////
+
+    public Collection executeQuery(String path, Map parameters) throws RepositoryException {
+        boolean transactionSucceeded = false;
+        boolean remote = false;
+        if (parameters.get("remote") != null) {
+            parameters.remove("remote");
+            remote = true;
+        }
+//        RequestContext context = new RequestContext(this, repository, versionRepository);
+        RequestContext context = new RequestContext(this);
+        Resource query = null;
+        try {
+            // start the transaction
+            beginTransaction();
+
+            Registry systemRegistry = new UserRegistry(CarbonConstants.REGISTRY_SYSTEM_USERNAME, CurrentSession.getTenantId(), this, realmService, null);
+            // we have to get the stored query without checking the user permissions.
+            // all query actions are blocked for all users. they are allowed to read the
+            // queries, only when executing them.
+            if (path != null) {
+                String purePath = InternalUtils.getPureResourcePath(path);
+                if (systemRegistry.resourceExists(purePath)) {
+                    query = systemRegistry.get(purePath);
+                    // If no media type was specified, the query should not work at all.
+                    // This is also used in the remote registry scenario, where we send '/' as the
+                    // query path, when path is null.
+                    if (query != null && (query.getMediaType() == null ||
+                            query.getMediaType().length() == 0)) {
+                        query = null;
+                    }
+                }
+            }
+            /*// transaction succeeded
+            transactionSucceeded = true;
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {
+                rollbackTransaction();
+            }
+        }
+        // new transaction
+        transactionSucceeded = false;
+        context = new RequestContext(this, repository, versionRepository);
+        try {
+            // start the transaction
+            beginTransaction();*/
+
+            if (path != null) {
+                context.setResourcePath(new ResourcePath(path));
+            }
+            context.setResource(query);
+            context.setQueryParameters(parameters);
+            Collection output = registryContext.getHandlerManager().executeQuery(context);
+            if (!context.isSimulation()) {
+//            if (!InternalUtils.isSimulation()) {
+                if (!context.isProcessingComplete()) {
+                    if (query == null) {
+                        query = newResource();
+                        String mediaType = (String) parameters.get("mediaType");
+                        query.setMediaType(mediaType != null ? mediaType :
+                                RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
+                    }
+                    //Resource query = repository.get(purePath);
+
+                    Collection temp = queryProcessorManager.executeQuery(this, query, parameters);
+                    Set<String> results = new LinkedHashSet<String>();
+                    if (output != null) {
+                        String[] children = output.getChildren();
+                        if (children != null) {
+                            for (String child : children) {
+                                if (child != null && (remote || resourceExists(child))) {
+                                    results.add(child);
+                                }
+                            }
+                        }
+
+                        if (temp != null) {
+                            children = temp.getChildren();
+                            if (children != null) {
+                                for (String child : children) {
+                                    if (child != null && (remote || resourceExists(child))) {
+                                        results.add(child);
+                                    }
+                                }
+                            }
+                        } else {
+                            temp = output;
+                        }
+                        temp.setContent(results.toArray(new String[results.size()]));
+                    }
+                    output = temp;
+                }
+
+                registryContext.getHandlerManager(
+                        HandlerLifecycleManager.COMMIT_HANDLER_PHASE).executeQuery(context);
+                // transaction succeeded
+                transactionSucceeded = true;
+            }
+            return output;
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {
+                try {
+                    registryContext.getHandlerManager(
+                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).executeQuery(context);
+                } finally {
+                    rollbackTransaction();
+                }
+            }
+        }
+    }
+
+    public Activity[] getLogs(String resourcePath, int action, String userName, Date from,
+                              Date to, boolean recentFirst) throws RepositoryException {
+        boolean transactionSucceeded = false;
+        try {
+            // start the transaction
+            beginTransaction();
+
+            List logEntryList =
+                    logsDAO.getLogs(resourcePath, action, userName, from, to, recentFirst);
+
+            // We go on two iterations to avoid null values in the following array. Need better way
+            // in a single iteration
+            for (int i = logEntryList.size() - 1; i >= 0; i--) {
+            	Activity logEntry = (Activity) logEntryList.get(i);
+                if (logEntry == null) {
+                    logEntryList.remove(i);
+                }
+            }
+
+            Activity[] logEntries = new Activity[logEntryList.size()];
+            for (int i = 0; i < logEntryList.size(); i++) {
+                logEntries[i] = (Activity) logEntryList.get(i);
+            }
+
+            // transaction succeeded
+            transactionSucceeded = true;
+
+            return logEntries;
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {
+                rollbackTransaction();
+            }
+        }
+    }
+
+    public Collection searchContent(String keywords) throws RepositoryException {
+
+        /*RequestContext context = new RequestContext(this, repository, versionRepository);
+
+        context.setKeywords(keywords);
+        Collection output = registryContext.getHandlerManager().searchContent(context);
+        if (!context.isSimulation()) {
+            if (!context.isProcessingComplete()) {
+                try {
+                    Searcher searcher = new IndexSearcher(registryContext.getJdbcDir());
+                    Query query =
+                            new QueryParser("content", new StandardAnalyzer()).parse(keywords);
+                    Hits hits = searcher.search(query);
+                    org.wso2.carbon.registry.core.Collection collection = new CollectionImpl();
+                    String[] paths = new String[hits.length()];
+                    for (int i = 0; i < hits.length(); i++) {
+                        paths[i] = hits.doc(i).get("id");
+                    }
+                    collection.setContent(paths);
+                    output = collection;
+                } catch (IOException e) {
+                    String msg = "Failed to search content";
+                    log.error(msg, e);
+                    throw new RepositoryException(msg, e);
+                } catch (ParseException e) {
+                    String msg = "Failed to parse the query";
+                    log.error(msg, e);
+                    throw new RepositoryException(msg, e);
+                }
+            }
+        }
+        return output;*/
+        return null;
+    }
+
+    public void createLink(String path, String target) throws RepositoryException {
+        boolean transactionSucceeded = false;
+//        RequestContext context = new RequestContext(this, repository, versionRepository);
+        RequestContext context = new RequestContext(this);
+        try {
+            // start the transaction
+            beginTransaction();
+
+            if (path.equals(target)) {
+                String msg = "Path and target are same, path = target = " + path +
+                        ". You can't create a symbolic link to itself.";
+                log.error(msg);
+                throw new RepositoryServerContentException(msg);
+            }
+            // first put the data..
+            Resource oldResource = repository.getMetaData(target);
+            Resource resource;
+            if (repository.resourceExists(path)) {
+                resource = repository.get(path);
+                resource.addProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_EXISTING_RESOURCE, "true");
+            } else if (oldResource != null) {
+                if (oldResource instanceof Collection) {
+                    resource = new CollectionImpl();
+                } else {
+                    resource = new ResourceImpl();
+                }
+            } else {
+                resource = new CollectionImpl();
+            }
+            resource.addProperty(RepositoryConstants.REGISTRY_NON_RECURSIVE, "true");
+            resource.addProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_LINK_RESTORATION,
+                    path + RepositoryConstants.URL_SEPARATOR + target +
+                            RepositoryConstants.URL_SEPARATOR + CurrentSession.getUser());
+            resource.setMediaType(/*RepositoryConstants.*/ InternalConstants.LINK_MEDIA_TYPE);
+            try {
+                CurrentSession.setAttribute(Repository.IS_LOGGING_ACTIVITY, false);
+                repository.put(path, resource);
+            } finally {
+                CurrentSession.removeAttribute(Repository.IS_LOGGING_ACTIVITY);
+            }
+            resource.discard();
+            HandlerManager hm = registryContext.getHandlerManager();
+
+            ResourcePath resourcePath = new ResourcePath(path);
+            context.setResourcePath(resourcePath);
+            context.setTargetPath(target);
+            hm.createLink(context);
+            if (!context.isSimulation()) {
+//            if (!InternalUtils.isSimulation()) {
+                if (!context.isProcessingComplete()) {
+//                    RepositoryUtils.registerHandlerForSymbolicLinks(registryContext, path, target,
+//                            CurrentSession.getUser());
+                    InternalUtils.registerHandlerForSymbolicLinks(this, path, target,
+                            CurrentSession.getUser());
+
+                    String author = CurrentSession.getUser();
+                    InternalUtils.addMountEntry(InternalUtils.getSystemRegistry(this),
+                            registryContext, path, target, false, author);
+
+
+                    if (context.isLoggingActivity()) {
+                        registryContext.getLogWriter().addLog(path, CurrentSession.getUser(),
+                        		Activity.CREATE_SYMBOLIC_LINK,
+                                target);
+                    }
+                }
+
+                registryContext.getHandlerManager(
+                        HandlerLifecycleManager.COMMIT_HANDLER_PHASE).createLink(context);
+                // transaction succeeded
+                transactionSucceeded = true;
+            }
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {
+                try {
+                    registryContext.getHandlerManager(
+                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).createLink(context);
+                } finally {
+                    rollbackTransaction();
+                }
+            }
+        }
+    }
+
+    public void createLink(String path, String target, String targetSubPath)
+            throws RepositoryException {
+        boolean transactionSucceeded = false;
+//        RequestContext context = new RequestContext(this, repository, versionRepository);
+        RequestContext context = new RequestContext(this);
+        try {
+            // start the transaction
+            beginTransaction();
+
+            Resource resource;
+
+            if (repository.resourceExists(path)) {
+                resource = repository.get(path);
+                resource.addProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_EXISTING_RESOURCE, "true");
+            } else {
+                resource = new CollectionImpl();
+            }
+            resource.addProperty(RepositoryConstants.REGISTRY_NON_RECURSIVE, "true");
+            resource.addProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_LINK_RESTORATION,
+                    path + RepositoryConstants.URL_SEPARATOR + target +
+                            RepositoryConstants.URL_SEPARATOR + targetSubPath +
+                            RepositoryConstants.URL_SEPARATOR + CurrentSession.getUser());
+            resource.setMediaType(/*RepositoryConstants.*/ InternalConstants.LINK_MEDIA_TYPE);
+            try {
+                CurrentSession.setAttribute(Repository.IS_LOGGING_ACTIVITY, false);
+                repository.put(path, resource);
+            } finally {
+                CurrentSession.removeAttribute(Repository.IS_LOGGING_ACTIVITY);
+            }
+            resource.discard();
+
+            HandlerManager hm = registryContext.getHandlerManager();
+
+            ResourcePath resourcePath = new ResourcePath(path);
+            context.setResourcePath(resourcePath);
+            context.setTargetPath(target);
+            context.setTargetSubPath(targetSubPath);
+            hm.createLink(context);
+            if (!context.isSimulation()) {
+//            if (!InternalUtils.isSimulation()) {
+                if (!context.isProcessingComplete()) {
+//                    RepositoryUtils.registerHandlerForRemoteLinks(registryContext, path, target,
+//                            targetSubPath, CurrentSession.getUser());
+                    InternalUtils.registerHandlerForRemoteLinks(this, path, target,
+                            targetSubPath, CurrentSession.getUser());
+
+                    String author = CurrentSession.getUser();
+                    InternalUtils.addMountEntry(InternalUtils.getSystemRegistry(this),
+                            registryContext, path, target, targetSubPath, author);
+
+                    if (context.isLoggingActivity()) {
+                        registryContext.getLogWriter().addLog(
+                                path, CurrentSession.getUser(), Activity.CREATE_REMOTE_LINK,
+                                target + ";" + targetSubPath);
+                    }
+                }
+
+                registryContext.getHandlerManager(
+                            HandlerLifecycleManager.COMMIT_HANDLER_PHASE).createLink(context);
+                // transaction succeeded
+                transactionSucceeded = true;
+            }
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {
+                try {
+                    registryContext.getHandlerManager(
+                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).createLink(context);
+                } finally {
+                    rollbackTransaction();
+                }
+            }
+        }
+    }
+
+    public void removeLink(String path) throws RepositoryException {
+        boolean transactionSucceeded = false;
+//        RequestContext context = new RequestContext(this, repository, versionRepository);
+        RequestContext context = new RequestContext(this);
+        try {
+            // start the transaction
+            beginTransaction();
+
+            ResourcePath resourcePath = new ResourcePath(path);
+            context.setResourcePath(resourcePath);
+            registryContext.getHandlerManager().removeLink(context);
+
+            // we will be removing the symlink handlers to remove
+            Handler handlerToRemove = (Handler) context.getProperty(
+                    /*RepositoryConstants.*/ InternalConstants.SYMLINK_TO_REMOVE_PROPERTY_NAME);
+            if (handlerToRemove != null) {
+                registryContext.getHandlerManager().removeHandler(handlerToRemove,
+                        HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+            }
+
+            if (!context.isSimulation()) {
+//            if (!InternalUtils.isSimulation()) {
+                if (!context.isProcessingComplete()) {
+                    try {
+                        Collection mountCollection = (Collection) getResource(
+                        		InternalUtils.getAbsolutePath(registryContext,
+                                        RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH +
+                                                RepositoryConstants.SYSTEM_MOUNT_PATH));
+                        String[] mountResources = mountCollection.getChildren();
+                        Resource resource = null;
+                        for (String mountResource : mountResources) {
+                            String mountResName =
+                                    mountResource.substring(mountResource.lastIndexOf('/') + 1);
+                            String relativePath = InternalUtils.getRelativePath(registryContext,
+                                    path);
+                            if (mountResName.equals(relativePath.replace("/", "-"))) {
+                                resource = getResource(mountResource);
+                                break;
+                            }
+                        }
+
+                        if (resource == null) {
+                            String msg = "Couldn't find the mount point to remove. ";
+                            log.error(msg);
+                            throw new RepositoryException(msg);
+                        }
+
+                        InternalUtils.getSystemRegistry(this).delete(resource.getPath());
+                    } catch (RepositoryResourceNotFoundException ignored) {
+                        // There can be situations where the mount resource is not found. In that
+                        // case, we can simply ignore this exception being thrown. An example of
+                        // such a situation is found in CARBON-12002.
+                    }
+                    if (repository.resourceExists(path)) {
+                        Resource r = repository.get(path);
+                        if (!Boolean.toString(true).equals(
+                                r.getProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_EXISTING_RESOURCE))) {
+                            repository.delete(path);
+                        }
+                    }
+
+                    if (context.isLoggingActivity()) {
+                        registryContext.getLogWriter().addLog(
+                                path, CurrentSession.getUser(), Activity.REMOVE_LINK, null);
+                    }
+                }
+
+                registryContext.getHandlerManager(
+                            HandlerLifecycleManager.COMMIT_HANDLER_PHASE).removeLink(context);
+                // transaction succeeded
+                transactionSucceeded = true;
+            }
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {
+                try {
+                    registryContext.getHandlerManager(
+                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).removeLink(context);
+                } finally {
+                    rollbackTransaction();
+                }
+            }
+        }
+
+    }
+
+    // check in, check out functionality
+
+    public void restore(String path, Reader reader) throws RepositoryException {
+        boolean transactionSucceeded = false;
+//        RequestContext context = new RequestContext(this, repository, versionRepository);
+        RequestContext context = new RequestContext(this);
+        try {
+            // start the transaction
+            beginTransaction();
+
+            context.setDumpingReader(reader);
+            context.setResourcePath(new ResourcePath(path));
+            registryContext.getHandlerManager().restore(context);
+            if (!context.isSimulation()) {
+//            if (!InternalUtils.isSimulation()) {
+                if (!context.isProcessingComplete()) {
+                    try {
+                        CurrentSession.setAttribute(Repository.IS_LOGGING_ACTIVITY,
+                                context.isLoggingActivity());
+                        repository.restore(path, reader);
+                    } finally {
+                        CurrentSession.removeAttribute(Repository.IS_LOGGING_ACTIVITY);
+                    }
+                    if (context.isLoggingActivity()) {
+                        registryContext.getLogWriter().addLog(
+                                path, CurrentSession.getUser(), Activity.RESTORE, null);
+                    }
+                }
+
+                registryContext.getHandlerManager(
+                        HandlerLifecycleManager.COMMIT_HANDLER_PHASE).restore(context);
+                // transaction succeeded
+                transactionSucceeded = true;
+            }
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {
+                try {
+                    registryContext.getHandlerManager(
+                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).restore(context);
+                } finally {
+                    rollbackTransaction();
+                }
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("total read: " + DumpReader.getTotalRead());
+                log.debug("total buffered: " + DumpReader.getTotalBuffered());
+                log.debug("maximum buffer size: " + DumpReader.getMaxBufferedSize());
+                log.debug("total buffer read size: " + DumpReader.getTotalBufferedRead());
+            }
+        }
+    }
+
+    public void dump(String path, Writer writer) throws RepositoryException {
+        boolean transactionSucceeded = false;
+//        RequestContext context = new RequestContext(this, repository, versionRepository);
+        RequestContext context = new RequestContext(this);
+        try {
+            // start the transaction
+            beginTransaction();
+
+            context.setResourcePath(new ResourcePath(path));
+            context.setDumpingWriter(writer);
+            registryContext.getHandlerManager().dump(context);
+            if (!context.isSimulation()) {
+//            if (!InternalUtils.isSimulation()) {
+                if (!context.isProcessingComplete()) {
+                    repository.dump(path, writer);
+                }
+
+                registryContext.getHandlerManager(
+                        HandlerLifecycleManager.COMMIT_HANDLER_PHASE).dump(context);
+                // transaction succeeded
+                transactionSucceeded = true;
+            }
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {
+                try {
+                    registryContext.getHandlerManager(
+                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).dump(context);
+                } finally {
+                    rollbackTransaction();
+                }
+            }
+        }
+    }
+
+    public String getEventingServiceURL(String path) throws RepositoryException {
+        if (path == null || eventingServiceURLs.size() == 0) {
+            return defaultEventingServiceURL;
+        }
+        Set<Map.Entry<String, String>> entries = eventingServiceURLs.entrySet();
+        for (Map.Entry<String, String> e : entries) {
+            if (e.getValue() == null) {
+                // Clean-up step
+                eventingServiceURLs.remove(e.getKey());
+            } else if (path.matches(e.getKey())) {
+                return e.getValue();
+            }
+        }
+        return defaultEventingServiceURL;
+
+    }
+
+    public void setEventingServiceURL(String path, String eventingServiceURL)
+            throws RepositoryException {
+        if (path == null) {
+            this.defaultEventingServiceURL = eventingServiceURL;
+        } else {
+            this.eventingServiceURLs.put(path, eventingServiceURL);
+        }
+    }
+    
+    public boolean removeVersionHistory(String path, long snapshotId)
+    		throws RepositoryException {    	
+    	
+    	boolean transactionSucceeded = false;    	
+        
+        try {
+            // start the transaction
+            beginTransaction();
+
+            versionRepository.removeVersionHistory(path, snapshotId);
+            
+            // transaction succeeded            
+            transactionSucceeded = true;
+            
+        } finally {
+            if (transactionSucceeded) {
+                commitTransaction();
+            } else {                
+                
+            	rollbackTransaction();                
+            }
+        }   	
+    	
+    	return false;
+    }
+    
+    public RegistryService getRegistryService() {
+    	return registryService;
+    }
+	
+	public Repository getRepository() {
+		return repository;
+	}
+	
+	// Caching features ------------------------------------------------------------------------
+	
+    private static Cache<RegistryCacheKey, GhostResource> getCache() {
+        return InternalUtils.getResourceCache(/*RepositoryConstants.*/InternalConstants.REGISTRY_CACHE_BACKED_ID);
+    }
+    
+    /**
+     * This method used to calculate the cache key
+     *
+     * @param registry Registry
+     * @param path     Resource path
+     *
+     * @return RegistryCacheKey
+     */
+    private RegistryCacheKey getRegistryCacheKey(Registry registry, String path) {
+        String connectionId = "";
+
+        int tenantId;
+        if (this.tenantId == MultitenantConstants.INVALID_TENANT_ID) {
+            tenantId = CurrentSession.getTenantId();
+            if (tenantId == MultitenantConstants.INVALID_TENANT_ID) {
+                tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+            }
+        } else {
+            tenantId = this.tenantId;
+        }
+        
+        String resourceCachePath;
+    	
+    	RegistryContext registryContext = InternalUtils.getRegistryContext(registry);
+    	
+//        RegistryContext registryContext = ((EmbeddedRegistry) registry).getRegistryContext();
+        if (registryContext == null) {
+            registryContext = RegistryContext.getBaseInstance();
+        }
+        if (registry instanceof EmbeddedRegistry) {
+            resourceCachePath = path;
+        } else {
+            resourceCachePath = InternalUtils.getAbsolutePath(registryContext, path);
+        }
+        DataBaseConfiguration dataBaseConfiguration = null;
+        if (dbConfigs.size() > 0) {
+            for (String sourcePath : dbConfigs.keySet()) {
+                if (resourceCachePath.startsWith(sourcePath)) {
+                    resourceCachePath = pathMap.get(sourcePath) + resourceCachePath.substring(sourcePath.length());
+                    dataBaseConfiguration = dbConfigs.get(sourcePath);
+                    break;
+                }
+            }
+        } else if (cacheIds.size() > 0) {
+            for (String sourcePath : cacheIds.keySet()) {
+                if (resourceCachePath.startsWith(sourcePath)) {
+                    resourceCachePath = pathMap.get(sourcePath) + resourceCachePath.substring(sourcePath.length());
+                    connectionId = cacheIds.get(sourcePath);
+                    break;
+                }
+            }
+        }
+        if (connectionId.length() == 0) {
+            if (dataBaseConfiguration == null) {
+                dataBaseConfiguration = registryContext.getDefaultDataBaseConfiguration();
+            }
+            if (dataBaseConfiguration != null) {
+                connectionId = (dataBaseConfiguration.getUserName() != null
+                        ? dataBaseConfiguration.getUserName().split("@")[0]:dataBaseConfiguration.getUserName()) + "@" + dataBaseConfiguration.getDbUrl();
+            }
+        }
+
+        return InternalUtils.buildRegistryCacheKey(connectionId, tenantId, resourceCachePath);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Resource get(String path) throws RepositoryException {
+    	//RegistryContext registryContext = InternalUtils.getRegistryContext(this);
+    	
+        if (registryContext != null && registryContext.isCacheEnabled())
+        {
+            //if (registry.getRegistryContext().isNoCachePath(path) || isCommunityFeatureRequest(path)) {
+        	if (getRegistryService().isNoCachePath(path) || isCommunityFeatureRequest(path)) {
+                return getResource(path);
+            }
+            Resource resource;
+            RegistryCacheKey registryCacheKey = getRegistryCacheKey(this, path);
+
+            Object ghostResourceObject;
+            Cache<RegistryCacheKey, GhostResource> cache = getCache();
+            if ((ghostResourceObject = cache.get(registryCacheKey)) == null) {
+                resource = getResource(path);
+                if (resource.getProperty(RepositoryConstants.REGISTRY_LINK) == null ||
+                        resource.getProperty(RepositoryConstants.REGISTRY_MOUNT) != null) {
+                    cache.put(registryCacheKey, new GhostResource<Resource>(resource));
+                }
+            } else {
+                if (!AuthorizationUtils.authorize(path, ActionConstants.GET)) {
+                    String msg = "User " + CurrentSession.getUser() + " is not authorized to " +
+                            "read the resource " + path + ".";
+                    log.warn(msg);
+                    throw new RepositoryAuthException(msg, RepositoryErrorCodes.USER_NOT_AUTHORISED);
+                }
+                GhostResource<Resource> ghostResource =
+                        (GhostResource<Resource>) ghostResourceObject;
+                resource = ghostResource.getResource();
+                if (resource == null) {
+                    resource = getResource(path);
+                    if (resource.getProperty(RepositoryConstants.REGISTRY_LINK) == null ||
+                            resource.getProperty(RepositoryConstants.REGISTRY_MOUNT) != null) {
+                        ghostResource.setResource(resource);
+                    }
+                }
+            }
+            return resource;
+        } else {
+        	return getResource(path);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Collection get(String path, int start, int pageSize) throws RepositoryException {
+    	//RegistryContext registryContext = InternalUtils.getRegistryContext(this);
+    	
+        if (registryContext != null && registryContext.isCacheEnabled()) {
+            //if (registry.getRegistryContext().isNoCachePath(path) || isCommunityFeatureRequest(path)) {
+        	if (getRegistryService().isNoCachePath(path) || isCommunityFeatureRequest(path)) {
+                return getCollection(path, start, pageSize);
+            }
+            Collection collection;
+            RegistryCacheKey registryCacheKey = getRegistryCacheKey(this, path +
+                    ";start=" + start + ";pageSize=" + pageSize);
+
+            Cache<RegistryCacheKey, GhostResource> cache = getCache();
+            if (!cache.containsKey(registryCacheKey)) {
+                collection = getCollection(path, start, pageSize);
+                if (collection.getProperty(RepositoryConstants.REGISTRY_LINK) == null) {
+                    cache.put(registryCacheKey, new GhostResource<Resource>(collection));
+                }
+            } else {
+                if (!AuthorizationUtils.authorize(path, ActionConstants.GET)) {
+                    String msg = "User " + CurrentSession.getUser() + " is not authorized to " +
+                            "read the resource " + path + ".";
+                    log.warn(msg);
+                    throw new RepositoryAuthException(msg, RepositoryErrorCodes.USER_NOT_AUTHORISED);
+                }
+                GhostResource<Resource> ghostResource =
+                        (GhostResource<Resource>) cache.get(registryCacheKey);
+                collection = (Collection) ghostResource.getResource();
+                if (collection == null) {
+                    collection = getCollection(path, start, pageSize);
+                    if (collection.getProperty(RepositoryConstants.REGISTRY_LINK) == null) {
+                        ghostResource.setResource(collection);
+                    }
+                }
+            }
+            return collection;       	
+        } else {
+        	return getCollection(path, start, pageSize);
+        }
+    }
+    
+    public boolean resourceExists(String path) throws RepositoryException {
+//      if (registry.getRegistryContext().isNoCachePath(path)) {
+  	if (getRegistryService().isNoCachePath(path)) {
+          return checkResourceExists(path);
+      }
+      Cache<RegistryCacheKey, GhostResource> cache = getCache();
+      RegistryCacheKey registryCacheKey = getRegistryCacheKey(this, path);
+      if (cache.containsKey(registryCacheKey)) {
+          return true;
+      } else if (checkResourceExists(path)) {
+          cache.put(registryCacheKey, new GhostResource<Resource>(null));
+          return true;
+      }
+      return false;
+  }
+    
+    // test whether this request was made specifically for a tag, comment or a rating.
+    private boolean isCommunityFeatureRequest(String path) {
+        if (path == null) {
+            return false;
+        }
+        String resourcePath = new ResourcePath(path).getPath();
+        if (path.length() > resourcePath.length()) {
+            String fragment = path.substring(resourcePath.length());
+            for (String temp : new String[] {"tags", "comments", "ratings"}) {
+                if (fragment.contains(temp)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public void setTenantId(int tenantId) {
+    	this.tenantId = tenantId ;
+    }
+	
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    ////////////////////////////////////////////////////////
     // Associations
     ////////////////////////////////////////////////////////
 
@@ -1392,8 +2226,7 @@ public class EmbeddedRegistry implements Registry {
             }
         }
     }
-
-
+    
     ////////////////////////////////////////////////////////
     // Tagging
     ////////////////////////////////////////////////////////
@@ -2271,161 +3104,7 @@ public class EmbeddedRegistry implements Registry {
             }
         }
     }
-
-    ////////////////////////////////////////////////////////
-    // Extensible searching API
-    ////////////////////////////////////////////////////////
-
-    public Collection executeQuery(String path, Map parameters) throws RepositoryException {
-        boolean transactionSucceeded = false;
-        boolean remote = false;
-        if (parameters.get("remote") != null) {
-            parameters.remove("remote");
-            remote = true;
-        }
-//        RequestContext context = new RequestContext(this, repository, versionRepository);
-        RequestContext context = new RequestContext(this);
-        Resource query = null;
-        try {
-            // start the transaction
-            beginTransaction();
-
-            Registry systemRegistry = new UserRegistry(CarbonConstants.REGISTRY_SYSTEM_USERNAME, CurrentSession.getTenantId(), this, realmService, null);
-            // we have to get the stored query without checking the user permissions.
-            // all query actions are blocked for all users. they are allowed to read the
-            // queries, only when executing them.
-            if (path != null) {
-                String purePath = InternalUtils.getPureResourcePath(path);
-                if (systemRegistry.resourceExists(purePath)) {
-                    query = systemRegistry.get(purePath);
-                    // If no media type was specified, the query should not work at all.
-                    // This is also used in the remote registry scenario, where we send '/' as the
-                    // query path, when path is null.
-                    if (query != null && (query.getMediaType() == null ||
-                            query.getMediaType().length() == 0)) {
-                        query = null;
-                    }
-                }
-            }
-            /*// transaction succeeded
-            transactionSucceeded = true;
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {
-                rollbackTransaction();
-            }
-        }
-        // new transaction
-        transactionSucceeded = false;
-        context = new RequestContext(this, repository, versionRepository);
-        try {
-            // start the transaction
-            beginTransaction();*/
-
-            if (path != null) {
-                context.setResourcePath(new ResourcePath(path));
-            }
-            context.setResource(query);
-            context.setQueryParameters(parameters);
-            Collection output = registryContext.getHandlerManager().executeQuery(context);
-            if (!context.isSimulation()) {
-//            if (!InternalUtils.isSimulation()) {
-                if (!context.isProcessingComplete()) {
-                    if (query == null) {
-                        query = newResource();
-                        String mediaType = (String) parameters.get("mediaType");
-                        query.setMediaType(mediaType != null ? mediaType :
-                                RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
-                    }
-                    //Resource query = repository.get(purePath);
-
-                    Collection temp = queryProcessorManager.executeQuery(this, query, parameters);
-                    Set<String> results = new LinkedHashSet<String>();
-                    if (output != null) {
-                        String[] children = output.getChildren();
-                        if (children != null) {
-                            for (String child : children) {
-                                if (child != null && (remote || resourceExists(child))) {
-                                    results.add(child);
-                                }
-                            }
-                        }
-
-                        if (temp != null) {
-                            children = temp.getChildren();
-                            if (children != null) {
-                                for (String child : children) {
-                                    if (child != null && (remote || resourceExists(child))) {
-                                        results.add(child);
-                                    }
-                                }
-                            }
-                        } else {
-                            temp = output;
-                        }
-                        temp.setContent(results.toArray(new String[results.size()]));
-                    }
-                    output = temp;
-                }
-
-                registryContext.getHandlerManager(
-                        HandlerLifecycleManager.COMMIT_HANDLER_PHASE).executeQuery(context);
-                // transaction succeeded
-                transactionSucceeded = true;
-            }
-            return output;
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {
-                try {
-                    registryContext.getHandlerManager(
-                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).executeQuery(context);
-                } finally {
-                    rollbackTransaction();
-                }
-            }
-        }
-    }
-
-    public Activity[] getLogs(String resourcePath, int action, String userName, Date from,
-                              Date to, boolean recentFirst) throws RepositoryException {
-        boolean transactionSucceeded = false;
-        try {
-            // start the transaction
-            beginTransaction();
-
-            List logEntryList =
-                    logsDAO.getLogs(resourcePath, action, userName, from, to, recentFirst);
-
-            // We go on two iterations to avoid null values in the following array. Need better way
-            // in a single iteration
-            for (int i = logEntryList.size() - 1; i >= 0; i--) {
-            	Activity logEntry = (Activity) logEntryList.get(i);
-                if (logEntry == null) {
-                    logEntryList.remove(i);
-                }
-            }
-
-            Activity[] logEntries = new Activity[logEntryList.size()];
-            for (int i = 0; i < logEntryList.size(); i++) {
-                logEntries[i] = (Activity) logEntryList.get(i);
-            }
-
-            // transaction succeeded
-            transactionSucceeded = true;
-
-            return logEntries;
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {
-                rollbackTransaction();
-            }
-        }
-    }
-
+    
     /*
     public LogEntryCollection getLogCollection(String resourcePath,
                                                int action,
@@ -2488,7 +3167,7 @@ public class EmbeddedRegistry implements Registry {
             resourcePath = processedPath.getPath();
 
             //TODO need to do the security validation here
-            Resource resource = get(resourcePath);
+            Resource resource = getResource(resourcePath);
             if ((resource.getAspects() == null) || (!resource.getAspects().contains(aspectName))) {
                 Aspect aspect = getAspect(aspectName);
                 if (aspect == null) {
@@ -2540,7 +3219,7 @@ public class EmbeddedRegistry implements Registry {
             }
             resourcePath = processedPath.getPath();
 
-            Resource resource = get(resourcePath);
+            Resource resource = getResource(resourcePath);
 
             Aspect aspect = getResourceAspect(resource, aspectName);
             context.setOldResource(get(resourcePath));
@@ -2599,7 +3278,7 @@ public class EmbeddedRegistry implements Registry {
             }
             resourcePath = processedPath.getPath();
 
-            Resource resource = get(resourcePath);
+            Resource resource = getResource(resourcePath);
 
             Aspect aspect = getResourceAspect(resource, aspectName);
             context.setOldResource(get(resourcePath));
@@ -2697,7 +3376,7 @@ public class EmbeddedRegistry implements Registry {
             }
             resourcePath = processedPath.getPath();
 
-            Resource resource = get(resourcePath);
+            Resource resource = getResource(resourcePath);
             Aspect aspect = getResourceAspect(resource, aspectName);
 
             context.setResource(resource);
@@ -2715,408 +3394,7 @@ public class EmbeddedRegistry implements Registry {
             }
         }
     }
-
-    public Collection searchContent(String keywords) throws RepositoryException {
-
-        /*RequestContext context = new RequestContext(this, repository, versionRepository);
-
-        context.setKeywords(keywords);
-        Collection output = registryContext.getHandlerManager().searchContent(context);
-        if (!context.isSimulation()) {
-            if (!context.isProcessingComplete()) {
-                try {
-                    Searcher searcher = new IndexSearcher(registryContext.getJdbcDir());
-                    Query query =
-                            new QueryParser("content", new StandardAnalyzer()).parse(keywords);
-                    Hits hits = searcher.search(query);
-                    org.wso2.carbon.registry.core.Collection collection = new CollectionImpl();
-                    String[] paths = new String[hits.length()];
-                    for (int i = 0; i < hits.length(); i++) {
-                        paths[i] = hits.doc(i).get("id");
-                    }
-                    collection.setContent(paths);
-                    output = collection;
-                } catch (IOException e) {
-                    String msg = "Failed to search content";
-                    log.error(msg, e);
-                    throw new RepositoryException(msg, e);
-                } catch (ParseException e) {
-                    String msg = "Failed to parse the query";
-                    log.error(msg, e);
-                    throw new RepositoryException(msg, e);
-                }
-            }
-        }
-        return output;*/
-        return null;
-    }
-
-    public void createLink(String path, String target) throws RepositoryException {
-        boolean transactionSucceeded = false;
-//        RequestContext context = new RequestContext(this, repository, versionRepository);
-        RequestContext context = new RequestContext(this);
-        try {
-            // start the transaction
-            beginTransaction();
-
-            if (path.equals(target)) {
-                String msg = "Path and target are same, path = target = " + path +
-                        ". You can't create a symbolic link to itself.";
-                log.error(msg);
-                throw new RepositoryServerContentException(msg);
-            }
-            // first put the data..
-            Resource oldResource = repository.getMetaData(target);
-            Resource resource;
-            if (repository.resourceExists(path)) {
-                resource = repository.get(path);
-                resource.addProperty(RepositoryConstants.REGISTRY_EXISTING_RESOURCE, "true");
-            } else if (oldResource != null) {
-                if (oldResource instanceof Collection) {
-                    resource = new CollectionImpl();
-                } else {
-                    resource = new ResourceImpl();
-                }
-            } else {
-                resource = new CollectionImpl();
-            }
-            resource.addProperty(RepositoryConstants.REGISTRY_NON_RECURSIVE, "true");
-            resource.addProperty(RepositoryConstants.REGISTRY_LINK_RESTORATION,
-                    path + RepositoryConstants.URL_SEPARATOR + target +
-                            RepositoryConstants.URL_SEPARATOR + CurrentSession.getUser());
-            resource.setMediaType(RepositoryConstants.LINK_MEDIA_TYPE);
-            try {
-                CurrentSession.setAttribute(Repository.IS_LOGGING_ACTIVITY, false);
-                repository.put(path, resource);
-            } finally {
-                CurrentSession.removeAttribute(Repository.IS_LOGGING_ACTIVITY);
-            }
-            resource.discard();
-            HandlerManager hm = registryContext.getHandlerManager();
-
-            ResourcePath resourcePath = new ResourcePath(path);
-            context.setResourcePath(resourcePath);
-            context.setTargetPath(target);
-            hm.createLink(context);
-            if (!context.isSimulation()) {
-//            if (!InternalUtils.isSimulation()) {
-                if (!context.isProcessingComplete()) {
-//                    RepositoryUtils.registerHandlerForSymbolicLinks(registryContext, path, target,
-//                            CurrentSession.getUser());
-                    InternalUtils.registerHandlerForSymbolicLinks(this, path, target,
-                            CurrentSession.getUser());
-
-                    String author = CurrentSession.getUser();
-                    InternalUtils.addMountEntry(InternalUtils.getSystemRegistry(this),
-                            registryContext, path, target, false, author);
-
-
-                    if (context.isLoggingActivity()) {
-                        registryContext.getLogWriter().addLog(path, CurrentSession.getUser(),
-                        		Activity.CREATE_SYMBOLIC_LINK,
-                                target);
-                    }
-                }
-
-                registryContext.getHandlerManager(
-                        HandlerLifecycleManager.COMMIT_HANDLER_PHASE).createLink(context);
-                // transaction succeeded
-                transactionSucceeded = true;
-            }
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {
-                try {
-                    registryContext.getHandlerManager(
-                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).createLink(context);
-                } finally {
-                    rollbackTransaction();
-                }
-            }
-        }
-    }
-
-    public void createLink(String path, String target, String targetSubPath)
-            throws RepositoryException {
-        boolean transactionSucceeded = false;
-//        RequestContext context = new RequestContext(this, repository, versionRepository);
-        RequestContext context = new RequestContext(this);
-        try {
-            // start the transaction
-            beginTransaction();
-
-            Resource resource;
-
-            if (repository.resourceExists(path)) {
-                resource = repository.get(path);
-                resource.addProperty(RepositoryConstants.REGISTRY_EXISTING_RESOURCE, "true");
-            } else {
-                resource = new CollectionImpl();
-            }
-            resource.addProperty(RepositoryConstants.REGISTRY_NON_RECURSIVE, "true");
-            resource.addProperty(RepositoryConstants.REGISTRY_LINK_RESTORATION,
-                    path + RepositoryConstants.URL_SEPARATOR + target +
-                            RepositoryConstants.URL_SEPARATOR + targetSubPath +
-                            RepositoryConstants.URL_SEPARATOR + CurrentSession.getUser());
-            resource.setMediaType(RepositoryConstants.LINK_MEDIA_TYPE);
-            try {
-                CurrentSession.setAttribute(Repository.IS_LOGGING_ACTIVITY, false);
-                repository.put(path, resource);
-            } finally {
-                CurrentSession.removeAttribute(Repository.IS_LOGGING_ACTIVITY);
-            }
-            resource.discard();
-
-            HandlerManager hm = registryContext.getHandlerManager();
-
-            ResourcePath resourcePath = new ResourcePath(path);
-            context.setResourcePath(resourcePath);
-            context.setTargetPath(target);
-            context.setTargetSubPath(targetSubPath);
-            hm.createLink(context);
-            if (!context.isSimulation()) {
-//            if (!InternalUtils.isSimulation()) {
-                if (!context.isProcessingComplete()) {
-//                    RepositoryUtils.registerHandlerForRemoteLinks(registryContext, path, target,
-//                            targetSubPath, CurrentSession.getUser());
-                    InternalUtils.registerHandlerForRemoteLinks(this, path, target,
-                            targetSubPath, CurrentSession.getUser());
-
-                    String author = CurrentSession.getUser();
-                    InternalUtils.addMountEntry(InternalUtils.getSystemRegistry(this),
-                            registryContext, path, target, targetSubPath, author);
-
-                    if (context.isLoggingActivity()) {
-                        registryContext.getLogWriter().addLog(
-                                path, CurrentSession.getUser(), Activity.CREATE_REMOTE_LINK,
-                                target + ";" + targetSubPath);
-                    }
-                }
-
-                registryContext.getHandlerManager(
-                            HandlerLifecycleManager.COMMIT_HANDLER_PHASE).createLink(context);
-                // transaction succeeded
-                transactionSucceeded = true;
-            }
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {
-                try {
-                    registryContext.getHandlerManager(
-                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).createLink(context);
-                } finally {
-                    rollbackTransaction();
-                }
-            }
-        }
-    }
-
-    public void removeLink(String path) throws RepositoryException {
-        boolean transactionSucceeded = false;
-//        RequestContext context = new RequestContext(this, repository, versionRepository);
-        RequestContext context = new RequestContext(this);
-        try {
-            // start the transaction
-            beginTransaction();
-
-            ResourcePath resourcePath = new ResourcePath(path);
-            context.setResourcePath(resourcePath);
-            registryContext.getHandlerManager().removeLink(context);
-
-            // we will be removing the symlink handlers to remove
-            Handler handlerToRemove = (Handler) context.getProperty(
-                    RepositoryConstants.SYMLINK_TO_REMOVE_PROPERTY_NAME);
-            if (handlerToRemove != null) {
-                registryContext.getHandlerManager().removeHandler(handlerToRemove,
-                        HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
-            }
-
-            if (!context.isSimulation()) {
-//            if (!InternalUtils.isSimulation()) {
-                if (!context.isProcessingComplete()) {
-                    try {
-                        Collection mountCollection = (Collection) get(
-                        		InternalUtils.getAbsolutePath(registryContext,
-                                        RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH +
-                                                RepositoryConstants.SYSTEM_MOUNT_PATH));
-                        String[] mountResources = mountCollection.getChildren();
-                        Resource resource = null;
-                        for (String mountResource : mountResources) {
-                            String mountResName =
-                                    mountResource.substring(mountResource.lastIndexOf('/') + 1);
-                            String relativePath = InternalUtils.getRelativePath(registryContext,
-                                    path);
-                            if (mountResName.equals(relativePath.replace("/", "-"))) {
-                                resource = get(mountResource);
-                                break;
-                            }
-                        }
-
-                        if (resource == null) {
-                            String msg = "Couldn't find the mount point to remove. ";
-                            log.error(msg);
-                            throw new RepositoryException(msg);
-                        }
-
-                        InternalUtils.getSystemRegistry(this).delete(resource.getPath());
-                    } catch (RepositoryResourceNotFoundException ignored) {
-                        // There can be situations where the mount resource is not found. In that
-                        // case, we can simply ignore this exception being thrown. An example of
-                        // such a situation is found in CARBON-12002.
-                    }
-                    if (repository.resourceExists(path)) {
-                        Resource r = repository.get(path);
-                        if (!Boolean.toString(true).equals(
-                                r.getProperty(RepositoryConstants.REGISTRY_EXISTING_RESOURCE))) {
-                            repository.delete(path);
-                        }
-                    }
-
-                    if (context.isLoggingActivity()) {
-                        registryContext.getLogWriter().addLog(
-                                path, CurrentSession.getUser(), Activity.REMOVE_LINK, null);
-                    }
-                }
-
-                registryContext.getHandlerManager(
-                            HandlerLifecycleManager.COMMIT_HANDLER_PHASE).removeLink(context);
-                // transaction succeeded
-                transactionSucceeded = true;
-            }
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {
-                try {
-                    registryContext.getHandlerManager(
-                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).removeLink(context);
-                } finally {
-                    rollbackTransaction();
-                }
-            }
-        }
-
-    }
-
-
-    // check in, check out functionality
-
-    public void restore(String path, Reader reader) throws RepositoryException {
-        boolean transactionSucceeded = false;
-//        RequestContext context = new RequestContext(this, repository, versionRepository);
-        RequestContext context = new RequestContext(this);
-        try {
-            // start the transaction
-            beginTransaction();
-
-            context.setDumpingReader(reader);
-            context.setResourcePath(new ResourcePath(path));
-            registryContext.getHandlerManager().restore(context);
-            if (!context.isSimulation()) {
-//            if (!InternalUtils.isSimulation()) {
-                if (!context.isProcessingComplete()) {
-                    try {
-                        CurrentSession.setAttribute(Repository.IS_LOGGING_ACTIVITY,
-                                context.isLoggingActivity());
-                        repository.restore(path, reader);
-                    } finally {
-                        CurrentSession.removeAttribute(Repository.IS_LOGGING_ACTIVITY);
-                    }
-                    if (context.isLoggingActivity()) {
-                        registryContext.getLogWriter().addLog(
-                                path, CurrentSession.getUser(), Activity.RESTORE, null);
-                    }
-                }
-
-                registryContext.getHandlerManager(
-                        HandlerLifecycleManager.COMMIT_HANDLER_PHASE).restore(context);
-                // transaction succeeded
-                transactionSucceeded = true;
-            }
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {
-                try {
-                    registryContext.getHandlerManager(
-                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).restore(context);
-                } finally {
-                    rollbackTransaction();
-                }
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("total read: " + DumpReader.getTotalRead());
-                log.debug("total buffered: " + DumpReader.getTotalBuffered());
-                log.debug("maximum buffer size: " + DumpReader.getMaxBufferedSize());
-                log.debug("total buffer read size: " + DumpReader.getTotalBufferedRead());
-            }
-        }
-    }
-
-    public void dump(String path, Writer writer) throws RepositoryException {
-        boolean transactionSucceeded = false;
-//        RequestContext context = new RequestContext(this, repository, versionRepository);
-        RequestContext context = new RequestContext(this);
-        try {
-            // start the transaction
-            beginTransaction();
-
-            context.setResourcePath(new ResourcePath(path));
-            context.setDumpingWriter(writer);
-            registryContext.getHandlerManager().dump(context);
-            if (!context.isSimulation()) {
-//            if (!InternalUtils.isSimulation()) {
-                if (!context.isProcessingComplete()) {
-                    repository.dump(path, writer);
-                }
-
-                registryContext.getHandlerManager(
-                        HandlerLifecycleManager.COMMIT_HANDLER_PHASE).dump(context);
-                // transaction succeeded
-                transactionSucceeded = true;
-            }
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {
-                try {
-                    registryContext.getHandlerManager(
-                            HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE).dump(context);
-                } finally {
-                    rollbackTransaction();
-                }
-            }
-        }
-    }
-
-    public String getEventingServiceURL(String path) throws RepositoryException {
-        if (path == null || eventingServiceURLs.size() == 0) {
-            return defaultEventingServiceURL;
-        }
-        Set<Map.Entry<String, String>> entries = eventingServiceURLs.entrySet();
-        for (Map.Entry<String, String> e : entries) {
-            if (e.getValue() == null) {
-                // Clean-up step
-                eventingServiceURLs.remove(e.getKey());
-            } else if (path.matches(e.getKey())) {
-                return e.getValue();
-            }
-        }
-        return defaultEventingServiceURL;
-
-    }
-
-    public void setEventingServiceURL(String path, String eventingServiceURL)
-            throws RepositoryException {
-        if (path == null) {
-            this.defaultEventingServiceURL = eventingServiceURL;
-        } else {
-            this.eventingServiceURLs.put(path, eventingServiceURL);
-        }
-    }
-
+    
     public boolean addAspect(String name, Aspect aspect)
             throws RepositoryException {
         boolean transactionSucceeded = false;
@@ -3171,36 +3449,6 @@ public class EmbeddedRegistry implements Registry {
         }
     }
     
-    public boolean removeVersionHistory(String path, long snapshotId)
-    		throws RepositoryException {    	
-    	
-    	boolean transactionSucceeded = false;    	
-        
-        try {
-            // start the transaction
-            beginTransaction();
-
-            versionRepository.removeVersionHistory(path, snapshotId);
-            
-            // transaction succeeded            
-            transactionSucceeded = true;
-            
-        } finally {
-            if (transactionSucceeded) {
-                commitTransaction();
-            } else {                
-                
-            	rollbackTransaction();                
-            }
-        }   	
-    	
-    	return false;
-    }
-    
-    public RegistryService getRegistryService() {
-    	return registryService;
-    }
-
 	@Override
 	public String getResourceMediaTypes() throws RepositoryException {
 		return resourceMediaTypes;
@@ -3229,8 +3477,4 @@ public class EmbeddedRegistry implements Registry {
     public void setCustomUIMediaTypes(String customUIMediaTypes) throws RepositoryException {
     	this.customUIMediaTypes = customUIMediaTypes;
     }
-	
-	public Repository getRepository() {
-		return repository;
-	}
 }

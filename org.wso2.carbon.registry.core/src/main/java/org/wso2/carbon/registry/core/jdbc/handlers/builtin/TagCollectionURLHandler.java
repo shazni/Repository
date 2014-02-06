@@ -18,15 +18,12 @@ package org.wso2.carbon.registry.core.jdbc.handlers.builtin;
 
 import org.wso2.carbon.registry.core.ResourceIDImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.registry.core.dao.ResourceDAO;
 import org.wso2.carbon.registry.core.dao.TagsDAO;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
-import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.repository.config.StaticConfiguration;
@@ -77,7 +74,7 @@ public class TagCollectionURLHandler extends Handler {
             }
 
             ResourceImpl resource = new ResourceImpl();
-            resource.setMediaType(RepositoryConstants.TAG_MEDIA_TYPE);
+            resource.setMediaType(/*RepositoryConstants.*/ InternalConstants.TAG_MEDIA_TYPE);
             resource.setContent(tagStr);
             resource.setPath(resourcePath.getCompletePath());
             resource.addProperty("resourcePath", path);

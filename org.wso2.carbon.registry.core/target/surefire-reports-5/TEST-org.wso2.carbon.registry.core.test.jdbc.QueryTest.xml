@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="16.236" errors="0" skipped="0" tests="5" name="org.wso2.carbon.registry.core.test.jdbc.QueryTest">
+<testsuite failures="0" time="10.358" errors="0" skipped="0" tests="5" name="org.wso2.carbon.registry.core.test.jdbc.QueryTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,9 +58,9 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="15.724" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testBackwardCompatibility"/>
-  <testcase time="0.168" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testDefaultQuery"/>
-  <testcase time="0.115" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testWithSpecialCharactersQuery"/>
-  <testcase time="0.114" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testWithoutTableParamsQuery"/>
-  <testcase time="0.115" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testWithoutWhereQuery"/>
+  <testcase time="9.83" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testBackwardCompatibility"/>
+  <testcase time="0.17" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testDefaultQuery"/>
+  <testcase time="0.122" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testWithSpecialCharactersQuery"/>
+  <testcase time="0.101" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testWithoutTableParamsQuery"/>
+  <testcase time="0.135" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest" name="testWithoutWhereQuery"/>
 </testsuite>

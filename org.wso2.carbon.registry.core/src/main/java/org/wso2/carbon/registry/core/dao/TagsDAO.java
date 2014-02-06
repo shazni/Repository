@@ -16,17 +16,18 @@
 
 package org.wso2.carbon.registry.core.dao;
 
+import java.util.List;
+
 import org.wso2.carbon.registry.core.ResourceIDImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
+import org.wso2.carbon.registry.core.jdbc.dataobjects.TaggingDO;
 import org.wso2.carbon.repository.Tag;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.registry.core.jdbc.dataobjects.TaggingDO;
-
-import java.util.List;
 
 /**
  * Data Access Object for Tags
  */
+@Deprecated
 public interface TagsDAO {
 
     /**

@@ -18,12 +18,13 @@ package org.wso2.carbon.registry.core.dao;
 
 import org.wso2.carbon.registry.core.ResourceIDImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.RatingDO;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * Data Access Object for Ratings
  */
+@Deprecated
 public interface RatingsDAO {
 
     /**

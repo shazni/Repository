@@ -16,9 +16,9 @@
 
 package org.wso2.carbon.registry.core;
 
-import org.wso2.carbon.repository.exceptions.RepositoryException;
-
 import java.util.Date;
+
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * Represents comments and its meta data. Note that only the Comment.text field needs to be filled
@@ -26,6 +26,7 @@ import java.util.Date;
  * values for the current context. Therefore, when constructing an instance of this class outside
  * the Registry impl, it is recommended to use new Comment("my comment text") constructor.
  */
+@Deprecated
 public class CommentImpl extends ResourceImpl implements org.wso2.carbon.repository.Comment {
 
     /**

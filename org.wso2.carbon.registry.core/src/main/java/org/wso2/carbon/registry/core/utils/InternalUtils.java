@@ -47,21 +47,21 @@ import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.registry.core.CollectionImpl;
 import org.wso2.carbon.registry.core.ResourceIDImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.caching.RegistryCacheEntry;
 import org.wso2.carbon.registry.core.caching.RegistryCacheKey;
 import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.config.RemoteConfiguration;
 import org.wso2.carbon.registry.core.dao.ResourceDAO;
 import org.wso2.carbon.registry.core.exceptions.RepositoryConfigurationException;
 import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
-import org.wso2.carbon.registry.core.internal.RegistryCoreServiceComponent;
 import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
 import org.wso2.carbon.registry.core.jdbc.handlers.HandlerLifecycleManager;
+import org.wso2.carbon.registry.core.jdbc.handlers.HandlerManager;
 import org.wso2.carbon.registry.core.jdbc.handlers.builtin.MountHandler;
 import org.wso2.carbon.registry.core.jdbc.handlers.builtin.SymLinkHandler;
 import org.wso2.carbon.registry.core.jdbc.handlers.filters.URLMatcher;
 import org.wso2.carbon.registry.core.jdbc.realm.RegistryRealm;
-import org.wso2.carbon.registry.core.service.RemoteRegistry;
+//import org.wso2.carbon.registry.core.service.RemoteRegistry;
 import org.wso2.carbon.registry.core.session.CurrentSession;
 import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.repository.Collection;
@@ -71,11 +71,9 @@ import org.wso2.carbon.repository.RegistryService;
 import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.ResourcePath;
-import org.wso2.carbon.repository.config.RemoteConfiguration;
 import org.wso2.carbon.repository.config.StaticConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryAuthException;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.repository.handlers.RequestContext;
 import org.wso2.carbon.repository.handlers.filters.Filter;
 import org.wso2.carbon.repository.utils.RepositoryUtils;
@@ -218,7 +216,7 @@ public class InternalUtils {
 
     private static CacheManager getCacheManager() {
         return Caching.getCacheManagerFactory().getCacheManager(
-                RepositoryConstants.REGISTRY_CACHE_MANAGER);
+                /*RepositoryConstants.*/ InternalConstants.REGISTRY_CACHE_MANAGER);
     }
     
     /**
@@ -538,9 +536,9 @@ public class InternalUtils {
         // This is to create the repository collections for the various registries and clean
         // them at start-up, if needed.
         boolean cleanRegistry = false;
-        if (System.getProperty(RepositoryConstants.CARBON_REGISTRY_CLEAN) != null) {
+        if (System.getProperty(/*RepositoryConstants.*/InternalConstants.CARBON_REGISTRY_CLEAN) != null) {
             cleanRegistry = true;
-            System.clearProperty(RepositoryConstants.CARBON_REGISTRY_CLEAN);
+            System.clearProperty(/*RepositoryConstants.*/InternalConstants.CARBON_REGISTRY_CLEAN);
         }
         if (cleanRegistry) {
             cleanArtifactLCs(registry);
@@ -699,7 +697,7 @@ public class InternalUtils {
             }
             mountPoint = systemRegistry.get(mountPointString);
             if (Boolean.toString(true).equals(mountPoint.getProperty(
-                    RepositoryConstants.REGISTRY_FIXED_MOUNT))) {
+                    /*RepositoryConstants.*/ InternalConstants.REGISTRY_FIXED_MOUNT))) {
                 continue;
             }
             String path = mountPoint.getProperty("path");
@@ -753,10 +751,15 @@ public class InternalUtils {
         handler.setAuthor(author);
 
 //        HandlerManager hm = context.getHandlerManager();
-        HandlerManager hm = registry.getRegistryService().getHandlerManager() ;
-        hm.addHandler(InternalUtils.getMountingMethods(),
+//        HandlerManager hm = registry.getRegistryService().getHandlerManager() ;
+//        hm.addHandler(InternalUtils.getMountingMethods(),
+//        		InternalUtils.getMountingMatcher(path), handler,
+//                HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+        
+        registry.getRegistryService().addHandler(InternalUtils.getMountingMethods(),
         		InternalUtils.getMountingMatcher(path), handler,
                 HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+        
         // now we are going to iterate through all the already available symbolic links and resolve
         // the cyclic symbolic links
 
@@ -774,8 +777,10 @@ public class InternalUtils {
         }
         // removing the symlink handlers
         for (SymLinkHandler handlerToRemove : handlersToRemove) {
-            hm.removeHandler(handlerToRemove,
-                HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+//            hm.removeHandler(handlerToRemove,
+//                HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+        	registry.getRegistryService().removeHandler(handlerToRemove,
+                    HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
         }
 
         // and importantly add the new entry, the currently creating symlink information..
@@ -886,8 +891,9 @@ public class InternalUtils {
             throws RepositoryException {
 //        HandlerManager hm = registryContext.getHandlerManager();
 //        List<RemoteConfiguration> remoteInstances = registryContext.getRemoteInstances();
-        HandlerManager hm = registry.getRegistryService().getHandlerManager();
-        List<RemoteConfiguration> remoteInstances = registry.getRegistryService().getRemoteInstances();
+//        HandlerManager hm = registry.getRegistryService().getHandlerManager();
+    	List<RemoteConfiguration> remoteInstances = InternalUtils.getRegistryContext(registry).getRemoteInstances();
+//        List<RemoteConfiguration> remoteInstances = registry.getRegistryService().getRemoteInstances();
         for (RemoteConfiguration config : remoteInstances) {
             if (config.getId().equals(target)) {
                 MountHandler handler = new MountHandler();
@@ -909,10 +915,15 @@ public class InternalUtils {
                     handler.setRegistryType(config.getType());
                 }
                 if (forAllTenants) {
-                    hm.addHandler(InternalUtils.getMountingMethods(),
+//                    hm.addHandler(InternalUtils.getMountingMethods(),
+//                    		InternalUtils.getMountingMatcher(path), handler);
+                	registry.getRegistryService().addHandler(InternalUtils.getMountingMethods(),
                     		InternalUtils.getMountingMatcher(path), handler);
                 } else {
-                    hm.addHandler(InternalUtils.getMountingMethods(),
+//                    hm.addHandler(InternalUtils.getMountingMethods(),
+//                    		InternalUtils.getMountingMatcher(path), handler,
+//                            HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+                	registry.getRegistryService().addHandler(InternalUtils.getMountingMethods(),
                     		InternalUtils.getMountingMatcher(path), handler,
                             HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
                 }
@@ -1296,7 +1307,7 @@ public class InternalUtils {
         r.addProperty("target", target);
         r.addProperty("author", author);
         r.addProperty("subPath", targetSubPath);
-        r.setMediaType(RepositoryConstants.MOUNT_MEDIA_TYPE);
+        r.setMediaType(/*RepositoryConstants.*/ InternalConstants.MOUNT_MEDIA_TYPE);
         String mountPath = RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH +
                         RepositoryConstants.SYSTEM_MOUNT_PATH + "/" +
                 relativePath.replace("/", "-");
@@ -1332,7 +1343,7 @@ public class InternalUtils {
         r.addProperty("target", /*RepositoryUtils.*/getRelativePath(registryContext,
                 target));
         r.addProperty("author", author);
-        r.setMediaType(RepositoryConstants.MOUNT_MEDIA_TYPE);
+        r.setMediaType(/*RepositoryConstants.*/ InternalConstants.MOUNT_MEDIA_TYPE);
         String mountPath = RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH +
                         RepositoryConstants.SYSTEM_MOUNT_PATH + "/" +
                 relativePath.replace("/", "-");
@@ -1389,15 +1400,18 @@ public class InternalUtils {
     public static RegistryContext getRegistryContext(Registry registry) {
     	RegistryContext registryContext = null ;
     	
-    	if (registry instanceof CacheBackedRegistry){
-        	registryContext = ((CacheBackedRegistry) registry).getRegistryContext();
-        } else if(registry instanceof EmbeddedRegistry) {
+//    	if (registry instanceof CacheBackedRegistry){
+//        	registryContext = ((CacheBackedRegistry) registry).getRegistryContext();
+//        } else 
+        	if(registry instanceof EmbeddedRegistry) {
         	registryContext = ((EmbeddedRegistry) registry).getRegistryContext();
         } else if (registry instanceof UserRegistry){
         	registryContext = ((UserRegistry) registry).getRegistryContext();
-        } else if (registry instanceof RemoteRegistry){
-        	registryContext = ((RemoteRegistry) registry).getRegistryContext();
-        } else {
+        } 
+//        else if (registry instanceof RemoteRegistry){
+//        	registryContext = ((RemoteRegistry) registry).getRegistryContext();
+//        } 
+        else {
         	registryContext = RegistryContext.getBaseInstance();
         }
         

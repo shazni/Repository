@@ -15,18 +15,14 @@
  */
 package org.wso2.carbon.registry.core.test.jdbc;
 
+import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
+import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Aspect;
 import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
-import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.RequestContext;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
-import org.wso2.carbon.registry.core.session.UserRegistry;
-import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
-import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.user.api.RealmConfiguration;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 

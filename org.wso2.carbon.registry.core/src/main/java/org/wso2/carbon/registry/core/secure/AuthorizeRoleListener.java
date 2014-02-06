@@ -37,6 +37,7 @@ import org.wso2.carbon.user.core.listener.AuthorizationManagerListener;
  * permissions to registry resource permissions and thereby manage accessibility to various resource
  * paths based on the amount of permissions available to a given role.
  */
+@Deprecated
 public class AuthorizeRoleListener extends AbstractAuthorizationManagerListener
         implements AuthorizationManagerListener {
 

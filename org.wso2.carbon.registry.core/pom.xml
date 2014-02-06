@@ -69,7 +69,7 @@
                             javax.xml.stream.*; version="1.0.1",
                             org.pdfbox.*,
                             org.apache.poi.*,
-                            org.apache.axiom.*; version="${imp.pkg.version.axiom}",
+                            <!--org.apache.axiom.*; version="${imp.pkg.version.axiom}",-->
                             org.apache.lucene.*,
                             org.apache.commons.io.*; version="0.0.0",
                             *;resolution:=optional
@@ -409,11 +409,11 @@
             <artifactId>h2-database-engine</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.ws.commons.axiom.wso2</groupId>
             <artifactId>axiom</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.ws.commons.schema.wso2</groupId>
             <artifactId>XmlSchema</artifactId>

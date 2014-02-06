@@ -18,25 +18,26 @@
  */
 package org.wso2.carbon.registry.core.jdbc.dao;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.repository.Association;
-import org.wso2.carbon.repository.RepositoryConstants;;
-import org.wso2.carbon.registry.core.dao.AssociationDAO;
-import org.wso2.carbon.registry.core.exceptions.RepositoryDBException;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.registry.core.jdbc.DatabaseConstants;
-import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDatabaseTransaction;
-import org.wso2.carbon.registry.core.session.CurrentSession;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.registry.core.dao.AssociationDAO;
+import org.wso2.carbon.registry.core.exceptions.RepositoryDBException;
+import org.wso2.carbon.registry.core.jdbc.DatabaseConstants;
+import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDatabaseTransaction;
+import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
+import org.wso2.carbon.repository.Association;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
+
 /**
  * An implementation of the {@link AssociationDAO} to store associations on a JDBC-based database.
  */
+@Deprecated
 public class JDBCAssociationDAO implements AssociationDAO {
 
     private static final Log log = LogFactory.getLog(JDBCAssociationDAO.class);
@@ -75,7 +76,7 @@ public class JDBCAssociationDAO implements AssociationDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -120,7 +121,7 @@ public class JDBCAssociationDAO implements AssociationDAO {
                     result.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -157,7 +158,7 @@ public class JDBCAssociationDAO implements AssociationDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -207,7 +208,7 @@ public class JDBCAssociationDAO implements AssociationDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -260,7 +261,7 @@ public class JDBCAssociationDAO implements AssociationDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -296,7 +297,7 @@ public class JDBCAssociationDAO implements AssociationDAO {
                     ps2.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -331,7 +332,7 @@ public class JDBCAssociationDAO implements AssociationDAO {
                 }
             }
             catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR +
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR +
                         ex.getMessage();
                 log.error(msg, ex);
             }
@@ -385,7 +386,7 @@ public class JDBCAssociationDAO implements AssociationDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }

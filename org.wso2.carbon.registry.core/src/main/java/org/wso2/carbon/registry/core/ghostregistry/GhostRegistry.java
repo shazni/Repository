@@ -16,15 +16,21 @@
 * specific language governing permissions and limitations
 * under the License.
 */
+
 package org.wso2.carbon.registry.core.ghostregistry;
 
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.RegistryType;
-import org.wso2.carbon.registry.core.*;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
+import org.wso2.carbon.registry.core.CommentImpl;
 import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
+import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Activity;
 import org.wso2.carbon.repository.Aspect;
 import org.wso2.carbon.repository.Association;
@@ -36,20 +42,12 @@ import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.Tag;
 import org.wso2.carbon.repository.TaggedResourcePath;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
-import org.wso2.carbon.registry.core.session.UserRegistry;
-import org.wso2.carbon.registry.core.utils.InternalUtils;
-
-import java.io.Reader;
-import java.io.Writer;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * This implements the Ghost lazy loading pattern for the Registry. An actual registry instance will
  * not be created until first access.
  */
+@Deprecated
 public class GhostRegistry implements Registry {
 
     private static Log log = LogFactory.getLog(GhostRegistry.class);
@@ -59,7 +57,6 @@ public class GhostRegistry implements Registry {
     private RegistryType    registryType;
 
     private Registry registry;
-
 
     public GhostRegistry(RegistryService registryService, int tenantId, RegistryType registryType){
         this.registryService = registryService;

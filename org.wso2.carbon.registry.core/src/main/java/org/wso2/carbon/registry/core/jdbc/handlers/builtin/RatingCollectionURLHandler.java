@@ -21,15 +21,12 @@ import java.util.List;
 
 import org.wso2.carbon.registry.core.CollectionImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.registry.core.dao.RatingsDAO;
 import org.wso2.carbon.registry.core.dao.ResourceDAO;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
-import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;;
+import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.repository.config.StaticConfiguration;
@@ -40,6 +37,7 @@ import org.wso2.carbon.repository.handlers.RequestContext;
 /**
  * Handles paths of the form <b>pure resource path</b>;ratings e.g. /projects/ids/config.xml;ratings
  */
+@Deprecated
 public class RatingCollectionURLHandler extends Handler {
 
     public Resource get(RequestContext requestContext) throws RepositoryException {

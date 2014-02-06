@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="4.016" errors="0" skipped="0" tests="4" name="org.wso2.carbon.registry.core.test.jdbc.RenameTest">
+<testsuite failures="0" time="8.313" errors="0" skipped="0" tests="4" name="org.wso2.carbon.registry.core.test.jdbc.RenameTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,8 +58,8 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="3.641" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest" name="testRootLevelResourceRename"/>
-  <testcase time="0.132" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest" name="testGeneralResourceRename"/>
-  <testcase time="0.14" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest" name="testRootLevelCollectionRename"/>
-  <testcase time="0.103" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest" name="testGeneralCollectionRename"/>
+  <testcase time="7.933" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest" name="testRootLevelResourceRename"/>
+  <testcase time="0.128" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest" name="testGeneralResourceRename"/>
+  <testcase time="0.15" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest" name="testRootLevelCollectionRename"/>
+  <testcase time="0.102" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest" name="testGeneralCollectionRename"/>
 </testsuite>

@@ -37,7 +37,6 @@ import org.wso2.carbon.repository.Tag;
 import org.wso2.carbon.repository.TaggedResourcePath;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.Handler;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.repository.handlers.RequestContext;
 import org.wso2.carbon.repository.handlers.filters.Filter;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
@@ -618,194 +617,6 @@ public class HandlerLifecycleManager extends HandlerManager {
         // The reporting handlers may change the state of processing
         isProcessingComplete |= requestContext.isProcessingComplete();
         requestContext.setProcessingComplete(isProcessingComplete);
-    }
-
-    @Override
-    public Association[] getAllAssociations(RequestContext requestContext)
-            throws RepositoryException {
-        Association[] defaultValue = handlerManagers.get(
-                DEFAULT_SYSTEM_HANDLER_PHASE).getAllAssociations(requestContext);
-        boolean isProcessingComplete = requestContext.isProcessingComplete();
-        if (!isProcessingComplete) {
-            Association[] tenantSpecificValue = handlerManagers.get(
-                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getAllAssociations(requestContext);
-            if (tenantSpecificValue != null) {
-                defaultValue = tenantSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        if (!isProcessingComplete) {
-            Association[] systemSpecificValue = handlerManagers.get(
-                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getAllAssociations(requestContext);
-            if (systemSpecificValue != null) {
-                defaultValue = systemSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        requestContext.setProcessingComplete(false);
-        Association[] userDefinedValue = handlerManagers.get(
-                USER_DEFINED_HANDLER_PHASE).getAllAssociations(requestContext);
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        // The reporting handler phase needs to know about the state of processing
-        requestContext.setProcessingComplete(isProcessingComplete);
-        handlerManagers.get(DEFAULT_REPORTING_HANDLER_PHASE).getAllAssociations(requestContext);
-        // The reporting handlers may change the state of processing
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        requestContext.setProcessingComplete(isProcessingComplete);
-        if (userDefinedValue != null) {
-            return userDefinedValue;
-        }
-        return defaultValue;
-    }
-
-    @Override
-    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
-        Association[] defaultValue = handlerManagers.get(
-                DEFAULT_SYSTEM_HANDLER_PHASE).getAssociations(requestContext);
-        boolean isProcessingComplete = requestContext.isProcessingComplete();
-        if (!isProcessingComplete) {
-            Association[] tenantSpecificValue = handlerManagers.get(
-                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getAssociations(requestContext);
-            if (tenantSpecificValue != null) {
-                defaultValue = tenantSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        if (!isProcessingComplete) {
-            Association[] systemSpecificValue = handlerManagers.get(
-                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getAssociations(requestContext);
-            if (systemSpecificValue != null) {
-                defaultValue = systemSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        requestContext.setProcessingComplete(false);
-        Association[] userDefinedValue = handlerManagers.get(
-                USER_DEFINED_HANDLER_PHASE).getAssociations(requestContext);
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        // The reporting handler phase needs to know about the state of processing
-        requestContext.setProcessingComplete(isProcessingComplete);
-        handlerManagers.get(DEFAULT_REPORTING_HANDLER_PHASE).getAssociations(requestContext);
-        // The reporting handlers may change the state of processing
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        requestContext.setProcessingComplete(isProcessingComplete);
-        if (userDefinedValue != null) {
-            return userDefinedValue;
-        }
-        return defaultValue;
-    }
-
-    @Override
-    public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
-            throws RepositoryException {
-        TaggedResourcePath[] defaultValue = handlerManagers.get(
-                DEFAULT_SYSTEM_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
-        boolean isProcessingComplete = requestContext.isProcessingComplete();
-        if (!isProcessingComplete) {
-            TaggedResourcePath[] tenantSpecificValue = handlerManagers.get(
-                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
-            if (tenantSpecificValue != null) {
-                defaultValue = tenantSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        if (!isProcessingComplete) {
-            TaggedResourcePath[] systemSpecificValue = handlerManagers.get(
-                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
-            if (systemSpecificValue != null) {
-                defaultValue = systemSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        requestContext.setProcessingComplete(false);
-        TaggedResourcePath[] userDefinedValue = handlerManagers.get(
-                USER_DEFINED_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        requestContext.setProcessingComplete(false);
-        handlerManagers.get(
-                DEFAULT_REPORTING_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
-        // The reporting handlers may change the state of processing
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        requestContext.setProcessingComplete(isProcessingComplete);
-        if (userDefinedValue != null) {
-            return userDefinedValue;
-        }
-        return defaultValue;
-    }
-
-    @Override
-    public Tag[] getTags(RequestContext requestContext)
-            throws RepositoryException {
-        Tag[] defaultValue = handlerManagers.get(
-                DEFAULT_SYSTEM_HANDLER_PHASE).getTags(requestContext);
-        boolean isProcessingComplete = requestContext.isProcessingComplete();
-        if (!isProcessingComplete) {
-            Tag[] tenantSpecificValue = handlerManagers.get(
-                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getTags(requestContext);
-            if (tenantSpecificValue != null) {
-                defaultValue = tenantSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        if (!isProcessingComplete) {
-            Tag[] systemSpecificValue = handlerManagers.get(
-                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getTags(requestContext);
-            if (systemSpecificValue != null) {
-                defaultValue = systemSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        requestContext.setProcessingComplete(false);
-        Tag[] userDefinedValue = handlerManagers.get(
-                USER_DEFINED_HANDLER_PHASE).getTags(requestContext);
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        // The reporting handler phase needs to know about the state of processing
-        requestContext.setProcessingComplete(isProcessingComplete);
-        handlerManagers.get(DEFAULT_REPORTING_HANDLER_PHASE).getTags(requestContext);
-        // The reporting handlers may change the state of processing
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        requestContext.setProcessingComplete(isProcessingComplete);
-        if (userDefinedValue != null) {
-            return userDefinedValue;
-        }
-        return defaultValue;
-    }
-
-    @Override
-    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
-        Comment[] defaultValue = handlerManagers.get(
-                DEFAULT_SYSTEM_HANDLER_PHASE).getComments(requestContext);
-        boolean isProcessingComplete = requestContext.isProcessingComplete();
-        if (!isProcessingComplete) {
-            Comment[] tenantSpecificValue = handlerManagers.get(
-                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getComments(requestContext);
-            if (tenantSpecificValue != null) {
-                defaultValue = tenantSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        if (!isProcessingComplete) {
-            Comment[] systemSpecificValue = handlerManagers.get(
-                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getComments(requestContext);
-            if (systemSpecificValue != null) {
-                defaultValue = systemSpecificValue;
-            }
-            isProcessingComplete = requestContext.isProcessingComplete();
-        }
-        requestContext.setProcessingComplete(false);
-        Comment[] userDefinedValue = handlerManagers.get(
-                USER_DEFINED_HANDLER_PHASE).getComments(requestContext);
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        // The reporting handler phase needs to know about the state of processing
-        requestContext.setProcessingComplete(isProcessingComplete);
-        handlerManagers.get(DEFAULT_REPORTING_HANDLER_PHASE).getComments(requestContext);
-        // The reporting handlers may change the state of processing
-        isProcessingComplete |= requestContext.isProcessingComplete();
-        requestContext.setProcessingComplete(isProcessingComplete);
-        if (userDefinedValue != null) {
-            return userDefinedValue;
-        }
-        return defaultValue;
     }
 
     @Override
@@ -1400,5 +1211,195 @@ public class HandlerLifecycleManager extends HandlerManager {
         }
 
         return registryContext;
+    }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    @Override
+    public Association[] getAllAssociations(RequestContext requestContext)
+            throws RepositoryException {
+        Association[] defaultValue = handlerManagers.get(
+                DEFAULT_SYSTEM_HANDLER_PHASE).getAllAssociations(requestContext);
+        boolean isProcessingComplete = requestContext.isProcessingComplete();
+        if (!isProcessingComplete) {
+            Association[] tenantSpecificValue = handlerManagers.get(
+                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getAllAssociations(requestContext);
+            if (tenantSpecificValue != null) {
+                defaultValue = tenantSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        if (!isProcessingComplete) {
+            Association[] systemSpecificValue = handlerManagers.get(
+                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getAllAssociations(requestContext);
+            if (systemSpecificValue != null) {
+                defaultValue = systemSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        requestContext.setProcessingComplete(false);
+        Association[] userDefinedValue = handlerManagers.get(
+                USER_DEFINED_HANDLER_PHASE).getAllAssociations(requestContext);
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        // The reporting handler phase needs to know about the state of processing
+        requestContext.setProcessingComplete(isProcessingComplete);
+        handlerManagers.get(DEFAULT_REPORTING_HANDLER_PHASE).getAllAssociations(requestContext);
+        // The reporting handlers may change the state of processing
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        requestContext.setProcessingComplete(isProcessingComplete);
+        if (userDefinedValue != null) {
+            return userDefinedValue;
+        }
+        return defaultValue;
+    }
+
+    @Override
+    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
+        Association[] defaultValue = handlerManagers.get(
+                DEFAULT_SYSTEM_HANDLER_PHASE).getAssociations(requestContext);
+        boolean isProcessingComplete = requestContext.isProcessingComplete();
+        if (!isProcessingComplete) {
+            Association[] tenantSpecificValue = handlerManagers.get(
+                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getAssociations(requestContext);
+            if (tenantSpecificValue != null) {
+                defaultValue = tenantSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        if (!isProcessingComplete) {
+            Association[] systemSpecificValue = handlerManagers.get(
+                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getAssociations(requestContext);
+            if (systemSpecificValue != null) {
+                defaultValue = systemSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        requestContext.setProcessingComplete(false);
+        Association[] userDefinedValue = handlerManagers.get(
+                USER_DEFINED_HANDLER_PHASE).getAssociations(requestContext);
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        // The reporting handler phase needs to know about the state of processing
+        requestContext.setProcessingComplete(isProcessingComplete);
+        handlerManagers.get(DEFAULT_REPORTING_HANDLER_PHASE).getAssociations(requestContext);
+        // The reporting handlers may change the state of processing
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        requestContext.setProcessingComplete(isProcessingComplete);
+        if (userDefinedValue != null) {
+            return userDefinedValue;
+        }
+        return defaultValue;
+    }
+
+    @Override
+    public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
+            throws RepositoryException {
+        TaggedResourcePath[] defaultValue = handlerManagers.get(
+                DEFAULT_SYSTEM_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
+        boolean isProcessingComplete = requestContext.isProcessingComplete();
+        if (!isProcessingComplete) {
+            TaggedResourcePath[] tenantSpecificValue = handlerManagers.get(
+                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
+            if (tenantSpecificValue != null) {
+                defaultValue = tenantSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        if (!isProcessingComplete) {
+            TaggedResourcePath[] systemSpecificValue = handlerManagers.get(
+                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
+            if (systemSpecificValue != null) {
+                defaultValue = systemSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        requestContext.setProcessingComplete(false);
+        TaggedResourcePath[] userDefinedValue = handlerManagers.get(
+                USER_DEFINED_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        requestContext.setProcessingComplete(false);
+        handlerManagers.get(
+                DEFAULT_REPORTING_HANDLER_PHASE).getResourcePathsWithTag(requestContext);
+        // The reporting handlers may change the state of processing
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        requestContext.setProcessingComplete(isProcessingComplete);
+        if (userDefinedValue != null) {
+            return userDefinedValue;
+        }
+        return defaultValue;
+    }
+
+    @Override
+    public Tag[] getTags(RequestContext requestContext)
+            throws RepositoryException {
+        Tag[] defaultValue = handlerManagers.get(
+                DEFAULT_SYSTEM_HANDLER_PHASE).getTags(requestContext);
+        boolean isProcessingComplete = requestContext.isProcessingComplete();
+        if (!isProcessingComplete) {
+            Tag[] tenantSpecificValue = handlerManagers.get(
+                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getTags(requestContext);
+            if (tenantSpecificValue != null) {
+                defaultValue = tenantSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        if (!isProcessingComplete) {
+            Tag[] systemSpecificValue = handlerManagers.get(
+                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getTags(requestContext);
+            if (systemSpecificValue != null) {
+                defaultValue = systemSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        requestContext.setProcessingComplete(false);
+        Tag[] userDefinedValue = handlerManagers.get(
+                USER_DEFINED_HANDLER_PHASE).getTags(requestContext);
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        // The reporting handler phase needs to know about the state of processing
+        requestContext.setProcessingComplete(isProcessingComplete);
+        handlerManagers.get(DEFAULT_REPORTING_HANDLER_PHASE).getTags(requestContext);
+        // The reporting handlers may change the state of processing
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        requestContext.setProcessingComplete(isProcessingComplete);
+        if (userDefinedValue != null) {
+            return userDefinedValue;
+        }
+        return defaultValue;
+    }
+
+    @Override
+    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
+        Comment[] defaultValue = handlerManagers.get(
+                DEFAULT_SYSTEM_HANDLER_PHASE).getComments(requestContext);
+        boolean isProcessingComplete = requestContext.isProcessingComplete();
+        if (!isProcessingComplete) {
+            Comment[] tenantSpecificValue = handlerManagers.get(
+                    TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE).getComments(requestContext);
+            if (tenantSpecificValue != null) {
+                defaultValue = tenantSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        if (!isProcessingComplete) {
+            Comment[] systemSpecificValue = handlerManagers.get(
+                    USER_DEFINED_SYSTEM_HANDLER_PHASE).getComments(requestContext);
+            if (systemSpecificValue != null) {
+                defaultValue = systemSpecificValue;
+            }
+            isProcessingComplete = requestContext.isProcessingComplete();
+        }
+        requestContext.setProcessingComplete(false);
+        Comment[] userDefinedValue = handlerManagers.get(
+                USER_DEFINED_HANDLER_PHASE).getComments(requestContext);
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        // The reporting handler phase needs to know about the state of processing
+        requestContext.setProcessingComplete(isProcessingComplete);
+        handlerManagers.get(DEFAULT_REPORTING_HANDLER_PHASE).getComments(requestContext);
+        // The reporting handlers may change the state of processing
+        isProcessingComplete |= requestContext.isProcessingComplete();
+        requestContext.setProcessingComplete(isProcessingComplete);
+        if (userDefinedValue != null) {
+            return userDefinedValue;
+        }
+        return defaultValue;
     }
 }

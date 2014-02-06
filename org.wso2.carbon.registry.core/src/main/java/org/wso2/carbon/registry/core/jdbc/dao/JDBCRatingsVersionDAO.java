@@ -37,8 +37,8 @@ import org.wso2.carbon.registry.core.jdbc.DatabaseConstants;
 import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDatabaseTransaction;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.RatingDO;
 import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
-import org.wso2.carbon.repository.RepositoryConstants;;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.utils.DBUtils;
 
@@ -46,6 +46,7 @@ import org.wso2.carbon.utils.DBUtils;
  * An extension of {@link JDBCRatingsDAO} implements {@link RatingsDAO} to store ratings on a
  * JDBC-based database, when versioning for ratings has been enabled.
  */
+@Deprecated
 public class JDBCRatingsVersionDAO extends JDBCRatingsDAO implements RatingsDAO {
 
     private static final Log log = LogFactory.getLog(JDBCRatingsVersionDAO.class);
@@ -154,7 +155,7 @@ public class JDBCRatingsVersionDAO extends JDBCRatingsDAO implements RatingsDAO 
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -243,7 +244,7 @@ public class JDBCRatingsVersionDAO extends JDBCRatingsDAO implements RatingsDAO 
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -285,7 +286,7 @@ public class JDBCRatingsVersionDAO extends JDBCRatingsDAO implements RatingsDAO 
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -354,7 +355,7 @@ public class JDBCRatingsVersionDAO extends JDBCRatingsDAO implements RatingsDAO 
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -417,7 +418,7 @@ public class JDBCRatingsVersionDAO extends JDBCRatingsDAO implements RatingsDAO 
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -475,7 +476,7 @@ public class JDBCRatingsVersionDAO extends JDBCRatingsDAO implements RatingsDAO 
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }

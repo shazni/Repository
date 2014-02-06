@@ -18,7 +18,13 @@
  */
 package org.wso2.carbon.registry.core.dataaccess;
 
-import org.wso2.carbon.registry.core.dao.*;
+import org.wso2.carbon.registry.core.dao.AssociationDAO;
+import org.wso2.carbon.registry.core.dao.CommentsDAO;
+import org.wso2.carbon.registry.core.dao.LogsDAO;
+import org.wso2.carbon.registry.core.dao.RatingsDAO;
+import org.wso2.carbon.registry.core.dao.ResourceDAO;
+import org.wso2.carbon.registry.core.dao.ResourceVersionDAO;
+import org.wso2.carbon.registry.core.dao.TagsDAO;
 
 /**
  * This describes a an instance of a data access object manager class that can be used to obtain
@@ -26,6 +32,38 @@ import org.wso2.carbon.registry.core.dao.*;
  */
 public interface DAOManager {
 
+    /**
+     * Method to obtain an instance of a logs data access object. This can be used to access audit
+     * logs stored on a database, that are related to the registry operations performed.
+     *
+     * @return instance of the logs data access object implementation.
+     */
+    LogsDAO getLogsDAO();
+
+    /**
+     * Method to obtain an instance of a resource data access object.
+     *
+     * @return instance of the resource data access object implementation. The returned
+     *         data access object can only handle non-versioned resources, and should only be used
+     *         when versioning has been disabled. If versioning has been enabled, use the
+     *         {@link #getResourceVersionDAO()} method. Automatic versioning of resources can be
+     *         disabled by setting a parameter on the XML-based registry configuration.
+     */
+    ResourceDAO getResourceDAO();
+
+    /**
+     * Method to obtain an instance of a versioned-resource data access object.
+     *
+     * @return instance of the versioned-resource data access object implementation. The returned
+     *         data access object can only handle versioned resources, and should only be used when
+     *         versioning has been enabled. If versioning has not been enabled, use the
+     *         {@link #getResourceDAO()} method. Automatic versioning of resources can be enabled
+     *         by setting a parameter on the XML-based registry configuration.
+     */
+    ResourceVersionDAO getResourceVersionDAO();
+    
+ // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
     /**
      * Method to obtain an instance of an association data access object.
      *
@@ -74,34 +112,4 @@ public interface DAOManager {
      *         versioning has been disabled, a non-versioned data access object must be requested.
      */
     TagsDAO getTagsDAO(boolean isVersioned);
-
-    /**
-     * Method to obtain an instance of a logs data access object. This can be used to access audit
-     * logs stored on a database, that are related to the registry operations performed.
-     *
-     * @return instance of the logs data access object implementation.
-     */
-    LogsDAO getLogsDAO();
-
-    /**
-     * Method to obtain an instance of a resource data access object.
-     *
-     * @return instance of the resource data access object implementation. The returned
-     *         data access object can only handle non-versioned resources, and should only be used
-     *         when versioning has been disabled. If versioning has been enabled, use the
-     *         {@link #getResourceVersionDAO()} method. Automatic versioning of resources can be
-     *         disabled by setting a parameter on the XML-based registry configuration.
-     */
-    ResourceDAO getResourceDAO();
-
-    /**
-     * Method to obtain an instance of a versioned-resource data access object.
-     *
-     * @return instance of the versioned-resource data access object implementation. The returned
-     *         data access object can only handle versioned resources, and should only be used when
-     *         versioning has been enabled. If versioning has not been enabled, use the
-     *         {@link #getResourceDAO()} method. Automatic versioning of resources can be enabled
-     *         by setting a parameter on the XML-based registry configuration.
-     */
-    ResourceVersionDAO getResourceVersionDAO();
 }

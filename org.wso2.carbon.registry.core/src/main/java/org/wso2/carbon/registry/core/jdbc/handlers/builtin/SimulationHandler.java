@@ -159,21 +159,6 @@ public class SimulationHandler extends Handler {
     }
 
     @Override
-    public Association[] getAllAssociations(RequestContext requestContext)
-            throws RepositoryException {
-        requestContext.setProcessingComplete(true);
-        setStatus(requestContext.getHandlerExecutionStatusMap());
-        return super.getAllAssociations(requestContext);
-    }
-
-    @Override
-    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
-        requestContext.setProcessingComplete(true);
-        setStatus(requestContext.getHandlerExecutionStatusMap());
-        return super.getAssociations(requestContext);
-    }
-
-    @Override
     public void applyTag(RequestContext requestContext) throws RepositoryException {
         requestContext.setProcessingComplete(true);
         setStatus(requestContext.getHandlerExecutionStatusMap());
@@ -230,13 +215,6 @@ public class SimulationHandler extends Handler {
     }
 
     @Override
-    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
-        requestContext.setProcessingComplete(true);
-        setStatus(requestContext.getHandlerExecutionStatusMap());
-        return super.getComments(requestContext);
-    }
-
-    @Override
     public float getAverageRating(RequestContext requestContext) throws RepositoryException {
         requestContext.setProcessingComplete(true);
         setStatus(requestContext.getHandlerExecutionStatusMap());
@@ -255,21 +233,6 @@ public class SimulationHandler extends Handler {
         requestContext.setProcessingComplete(true);
         setStatus(requestContext.getHandlerExecutionStatusMap());
         return super.getVersions(requestContext);
-    }
-
-    @Override
-    public Tag[] getTags(RequestContext requestContext) throws RepositoryException {
-        requestContext.setProcessingComplete(true);
-        setStatus(requestContext.getHandlerExecutionStatusMap());
-        return super.getTags(requestContext);
-    }
-
-    @Override
-    public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
-            throws RepositoryException {
-        requestContext.setProcessingComplete(true);
-        setStatus(requestContext.getHandlerExecutionStatusMap());
-        return super.getResourcePathsWithTag(requestContext);
     }
 
     @Override
@@ -305,5 +268,44 @@ public class SimulationHandler extends Handler {
         requestContext.setProcessingComplete(true);
         setStatus(requestContext.getHandlerExecutionStatusMap());
         super.restore(requestContext);
+    }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    @Override
+    public Association[] getAllAssociations(RequestContext requestContext)
+            throws RepositoryException {
+        requestContext.setProcessingComplete(true);
+        setStatus(requestContext.getHandlerExecutionStatusMap());
+        return super.getAllAssociations(requestContext);
+    }
+
+    @Override
+    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
+        requestContext.setProcessingComplete(true);
+        setStatus(requestContext.getHandlerExecutionStatusMap());
+        return super.getAssociations(requestContext);
+    }
+    
+    @Override
+    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
+        requestContext.setProcessingComplete(true);
+        setStatus(requestContext.getHandlerExecutionStatusMap());
+        return super.getComments(requestContext);
+    }
+    
+    @Override
+    public Tag[] getTags(RequestContext requestContext) throws RepositoryException {
+        requestContext.setProcessingComplete(true);
+        setStatus(requestContext.getHandlerExecutionStatusMap());
+        return super.getTags(requestContext);
+    }
+
+    @Override
+    public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
+            throws RepositoryException {
+        requestContext.setProcessingComplete(true);
+        setStatus(requestContext.getHandlerExecutionStatusMap());
+        return super.getResourcePathsWithTag(requestContext);
     }
 }

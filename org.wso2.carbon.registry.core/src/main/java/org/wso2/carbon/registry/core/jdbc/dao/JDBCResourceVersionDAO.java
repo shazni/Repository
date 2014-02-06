@@ -56,6 +56,7 @@ import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.jdbc.utils.VersionRetriever;
 import org.wso2.carbon.registry.core.session.CurrentSession;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.registry.core.utils.VersionedPath;
 import org.wso2.carbon.repository.ActionConstants;
@@ -147,7 +148,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -194,7 +195,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -329,7 +330,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -374,7 +375,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -496,7 +497,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -640,7 +641,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                                 (parentPath.equals(RepositoryConstants.PATH_SEPARATOR) ? "" :
                                         RepositoryConstants.PATH_SEPARATOR) +
                                 resourceName +
-                                RepositoryConstants.VERSION_SEPARATOR + snapshotID;
+                                /*RepositoryConstants.*/ InternalConstants.VERSION_SEPARATOR + snapshotID;
                         if (current >= start) {
                             childPathList.add(childPath);
                         }
@@ -664,7 +665,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                                 // so we confirm that this is a child of our collection
                                 String childPath =
                                         result2.getString(DatabaseConstants.PATH_VALUE_FIELD) +
-                                                RepositoryConstants.VERSION_SEPARATOR + snapshotID;
+                                                /*RepositoryConstants.*/ InternalConstants.VERSION_SEPARATOR + snapshotID;
                                 if (current >= start) {
                                     childPathList.add(childPath);
                                 }
@@ -704,7 +705,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                         }
                     }
                 } catch (SQLException ex) {
-                    String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                    String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                     log.error(msg, ex);
                 }
             }
@@ -807,7 +808,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -848,7 +849,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -917,7 +918,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -957,7 +958,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1002,7 +1003,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
             newResource.setProperties(oldResource.getProperties());
             resourceDAO.addProperties(newResource);
             String linkRestoration = newResource.getProperty(
-                    RepositoryConstants.REGISTRY_LINK_RESTORATION);
+                    /*RepositoryConstants.*/ InternalConstants.REGISTRY_LINK_RESTORATION);
             if (linkRestoration != null) {
                 String[] parts = linkRestoration.split(RepositoryConstants.URL_SEPARATOR);
                 if (parts.length == 4) {
@@ -1087,7 +1088,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1134,7 +1135,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1220,7 +1221,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1267,7 +1268,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                         ps.close();
                     }
                 } catch (SQLException ex) {
-                    String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                    String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                     log.error(msg, ex);
                 }
             }
@@ -1298,7 +1299,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                         ps.close();
                     }
                 } catch (SQLException ex) {
-                    String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                    String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                     log.error(msg, ex);
                 }
             }
@@ -1348,7 +1349,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                      }
                  }
              } catch (SQLException ex) {
-                 String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                 String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                  log.error(msg, ex);
              }
          }   	
@@ -1394,7 +1395,7 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }        

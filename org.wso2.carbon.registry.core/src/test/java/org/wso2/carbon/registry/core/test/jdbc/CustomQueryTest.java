@@ -21,11 +21,12 @@ package org.wso2.carbon.registry.core.test.jdbc;
 import org.wso2.carbon.registry.core.*;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;;
+import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
 import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.user.api.RealmConfiguration;
 
 import java.util.*;
@@ -183,7 +184,7 @@ public class CustomQueryTest  extends BaseTestCase {
         Map<String, String> params = new HashMap <String, String> ();
         params.put("query", sql);
         params.put(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME,
-                RepositoryConstants.COMMENTS_RESULT_TYPE);
+                /*RepositoryConstants.*/ InternalConstants.COMMENTS_RESULT_TYPE);
         params.put("1", "commentXX1%");
         Collection qResults = registry.executeQuery("/test/qap", params);
 
@@ -212,7 +213,7 @@ public class CustomQueryTest  extends BaseTestCase {
 
         comQuery.setMediaType(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
         comQuery.addProperty(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME,
-                RepositoryConstants.COMMENTS_RESULT_TYPE);
+                /*RepositoryConstants.*/ InternalConstants.COMMENTS_RESULT_TYPE);
 
         configSystemRegistry.put("/test/comments/q1", comQuery);
 
@@ -268,7 +269,7 @@ public class CustomQueryTest  extends BaseTestCase {
 
         comQuery.setMediaType(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
         comQuery.addProperty(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME,
-                RepositoryConstants.COMMENTS_RESULT_TYPE);
+                /*RepositoryConstants.*/ InternalConstants.COMMENTS_RESULT_TYPE);
 
         configSystemRegistry.put("/test/comments/q1", comQuery);
 

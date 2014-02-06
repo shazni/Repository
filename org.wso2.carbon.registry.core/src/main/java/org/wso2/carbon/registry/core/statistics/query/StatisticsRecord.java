@@ -18,7 +18,10 @@
  */
 package org.wso2.carbon.registry.core.statistics.query;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

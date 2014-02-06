@@ -18,24 +18,20 @@
  */
 package org.wso2.carbon.registry.core.test.jdbc;
 
+import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.jdbc.Repository;
+import org.wso2.carbon.registry.core.jdbc.handlers.HandlerManager;
+import org.wso2.carbon.registry.core.jdbc.handlers.filters.URLMatcher;
+import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
+import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
-import org.wso2.carbon.registry.core.config.RegistryContext;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.Handler;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.repository.handlers.RequestContext;
 import org.wso2.carbon.repository.handlers.filters.Filter;
 import org.wso2.carbon.repository.utils.RepositoryUtils;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
-import org.wso2.carbon.registry.core.jdbc.Repository;
-import org.wso2.carbon.registry.core.jdbc.handlers.filters.URLMatcher;
-import org.wso2.carbon.registry.core.session.CurrentSession;
-import org.wso2.carbon.registry.core.session.UserRegistry;
-import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
-import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.user.api.RealmConfiguration;
 
 public class SystemRegistryInHandlerTest  extends BaseTestCase {

@@ -15,10 +15,10 @@
  */
 package org.wso2.carbon.repository;
 
+import java.util.Map;
+
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.RequestContext;
-
-import java.util.Map;
 
 /**
  * @deprecated
@@ -92,6 +92,5 @@ public abstract class Aspect {
      *
      * @param context the RequestContext containing all the state about this request
      */
-    @SuppressWarnings("unused")
     public abstract void dissociate(RequestContext context);
 }

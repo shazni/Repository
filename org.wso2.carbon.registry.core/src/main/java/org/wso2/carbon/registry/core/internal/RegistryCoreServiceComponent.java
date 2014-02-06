@@ -16,7 +16,18 @@
 
 package org.wso2.carbon.registry.core.internal;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.lang.management.ManagementPermission;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
 import org.apache.axis2.context.ConfigurationContext;
+import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -26,50 +37,55 @@ import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.registry.core.CollectionImpl;
+import org.wso2.carbon.registry.core.caching.CachingHandler;
+import org.wso2.carbon.registry.core.config.Mount;
+import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.dao.LogsDAO;
+import org.wso2.carbon.registry.core.exceptions.RepositoryInitException;
+import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
+import org.wso2.carbon.registry.core.jdbc.handlers.HandlerLifecycleManager;
+import org.wso2.carbon.registry.core.jdbc.handlers.HandlerManager;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.CommentCollectionURLHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.CommentURLHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.OperationStatisticsHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.RatingCollectionURLHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.RatingURLHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.RegexBaseRestrictionHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.SQLQueryHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.SimulationHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.builtin.TagURLHandler;
+import org.wso2.carbon.registry.core.jdbc.handlers.filters.MediaTypeMatcher;
+import org.wso2.carbon.registry.core.jdbc.handlers.filters.URLMatcher;
+import org.wso2.carbon.registry.core.secure.AuthorizeRoleListener;
+import org.wso2.carbon.registry.core.service.RegistryService;
+//import org.wso2.carbon.registry.core.service.RemoteRegistryService;
+import org.wso2.carbon.registry.core.service.TenantRegistryLoader;
+//import org.wso2.carbon.registry.core.service.Utils;
+import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
+import org.wso2.carbon.registry.core.utils.InternalUtils;
+import org.wso2.carbon.registry.core.utils.LogQueue;
+import org.wso2.carbon.registry.core.utils.LogRecord;
+import org.wso2.carbon.registry.core.utils.LogWriter;
+import org.wso2.carbon.registry.core.utils.MediaTypesUtils;
 import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.SimulationService;
 import org.wso2.carbon.repository.StatisticsCollector;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
-import org.wso2.carbon.registry.core.caching.CachingHandler;
-import org.wso2.carbon.registry.core.config.Mount;
-import org.wso2.carbon.registry.core.config.RegistryContext;
-import org.wso2.carbon.registry.core.dao.LogsDAO;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.Handler;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.repository.handlers.filters.Filter;
 import org.wso2.carbon.repository.handlers.filters.SimulationFilter;
 import org.wso2.carbon.repository.utils.RepositoryUtils;
-import org.wso2.carbon.registry.core.exceptions.RepositoryInitException;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
-import org.wso2.carbon.registry.core.jdbc.handlers.HandlerLifecycleManager;
-import org.wso2.carbon.registry.core.jdbc.handlers.builtin.*;
-import org.wso2.carbon.registry.core.jdbc.handlers.filters.MediaTypeMatcher;
-import org.wso2.carbon.registry.core.jdbc.handlers.filters.URLMatcher;
-import org.wso2.carbon.registry.core.secure.AuthorizeRoleListener;
-import org.wso2.carbon.registry.core.service.RegistryService;
-import org.wso2.carbon.registry.core.service.RemoteRegistryService;
-import org.wso2.carbon.registry.core.service.TenantRegistryLoader;
-import org.wso2.carbon.registry.core.service.Utils;
-import org.wso2.carbon.registry.core.session.CurrentSession;
-import org.wso2.carbon.registry.core.session.UserRegistry;
-import org.wso2.carbon.registry.core.utils.*;
 import org.wso2.carbon.user.core.listener.AuthorizationManagerListener;
 import org.wso2.carbon.user.core.service.RealmService;
-import org.wso2.carbon.utils.*;
+import org.wso2.carbon.utils.AbstractAxis2ConfigurationContextObserver;
+import org.wso2.carbon.utils.AuthenticationObserver;
+import org.wso2.carbon.utils.CarbonUtils;
+import org.wso2.carbon.utils.WaitBeforeShutdownObserver;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.lang.management.ManagementPermission;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 /**
  * The Registry Kernel Declarative Service Component.
@@ -124,8 +140,11 @@ public class RegistryCoreServiceComponent {
             registrations.push(bundleContext.registerService(new String[]{RegistryService.class.getName(),
                                                                           org.wso2.carbon.repository.RegistryService.class.getName()},
                                                              registryService, null));
+            
             registrations.push(bundleContext.registerService(SimulationService.class.getName(),
                     new DefaultSimulationService(), null));
+            
+            // Following part should be removed in the end -------------------------------------------------
             TenantDeploymentListenerImpl listener = new TenantDeploymentListenerImpl(registryService);
             registrations.push(bundleContext.registerService(
                     Axis2ConfigurationContextObserver.class.getName(),
@@ -136,6 +155,7 @@ public class RegistryCoreServiceComponent {
             registrations.push(bundleContext.registerService(
                     TenantRegistryLoader.class.getName(),
                     listener, null));
+            // ----------------------------------------------------------------------------------------------
 
             log.debug("Registry Core bundle is activated ");
         } catch (Throwable e) {
@@ -232,9 +252,9 @@ public class RegistryCoreServiceComponent {
             r = registry.get(lookupPath);
         } else {
             r = registry.newResource();
-            r.setContent(RepositoryConstants.MOUNT_MEDIA_TYPE);
+            r.setContent(/*RepositoryConstants.*/ InternalConstants.MOUNT_MEDIA_TYPE);
         }
-        r.addProperty(RepositoryConstants.REGISTRY_FIXED_MOUNT, Boolean.toString(true));
+        r.addProperty(/*RepositoryConstants.*/InternalConstants.REGISTRY_FIXED_MOUNT, Boolean.toString(true));
         registry.put(lookupPath, r);
     }
 
@@ -264,7 +284,7 @@ public class RegistryCoreServiceComponent {
         Resource r = registry.get(lookupPath);
         return (!isSuperTenant || targetPath.equals(r.getProperty("subPath")))
                 && Boolean.toString(true).equals(
-                r.getProperty(RepositoryConstants.REGISTRY_FIXED_MOUNT));
+                r.getProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_FIXED_MOUNT));
     }
 
     // Sets-up the media types for this instance.
@@ -327,16 +347,16 @@ public class RegistryCoreServiceComponent {
         Resource resource;
         if (registry.resourceExists(path)) {
             resource = registry.get(path);
-            resource.addProperty(RepositoryConstants.REGISTRY_EXISTING_RESOURCE, "true");
+            resource.addProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_EXISTING_RESOURCE, "true");
         } else {
             resource = new CollectionImpl();
         }
         resource.addProperty(RepositoryConstants.REGISTRY_NON_RECURSIVE, "true");
-        resource.addProperty(RepositoryConstants.REGISTRY_LINK_RESTORATION,
+        resource.addProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_LINK_RESTORATION,
                 path + RepositoryConstants.URL_SEPARATOR + target +
                         RepositoryConstants.URL_SEPARATOR + targetSubPath +
                         RepositoryConstants.URL_SEPARATOR + CurrentSession.getUser());
-        resource.setMediaType(RepositoryConstants.LINK_MEDIA_TYPE);
+        resource.setMediaType(/*RepositoryConstants.*/ InternalConstants.LINK_MEDIA_TYPE);
         registry.put(path, resource);
         resource.discard();
     }
@@ -477,7 +497,9 @@ public class RegistryCoreServiceComponent {
 //        RegistryContext registryContext = InternalUtils.getRegistryContext(registry);
 //        HandlerManager handlerManager = registryContext.getHandlerManager();
 
-        HandlerManager handlerManager = registryService.getHandlerManager();
+//        HandlerManager handlerManager = registryService.getHandlerManager();
+        RegistryContext registryContext = InternalUtils.getRegistryContext(registry);
+        HandlerManager handlerManager = registryContext.getHandlerManager();
         
         if (log.isTraceEnabled()) {
             log.trace("Engaging the Operation Statistics Handler.");
@@ -594,16 +616,18 @@ public class RegistryCoreServiceComponent {
 
         RegistryService registryService;
         String registryRoot;
-        if (org.wso2.carbon.registry.core.config.RegistryConfiguration.REMOTE_REGISTRY
-                .equals(RegistryCoreServiceComponent.registryConfig.getRegistryType())) {
-            registryService = getRemoteRegistryService(RegistryCoreServiceComponent.registryConfig);
-            registryRoot = RegistryCoreServiceComponent.registryConfig.getValue(
-                    org.wso2.carbon.registry.core.config.RegistryConfiguration.REGISTRY_ROOT);
-        } else {
+        
+        // Following will be commented - Shazni 
+//        if (org.wso2.carbon.registry.core.config.RegistryConfiguration.REMOTE_REGISTRY
+//                .equals(RegistryCoreServiceComponent.registryConfig.getRegistryType())) {
+//            registryService = getRemoteRegistryService(RegistryCoreServiceComponent.registryConfig);
+//            registryRoot = RegistryCoreServiceComponent.registryConfig.getValue(
+//                    org.wso2.carbon.registry.core.config.RegistryConfiguration.REGISTRY_ROOT);
+//        } else {
             registryService = getEmbeddedRegistryService();
-            Utils.setEmbeddedRegistry((EmbeddedRegistryService) registryService);
+//            Utils.setEmbeddedRegistry((EmbeddedRegistryService) registryService);
             registryRoot = RegistryContext.getBaseInstance().getRegistryRoot();
-        }
+//        }
 
         UserRegistry systemRegistry = registryService.getRegistry(CarbonConstants.REGISTRY_SYSTEM_USERNAME);
         RegistryContext registryContext = systemRegistry.getRegistryContext();
@@ -665,8 +689,7 @@ public class RegistryCoreServiceComponent {
 
         InputStream configInputStream = new FileInputStream(getConfigFile());
         EmbeddedRegistryService embeddedRegistryService = new EmbeddedRegistryService() ;
-        RegistryContext registryContext =
-                RegistryContext.getBaseInstance(configInputStream, realmService, embeddedRegistryService);
+        RegistryContext registryContext = RegistryContext.getBaseInstance(configInputStream, realmService, embeddedRegistryService);
         registryContext.setSetup(System.getProperty(RepositoryConstants.SETUP_PROPERTY) != null);
         embeddedRegistryService.init(registryContext);
         return embeddedRegistryService ;
@@ -674,21 +697,21 @@ public class RegistryCoreServiceComponent {
     }
 
     // Gets registry service for the Remote Registry
-    @SuppressWarnings("deprecation")
-    private RegistryService getRemoteRegistryService(
-            org.wso2.carbon.registry.core.config.RegistryConfiguration regConfig) throws Exception {
-
-        String url =
-                regConfig.getValue(org.wso2.carbon.registry.core.config.RegistryConfiguration.URL);
-        String username = regConfig
-                .getValue(org.wso2.carbon.registry.core.config.RegistryConfiguration.USERNAME);
-        String password = regConfig
-                .getValue(org.wso2.carbon.registry.core.config.RegistryConfiguration.PASSWORD);
-        String chroot = regConfig
-                .getValue(org.wso2.carbon.registry.core.config.RegistryConfiguration.REGISTRY_ROOT);
-
-        return new RemoteRegistryService(url, username, password, realmService, chroot);
-    }
+//    @SuppressWarnings("deprecation")
+//    private RegistryService getRemoteRegistryService(
+//            org.wso2.carbon.registry.core.config.RegistryConfiguration regConfig) throws Exception {
+//
+//        String url =
+//                regConfig.getValue(org.wso2.carbon.registry.core.config.RegistryConfiguration.URL);
+//        String username = regConfig
+//                .getValue(org.wso2.carbon.registry.core.config.RegistryConfiguration.USERNAME);
+//        String password = regConfig
+//                .getValue(org.wso2.carbon.registry.core.config.RegistryConfiguration.PASSWORD);
+//        String chroot = regConfig
+//                .getValue(org.wso2.carbon.registry.core.config.RegistryConfiguration.REGISTRY_ROOT);
+//
+//        return new RemoteRegistryService(url, username, password, realmService, chroot);
+//    }
 
     // Gets registry configuration instance.
     @SuppressWarnings("deprecation")
@@ -810,6 +833,7 @@ public class RegistryCoreServiceComponent {
      *
      * @see AuthorizeRoleListener
      */
+    @Deprecated
     public static void addAuthorizeRoleListener(int executionId, String path, String permission,
                                                 String executeAction, String[] actions) {
         if (bundleContext != null) {
@@ -878,6 +902,7 @@ public class RegistryCoreServiceComponent {
 
     // An implementation of an Axis2 Configuration Context observer plus an Authentication Observer,
     // which is used to handle the requirement of initializing the registry space for a tenant.
+    //*    // Following should go away in the end. 
     @SuppressWarnings("unused")
     private static class TenantDeploymentListenerImpl extends AbstractAxis2ConfigurationContextObserver
             implements TenantRegistryLoader, AuthenticationObserver {
@@ -921,4 +946,5 @@ public class RegistryCoreServiceComponent {
             // Do nothing here.
         }
     }
+    //*/
 }

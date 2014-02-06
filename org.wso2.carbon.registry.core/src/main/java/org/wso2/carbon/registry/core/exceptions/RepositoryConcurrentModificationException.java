@@ -16,6 +16,7 @@
  *  under the License.
  *
  */
+
 package org.wso2.carbon.registry.core.exceptions;
 
 import org.wso2.carbon.repository.exceptions.RepositoryException;

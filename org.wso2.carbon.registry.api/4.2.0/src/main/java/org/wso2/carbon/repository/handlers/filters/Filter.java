@@ -26,10 +26,6 @@ import org.wso2.carbon.repository.handlers.RequestContext;
  */
 public abstract class Filter {
 
-    ////////////////////////////////////////////////////////
-    // Supported method names
-    ////////////////////////////////////////////////////////
-
     /**
      * Represents a get operation on the registry.
      */
@@ -257,21 +253,6 @@ public abstract class Filter {
             throws RepositoryException;
 
     /**
-     * Determines whether the associating handler should handle the invokeAspect action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleInvokeAspect(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
      * Determines whether the associating handler should handle the move action.
      *
      * @param requestContext Information about the current requestContext.
@@ -347,111 +328,6 @@ public abstract class Filter {
     }
 
     /**
-     * Determines whether the associating handler should handle the addAssociation action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleAddAssociation(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the removeAssociation action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleRemoveAssociation(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the getAllAssociations action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleGetAllAssociations(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the getAssociations action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleGetAssociations(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the applyTag action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleApplyTag(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the removeTag action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleRemoveTag(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the rateResource action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleRateResource(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
      * Determines whether the associating handler should handle the restoreVersion action.
      *
      * @param requestContext Information about the current requestContext.
@@ -477,126 +353,6 @@ public abstract class Filter {
      *                           the surface.
      */
     public boolean handleCreateVersion(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the editComment action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleEditComment(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the addComment action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleAddComment(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the removeComment action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleRemoveComment(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the getComments action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleGetComments(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the getResourcePathsWithTag action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleGetResourcePathsWithTag(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the getTags action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleGetTags(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the getAverageRating action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleGetAverageRating(RequestContext requestContext)
-            throws RepositoryException {
-        return false;
-    }
-
-    /**
-     * Determines whether the associating handler should handle the getRating action.
-     *
-     * @param requestContext Information about the current requestContext.
-     *
-     * @return true if the associating handler should handle the request. false otherwise.
-     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
-     *                           throw a RegistryException if the exception has to be propagated to
-     *                           the surface.
-     */
-    public boolean handleGetRating(RequestContext requestContext)
             throws RepositoryException {
         return false;
     }
@@ -745,5 +501,247 @@ public abstract class Filter {
     public boolean equals(Object obj) {
         return (obj != null && obj instanceof Filter && obj.getClass().equals(getClass()) &&
                 ((Filter) obj).invert == this.invert);
+    }
+    
+    // ------------- Following will eventually move out of the kernel ----------------------------------------------------
+    
+    /**
+     * Determines whether the associating handler should handle the invokeAspect action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleInvokeAspect(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+    
+    /**
+     * Determines whether the associating handler should handle the addAssociation action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleAddAssociation(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the removeAssociation action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleRemoveAssociation(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the getAllAssociations action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleGetAllAssociations(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the getAssociations action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleGetAssociations(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the applyTag action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleApplyTag(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the removeTag action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleRemoveTag(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the rateResource action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleRateResource(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+    
+    /**
+     * Determines whether the associating handler should handle the editComment action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleEditComment(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the addComment action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleAddComment(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the removeComment action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleRemoveComment(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the getComments action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleGetComments(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the getResourcePathsWithTag action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleGetResourcePathsWithTag(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the getTags action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleGetTags(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the getAverageRating action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleGetAverageRating(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
+    }
+
+    /**
+     * Determines whether the associating handler should handle the getRating action.
+     *
+     * @param requestContext Information about the current requestContext.
+     *
+     * @return true if the associating handler should handle the request. false otherwise.
+     * @throws RepositoryException Filter implementations should deal with the specific exceptions and
+     *                           throw a RegistryException if the exception has to be propagated to
+     *                           the surface.
+     */
+    public boolean handleGetRating(RequestContext requestContext)
+            throws RepositoryException {
+        return false;
     }
 }

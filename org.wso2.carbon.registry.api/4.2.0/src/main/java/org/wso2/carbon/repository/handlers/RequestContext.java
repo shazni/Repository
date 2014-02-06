@@ -24,9 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 import org.wso2.carbon.repository.Aspect;
-//import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Association;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;
@@ -34,7 +32,6 @@ import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.repository.Tag;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.handlers.filters.SimulationFilter;
 
 /**
@@ -333,24 +330,6 @@ public class RequestContext {
     }
 
     /**
-     * Method to get the Aspect.
-     *
-     * @return the Aspect.
-     */
-    public Aspect getAspect() {
-        return aspect;
-    }
-
-    /**
-     * Method to set Aspect.
-     *
-     * @param aspect the Aspect.
-     */
-    public void setAspect(Aspect aspect) {
-        this.aspect = aspect;
-    }
-
-    /**
      * Method to get the Action.
      *
      * @return the Action.
@@ -480,78 +459,6 @@ public class RequestContext {
     }
 
     /**
-     * Method to get the Tag.
-     *
-     * @return the Tag.
-     */
-    public String getTag() {
-        return tag;
-    }
-
-    /**
-     * Method to set Tag.
-     *
-     * @param tag the Tag.
-     */
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    /**
-     * Method to get the Association Type.
-     *
-     * @return the Association Type.
-     */
-    public String getAssociationType() {
-        return associationType;
-    }
-
-    /**
-     * Method to set Association Type.
-     *
-     * @param associationType the Association Type.
-     */
-    public void setAssociationType(String associationType) {
-        this.associationType = associationType;
-    }
-
-    /**
-     * Method to get the Rating.
-     *
-     * @return the Rating.
-     */
-    public int getRating() {
-        return rating;
-    }
-
-    /**
-     * Method to set Rating.
-     *
-     * @param rating the Rating.
-     */
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    /**
-     * Method to get the Comment.
-     *
-     * @return the Comment.
-     */
-    public Comment getComment() {
-        return comment;
-    }
-
-    /**
-     * Method to set Comment.
-     *
-     * @param comment the Comment.
-     */
-    public void setComment(Comment comment) {
-        this.comment = comment;
-    }
-
-    /**
      * Method to get the Version Path.
      *
      * @return the Version Path.
@@ -678,24 +585,6 @@ public class RequestContext {
     }
 
     /**
-     * Method to get the Registry Context.
-     *
-     * @return the Registry Context.
-     */
-//    public RegistryContext getRegistryContext() {
-//        return registryContext;
-//    }
-
-    /**
-     * Method to set Registry Context.
-     *
-     * @param registryContext the Registry Context.
-     */
-//    public void setRegistryContext(RegistryContext registryContext) {
-//        this.registryContext = registryContext;
-//    }
-
-    /**
      * Method to get the Old Resource.
      *
      * @return the Old Resource.
@@ -713,6 +602,201 @@ public class RequestContext {
         this.oldResource = oldResource;
     }
 
+    /**
+     * Method to get the Handler Execution Id
+     *
+     * @return the Handler Execution Id String.
+     */
+    public synchronized String getHandlerExecutionIdString() {
+        Integer executionId = getHandlerExecutionId() + 1;
+        setHandlerExecutionId(executionId);
+        return Integer.toString(executionId);
+    }
+
+    /**
+     * Method to set Execution Status.
+     *
+     * @param handler the Execution Status.
+     * @param status  the status.
+     */
+    public void setExecutionStatus(Handler handler, boolean status) {
+        if (handler == null) {
+            return;
+        }
+        String handlerClass = handler.getClass().getName();
+        List<String[]> statusList = handlerExecutionStatusMap.get(handlerClass);
+        if (statusList == null) {
+            statusList = new LinkedList<String[]>();
+        }
+        String[] statusArr = new String[2];
+        statusArr[0] = status ? SUCCESSFUL : FAILED;
+        statusArr[1] = getHandlerExecutionIdString();
+        statusList.add(statusArr);
+        handlerExecutionStatusMap.put(handlerClass, statusList);
+    }
+
+    /**
+     * Method to set Execution Status.
+     *
+     * @param handler   the Execution Status.
+     * @param exception the exception to throw at a failure.
+     */
+    public void setExecutionStatus(Handler handler, Throwable exception) {
+        if (handler == null) {
+            return;
+        }
+        String handlerClass = handler.getClass().getName();
+        List<String[]> statusList = handlerExecutionStatusMap.get(handlerClass);
+        if (statusList == null) {
+            statusList = new LinkedList<String[]>();
+        }
+        String[] statusArr = new String[2];
+        statusArr[0] = exception.getMessage();
+        statusArr[1] = getHandlerExecutionIdString();
+        statusList.add(statusArr);
+        handlerExecutionStatusMap.put(handlerClass, statusList);
+    }
+
+    /**
+     * Check whether the execution status is set.
+     *
+     * @param handler The handler the execution status checking.
+     *
+     * @return whether the status is set or not.
+     */
+    public boolean isExecutionStatusSet(Handler handler) {
+        return ((handler != null) &&
+                (handlerExecutionStatusMap.get(handler.getClass().getName()) != null));
+    }
+
+    /**
+     * Method to get the HandlerExecutionStatusMap.
+     *
+     * @return the HandlerExecutionStatusMap.
+     */
+    public Map<String, List<String[]>> getHandlerExecutionStatusMap() {
+        return handlerExecutionStatusMap;
+    }
+
+    /**
+     * Check whether this is running in simulation mode
+     *
+     * @return true if it is running on simulation mode, false otherwise.
+     */
+    public boolean isSimulation() {
+        return SimulationFilter.isSimulation();
+    }
+
+    /**
+     * Check whether activities must be logged or not. This is true by default.
+     *
+     * @return true if activities must be logged, false otherwise.
+     */
+    public boolean isLoggingActivity() {
+        return loggingActivity;
+    }
+
+    /**
+     * Method to set whether activities must be logged for this operation.
+     *
+     * @param loggingActivity whether activities should be logged or not.
+     */
+    public void setLoggingActivity(boolean loggingActivity) {
+        this.loggingActivity = loggingActivity;
+    }
+    
+ // ------------- Following will eventually move out of the kernel ----------------------------------------------------
+    
+    /**
+     * Method to get the Aspect.
+     *
+     * @return the Aspect.
+     */
+    public Aspect getAspect() {
+        return aspect;
+    }
+
+    /**
+     * Method to set Aspect.
+     *
+     * @param aspect the Aspect.
+     */
+    public void setAspect(Aspect aspect) {
+        this.aspect = aspect;
+    }
+    
+    /**
+     * Method to get the Tag.
+     *
+     * @return the Tag.
+     */
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * Method to set Tag.
+     *
+     * @param tag the Tag.
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * Method to get the Association Type.
+     *
+     * @return the Association Type.
+     */
+    public String getAssociationType() {
+        return associationType;
+    }
+
+    /**
+     * Method to set Association Type.
+     *
+     * @param associationType the Association Type.
+     */
+    public void setAssociationType(String associationType) {
+        this.associationType = associationType;
+    }
+
+    /**
+     * Method to get the Rating.
+     *
+     * @return the Rating.
+     */
+    public int getRating() {
+        return rating;
+    }
+
+    /**
+     * Method to set Rating.
+     *
+     * @param rating the Rating.
+     */
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    /**
+     * Method to get the Comment.
+     *
+     * @return the Comment.
+     */
+    public Comment getComment() {
+        return comment;
+    }
+
+    /**
+     * Method to set Comment.
+     *
+     * @param comment the Comment.
+     */
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
+    
     /**
      * Method to get the Old Associations On Source.
      *
@@ -825,7 +909,7 @@ public class RequestContext {
     public int getOldRating() {
         return oldRating;
     }
-
+    
     /**
      * Method to set Old Rating.
      *
@@ -851,108 +935,5 @@ public class RequestContext {
      */
     public void setOldAverageRating(float oldAverageRating) {
         this.oldAverageRating = oldAverageRating;
-    }
-
-    /**
-     * Method to get the Handler Execution Id
-     *
-     * @return the Handler Execution Id String.
-     */
-    public synchronized String getHandlerExecutionIdString() {
-        Integer executionId = getHandlerExecutionId() + 1;
-        setHandlerExecutionId(executionId);
-        return Integer.toString(executionId);
-    }
-
-    /**
-     * Method to set Execution Status.
-     *
-     * @param handler the Execution Status.
-     * @param status  the status.
-     */
-    public void setExecutionStatus(Handler handler, boolean status) {
-        if (handler == null) {
-            return;
-        }
-        String handlerClass = handler.getClass().getName();
-        List<String[]> statusList = handlerExecutionStatusMap.get(handlerClass);
-        if (statusList == null) {
-            statusList = new LinkedList<String[]>();
-        }
-        String[] statusArr = new String[2];
-        statusArr[0] = status ? SUCCESSFUL : FAILED;
-        statusArr[1] = getHandlerExecutionIdString();
-        statusList.add(statusArr);
-        handlerExecutionStatusMap.put(handlerClass, statusList);
-    }
-
-    /**
-     * Method to set Execution Status.
-     *
-     * @param handler   the Execution Status.
-     * @param exception the exception to throw at a failure.
-     */
-    public void setExecutionStatus(Handler handler, Throwable exception) {
-        if (handler == null) {
-            return;
-        }
-        String handlerClass = handler.getClass().getName();
-        List<String[]> statusList = handlerExecutionStatusMap.get(handlerClass);
-        if (statusList == null) {
-            statusList = new LinkedList<String[]>();
-        }
-        String[] statusArr = new String[2];
-        statusArr[0] = exception.getMessage();
-        statusArr[1] = getHandlerExecutionIdString();
-        statusList.add(statusArr);
-        handlerExecutionStatusMap.put(handlerClass, statusList);
-    }
-
-    /**
-     * Check whether the execution status is set.
-     *
-     * @param handler The handler the execution status checking.
-     *
-     * @return whether the status is set or not.
-     */
-    public boolean isExecutionStatusSet(Handler handler) {
-        return ((handler != null) &&
-                (handlerExecutionStatusMap.get(handler.getClass().getName()) != null));
-    }
-
-    /**
-     * Method to get the HandlerExecutionStatusMap.
-     *
-     * @return the HandlerExecutionStatusMap.
-     */
-    public Map<String, List<String[]>> getHandlerExecutionStatusMap() {
-        return handlerExecutionStatusMap;
-    }
-
-    /**
-     * Check whether this is running in simulation mode
-     *
-     * @return true if it is running on simulation mode, false otherwise.
-     */
-    public boolean isSimulation() {
-        return SimulationFilter.isSimulation();
-    }
-
-    /**
-     * Check whether activities must be logged or not. This is true by default.
-     *
-     * @return true if activities must be logged, false otherwise.
-     */
-    public boolean isLoggingActivity() {
-        return loggingActivity;
-    }
-
-    /**
-     * Method to set whether activities must be logged for this operation.
-     *
-     * @param loggingActivity whether activities should be logged or not.
-     */
-    public void setLoggingActivity(boolean loggingActivity) {
-        this.loggingActivity = loggingActivity;
     }
 }

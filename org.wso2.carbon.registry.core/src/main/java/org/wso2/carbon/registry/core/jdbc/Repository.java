@@ -16,20 +16,50 @@
 
 package org.wso2.carbon.registry.core.jdbc;
 
-import org.apache.axiom.om.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.util.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.registry.core.*;
-import org.wso2.carbon.repository.ActionConstants;
-import org.wso2.carbon.repository.Activity;
-import org.wso2.carbon.repository.Association;
-import org.wso2.carbon.repository.Collection;
-import org.wso2.carbon.repository.RepositoryConstants;
-import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.repository.ResourcePath;
+import org.wso2.carbon.registry.core.CollectionImpl;
+import org.wso2.carbon.registry.core.CommentImpl;
+import org.wso2.carbon.registry.core.ResourceIDImpl;
+import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.registry.core.config.RegistryContext;
-import org.wso2.carbon.registry.core.dao.*;
+import org.wso2.carbon.registry.core.dao.AssociationDAO;
+import org.wso2.carbon.registry.core.dao.CommentsDAO;
+import org.wso2.carbon.registry.core.dao.RatingsDAO;
+import org.wso2.carbon.registry.core.dao.ResourceDAO;
+import org.wso2.carbon.registry.core.dao.ResourceVersionDAO;
+import org.wso2.carbon.registry.core.dao.TagsDAO;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
 import org.wso2.carbon.registry.core.exceptions.RepositoryServerContentException;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.CommentDO;
@@ -40,8 +70,16 @@ import org.wso2.carbon.registry.core.jdbc.utils.DumpReader;
 import org.wso2.carbon.registry.core.jdbc.utils.DumpWriter;
 import org.wso2.carbon.registry.core.session.CurrentSession;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.registry.core.utils.MediaTypesUtils;
+import org.wso2.carbon.repository.ActionConstants;
+import org.wso2.carbon.repository.Activity;
+import org.wso2.carbon.repository.Association;
+import org.wso2.carbon.repository.Collection;
+import org.wso2.carbon.repository.RepositoryConstants;
+import org.wso2.carbon.repository.Resource;
+import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.repository.config.StaticConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryAuthException;
 import org.wso2.carbon.repository.exceptions.RepositoryErrorCodes;
@@ -49,16 +87,6 @@ import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.exceptions.RepositoryResourceNotFoundException;
 import org.wso2.carbon.repository.exceptions.RepositoryUserContentException;
 import org.wso2.carbon.repository.utils.RepositoryUtils;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.*;
-
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Encapsulates the retrieving, storing, modifying and deleting of resources. This class only deals
@@ -272,8 +300,8 @@ public class Repository {
         if (illegalCharactersPattern.matcher(path).matches()) {  //"[~!@#;%^*()+={}[]|\\<>\"\',]"
             throw new RepositoryUserContentException("The path '" + path + "' contains one or more illegal " +
                     "characters (~!@#;%^*()+={}|\\<>\"\',)", RepositoryErrorCodes.INVALID_PATH_PROVIDED);
-        } else if (RepositoryConstants.CHECK_IN_META_DIR.equals(path)) {
-            throw new RepositoryUserContentException(RepositoryConstants.CHECK_IN_META_DIR + " is an illegal " +
+        } else if (/*RepositoryConstants.*/ InternalConstants.CHECK_IN_META_DIR.equals(path)) {
+            throw new RepositoryUserContentException(/*RepositoryConstants.*/ InternalConstants.CHECK_IN_META_DIR + " is an illegal " +
                     "name for a resource.", RepositoryErrorCodes.ILLEGAL_NAME_OF_RESOURCE);
         }
         // validating the resource property names for NULL. This is important when adding properties via the API.
@@ -1798,7 +1826,7 @@ public class Repository {
 
         // create sym links
         String linkRestoration = resourceImpl.getProperty(
-                RepositoryConstants.REGISTRY_LINK_RESTORATION);
+                /*RepositoryConstants.*/ InternalConstants.REGISTRY_LINK_RESTORATION);
         if (linkRestoration != null) {
             String[] parts = linkRestoration.split(RepositoryConstants.URL_SEPARATOR);
             if (parts.length == 4) {
@@ -2312,4 +2340,6 @@ public class Repository {
         xmlWriter.writeEndElement();
         xmlWriter.flush();
     }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
 }

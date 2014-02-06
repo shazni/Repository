@@ -19,11 +19,12 @@ package org.wso2.carbon.registry.core.test.jdbc;
 import org.wso2.carbon.registry.core.*;
 import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
 import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.user.api.RealmConfiguration;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;
 import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.RepositoryConstants;;
+import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 
@@ -81,7 +82,7 @@ public class CommentsTest extends BaseTestCase {
 
         comQuery.setMediaType(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
         comQuery.addProperty(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME,
-                RepositoryConstants.COMMENTS_RESULT_TYPE);
+                /*RepositoryConstants.*/ InternalConstants.COMMENTS_RESULT_TYPE);
         
         configSystemRegistry.put("/test/comments/q1", comQuery);
 
@@ -125,7 +126,7 @@ public class CommentsTest extends BaseTestCase {
 
         comQuery.setMediaType(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
         comQuery.addProperty(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME,
-                RepositoryConstants.COMMENTS_RESULT_TYPE);
+                /*RepositoryConstants.*/ InternalConstants.COMMENTS_RESULT_TYPE);
 
         configSystemRegistry.put("/test/comments/q1", comQuery);
 

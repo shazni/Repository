@@ -51,6 +51,7 @@
                             org.wso2.carbon.repository.*;version=1.0.1
                         </Export-Package>
 						<Import-Package>
+							org.w3c.dom.*,
 							org.apache.commons.logging.*,
 							<!-- org.wso2.carbon.utils.*,-->
 							org.apache.axis2.*,

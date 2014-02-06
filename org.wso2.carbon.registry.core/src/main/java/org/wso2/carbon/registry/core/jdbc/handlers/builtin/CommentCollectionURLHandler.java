@@ -27,6 +27,7 @@ import org.wso2.carbon.repository.handlers.RequestContext;
 /**
  * Handles paths of the form <pure resource path>;comments e.g. /projects/foo/config.xml;comments
  */
+@Deprecated
 public class CommentCollectionURLHandler extends Handler {
 
     public Resource get(RequestContext requestContext) throws RepositoryException {

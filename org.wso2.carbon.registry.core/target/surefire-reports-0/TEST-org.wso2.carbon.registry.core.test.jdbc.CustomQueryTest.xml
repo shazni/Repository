@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="2.724" errors="0" skipped="0" tests="5" name="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest">
+<testsuite failures="0" time="6.572" errors="0" skipped="0" tests="5" name="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,9 +58,9 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="2.187" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testAssociationsQuery"/>
-  <testcase time="0.185" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testAssociationsCollectionQuery"/>
-  <testcase time="0.091" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testQueryAsParameter"/>
-  <testcase time="0.15" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testCustomQueryResultsOrderForComments"/>
-  <testcase time="0.111" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testCustomQueryResultsOrderForResources"/>
+  <testcase time="6.021" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testAssociationsQuery"/>
+  <testcase time="0.174" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testAssociationsCollectionQuery"/>
+  <testcase time="0.087" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testQueryAsParameter"/>
+  <testcase time="0.175" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testCustomQueryResultsOrderForComments"/>
+  <testcase time="0.115" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" name="testCustomQueryResultsOrderForResources"/>
 </testsuite>

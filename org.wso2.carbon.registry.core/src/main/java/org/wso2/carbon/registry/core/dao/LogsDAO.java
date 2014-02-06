@@ -16,13 +16,13 @@
 
 package org.wso2.carbon.registry.core.dao;
 
-import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
-import org.wso2.carbon.repository.Activity;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.registry.core.utils.LogRecord;
-
 import java.util.Date;
 import java.util.List;
+
+import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
+import org.wso2.carbon.registry.core.utils.LogRecord;
+import org.wso2.carbon.repository.Activity;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * Data Access Object for Activity Logs.

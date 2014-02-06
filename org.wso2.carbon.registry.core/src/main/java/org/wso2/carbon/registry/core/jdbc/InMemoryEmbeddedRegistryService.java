@@ -16,13 +16,13 @@
 
 package org.wso2.carbon.registry.core.jdbc;
 
+import java.io.InputStream;
+
 import org.wso2.carbon.registry.core.config.RegistryContext;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.registry.core.jdbc.realm.InMemoryRealmService;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.user.api.RealmConfiguration;
 import org.wso2.carbon.user.core.service.RealmService;
-
-import java.io.InputStream;
 
 /**
  * This is an extension to the {@link EmbeddedRegistryService} which is tailored to expose {@link

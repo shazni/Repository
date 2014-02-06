@@ -18,22 +18,14 @@ package org.wso2.carbon.repository.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.wso2.carbon.base.ServerConfiguration;
-//import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.RegistryService;
 import org.wso2.carbon.repository.RepositoryConstants;
@@ -42,9 +34,6 @@ import org.wso2.carbon.repository.StatisticsCollector;
 import org.wso2.carbon.repository.config.StaticConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.exceptions.RepositoryUserContentException;
-//import org.wso2.carbon.utils.CarbonUtils;
-//import org.wso2.carbon.utils.ServerConstants;
-//import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 /**
  * This class contains a set of useful utility methods used by the Registry Kernel. These can also
@@ -576,7 +565,6 @@ public final class RepositoryUtils {
      * @throws RepositoryException throws if the operation fail.
      */
     public static void prepareContentForPut(Resource resource) throws RepositoryException {
-
     	Object content = resource.getContent();
         if (content instanceof String) {
             content = RepositoryUtils.encodeString((String) content);

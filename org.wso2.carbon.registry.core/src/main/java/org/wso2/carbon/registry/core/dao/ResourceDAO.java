@@ -16,15 +16,15 @@
 
 package org.wso2.carbon.registry.core.dao;
 
+import java.io.InputStream;
+import java.util.List;
+
 import org.wso2.carbon.registry.core.CollectionImpl;
 import org.wso2.carbon.registry.core.ResourceIDImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.registry.core.dataaccess.DataAccessManager;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
-
-import java.io.InputStream;
-import java.util.List;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * The data access object for resources.

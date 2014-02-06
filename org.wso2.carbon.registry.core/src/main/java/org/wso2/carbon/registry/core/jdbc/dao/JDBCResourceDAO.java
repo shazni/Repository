@@ -49,6 +49,7 @@ import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
 import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.session.CurrentSession;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.repository.ActionConstants;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.RepositoryConstants;
@@ -233,7 +234,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -375,7 +376,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -447,7 +448,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -539,7 +540,7 @@ public class JDBCResourceDAO implements ResourceDAO {
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+            String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
             log.error(msg, ex);
             throw new RepositoryDBException(msg, ex);
         } finally {
@@ -548,7 +549,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -575,7 +576,7 @@ public class JDBCResourceDAO implements ResourceDAO {
             }
 
         } catch (SQLException ex) {
-            String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+            String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
             log.error(msg, ex);
             throw new RepositoryDBException(msg, ex);
         } finally {
@@ -590,7 +591,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -765,7 +766,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1097,7 +1098,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1203,7 +1204,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1305,7 +1306,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1340,7 +1341,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1443,7 +1444,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1539,7 +1540,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1584,7 +1585,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1700,7 +1701,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                                 }
                             } catch (SQLException ex) {
                                 String msg =
-                                        RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                                        InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                                 log.error(msg, ex);
                             }
                         }
@@ -1778,7 +1779,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -1844,7 +1845,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -2005,7 +2006,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -2074,14 +2075,14 @@ public class JDBCResourceDAO implements ResourceDAO {
                 try {
                     result.close();
                 } catch (SQLException e) {
-                    log.error(RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR, e);
+                    log.error(InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR, e);
                 }
             }
             if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException e) {
-                    log.error(RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR, e);
+                    log.error(InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR, e);
                 }
             }
         }
@@ -2161,14 +2162,14 @@ public class JDBCResourceDAO implements ResourceDAO {
                 try {
                     results.close();
                 } catch (SQLException e) {
-                    log.error(RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR, e);
+                    log.error(InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR, e);
                 }
             }
             if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException e) {
-                    log.error(RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR, e);
+                    log.error(InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR, e);
                 }
             }
         }
@@ -2261,7 +2262,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -2291,7 +2292,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -2337,7 +2338,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -2370,7 +2371,7 @@ public class JDBCResourceDAO implements ResourceDAO {
                     ps.close();
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }

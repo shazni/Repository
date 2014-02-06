@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.registry.core.jdbc.handlers.filters;
 
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
 import org.wso2.carbon.registry.core.exceptions.RepositoryServerContentException;
 import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
 import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
@@ -141,11 +140,13 @@ public class MediaTypeMatcher extends Filter {
             	if(registry instanceof EmbeddedRegistry) {
 	                resource = ((EmbeddedRegistry) requestContext.getRegistry()).getRepository().
 	                        get(requestContext.getResourcePath().getPath());
-            	} else if(registry instanceof CacheBackedRegistry) {
-            		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
-	                resource = ((EmbeddedRegistry) embeddedRegistry).getRepository().
-	                        get(requestContext.getResourcePath().getPath());
-            	} else {
+            	} 
+//            	else if(registry instanceof CacheBackedRegistry) {
+//            		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
+//	                resource = ((EmbeddedRegistry) embeddedRegistry).getRepository().
+//	                        get(requestContext.getResourcePath().getPath());
+//            	} 
+            	else {
             		throw new RepositoryServerException("The registry is not an Embedded or Cachebacked registry");
             	}
             	
@@ -225,11 +226,13 @@ public class MediaTypeMatcher extends Filter {
         	if(registry instanceof EmbeddedRegistry) {
                 resource = ((EmbeddedRegistry) requestContext.getRegistry()).getRepository().
                         get(requestContext.getResourcePath().getPath());
-        	} else if(registry instanceof CacheBackedRegistry) {
-        		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
-                resource = ((EmbeddedRegistry) embeddedRegistry).getRepository().
-                        get(requestContext.getResourcePath().getPath());
-        	} else {
+        	} 
+//        	else if(registry instanceof CacheBackedRegistry) {
+//        		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
+//                resource = ((EmbeddedRegistry) embeddedRegistry).getRepository().
+//                        get(requestContext.getResourcePath().getPath());
+//        	} 
+        	else {
         		throw new RepositoryServerException("The registry is not an Embedded or Cachebacked registry");
         	}
         	
@@ -293,11 +296,13 @@ public class MediaTypeMatcher extends Filter {
     	if(registry instanceof EmbeddedRegistry) {
             resource = ((EmbeddedRegistry) requestContext.getRegistry()).getRepository().
                     get(requestContext.getSourcePath());
-    	} else if(registry instanceof CacheBackedRegistry) {
-    		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
-            resource = ((EmbeddedRegistry) embeddedRegistry).getRepository().
-                    get(requestContext.getSourcePath());
-    	} else {
+    	} 
+//    	else if(registry instanceof CacheBackedRegistry) {
+//    		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
+//            resource = ((EmbeddedRegistry) embeddedRegistry).getRepository().
+//                    get(requestContext.getSourcePath());
+//    	} 
+    	else {
     		throw new RepositoryServerException("The registry is not an Embedded or Cachebacked registry");
     	}
     	
@@ -361,11 +366,13 @@ public class MediaTypeMatcher extends Filter {
         	if(registry instanceof EmbeddedRegistry) {
                 resource = ((EmbeddedRegistry) requestContext.getRegistry()).getRepository().
                         get(requestContext.getResourcePath().getPath());
-        	} else if(registry instanceof CacheBackedRegistry) {
-        		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
-                resource = ((EmbeddedRegistry) embeddedRegistry).getRepository().
-                        get(requestContext.getResourcePath().getPath());
-        	} else {
+        	} 
+//        	else if(registry instanceof CacheBackedRegistry) {
+//        		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
+//                resource = ((EmbeddedRegistry) embeddedRegistry).getRepository().
+//                        get(requestContext.getResourcePath().getPath());
+//        	} 
+        	else {
         		throw new RepositoryServerException("The registry is not an Embedded or Cachebacked registry");
         	}
         	
@@ -473,11 +480,13 @@ public class MediaTypeMatcher extends Filter {
             	if(registry instanceof EmbeddedRegistry) {
             		parentCollection = (Collection) ((EmbeddedRegistry) requestContext.getRegistry()).getRepository().
 	                        get(parentPath);
-            	} else if(registry instanceof CacheBackedRegistry) {
-            		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
-            		parentCollection = (Collection) ((EmbeddedRegistry) embeddedRegistry).getRepository().
-	                        get(parentPath);
-            	} else {
+            	} 
+//            	else if(registry instanceof CacheBackedRegistry) {
+//            		Registry embeddedRegistry = ((CacheBackedRegistry) registry).getEmbeddedRegistry();
+//            		parentCollection = (Collection) ((EmbeddedRegistry) embeddedRegistry).getRepository().
+//	                        get(parentPath);
+//            	} 
+            	else {
             		throw new RepositoryServerException("The registry is not an Embedded or Cachebacked registry");
             	}
             	

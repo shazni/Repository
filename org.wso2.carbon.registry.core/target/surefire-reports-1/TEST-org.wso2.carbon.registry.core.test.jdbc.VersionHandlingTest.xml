@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="5.305" errors="0" skipped="0" tests="10" name="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest">
+<testsuite failures="0" time="6.1" errors="0" skipped="0" tests="10" name="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,14 +58,14 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="3.833" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testCreateVersions"/>
-  <testcase time="0.116" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testResourceContentVersioning"/>
-  <testcase time="0.124" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testResourcePropertyVersioning"/>
-  <testcase time="0.158" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testSimpleCollectionVersioning"/>
-  <testcase time="0.094" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testResourceRestore"/>
-  <testcase time="0.19" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testSimpleCollectionRestore"/>
-  <testcase time="0.214" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testAdvancedCollectionRestore"/>
-  <testcase time="0.085" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testPermalinksForResources"/>
-  <testcase time="0.088" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testPermalinksForCollections"/>
-  <testcase time="0.403" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testRootLevelVersioning"/>
+  <testcase time="4.696" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testCreateVersions"/>
+  <testcase time="0.15" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testResourceContentVersioning"/>
+  <testcase time="0.108" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testResourcePropertyVersioning"/>
+  <testcase time="0.161" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testSimpleCollectionVersioning"/>
+  <testcase time="0.116" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testResourceRestore"/>
+  <testcase time="0.163" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testSimpleCollectionRestore"/>
+  <testcase time="0.238" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testAdvancedCollectionRestore"/>
+  <testcase time="0.082" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testPermalinksForResources"/>
+  <testcase time="0.085" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testPermalinksForCollections"/>
+  <testcase time="0.301" classname="org.wso2.carbon.registry.core.test.jdbc.VersionHandlingTest" name="testRootLevelVersioning"/>
 </testsuite>

@@ -18,7 +18,6 @@
  */
 package org.wso2.carbon.registry.core.caching;
 
-
 import java.io.Serializable;
 
 /**

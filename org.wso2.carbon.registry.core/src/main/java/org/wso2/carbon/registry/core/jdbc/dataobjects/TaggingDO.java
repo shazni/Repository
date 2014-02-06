@@ -21,6 +21,7 @@ import java.util.Date;
 /**
  * The data object maps with a tag
  */
+@Deprecated
 public class TaggingDO {
 
     private long tagID;

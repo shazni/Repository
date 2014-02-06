@@ -21,6 +21,7 @@ import java.util.Date;
 /**
  * The data object maps with a rating
  */
+@Deprecated
 public class RatingDO {
 
     private String resourcePath;

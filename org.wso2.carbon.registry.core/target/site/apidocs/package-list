@@ -1,5 +1,4 @@
 org.wso2.carbon.registry.core
-org.wso2.carbon.registry.core.app
 org.wso2.carbon.registry.core.caching
 org.wso2.carbon.registry.core.config
 org.wso2.carbon.registry.core.dao

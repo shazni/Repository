@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="3.713" errors="0" skipped="0" tests="2" name="org.wso2.carbon.registry.core.test.jdbc.HandlerTest">
+<testsuite failures="0" time="11.109" errors="0" skipped="0" tests="2" name="org.wso2.carbon.registry.core.test.jdbc.HandlerTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/java/jdk1.6.0_43/jre/lib/amd64"/>
@@ -58,6 +58,6 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="3.621" classname="org.wso2.carbon.registry.core.test.jdbc.HandlerTest" name="testCommitHandlerExecution"/>
-  <testcase time="0.092" classname="org.wso2.carbon.registry.core.test.jdbc.HandlerTest" name="testRollbackHandlerExecution"/>
+  <testcase time="11.02" classname="org.wso2.carbon.registry.core.test.jdbc.HandlerTest" name="testCommitHandlerExecution"/>
+  <testcase time="0.089" classname="org.wso2.carbon.registry.core.test.jdbc.HandlerTest" name="testRollbackHandlerExecution"/>
 </testsuite>

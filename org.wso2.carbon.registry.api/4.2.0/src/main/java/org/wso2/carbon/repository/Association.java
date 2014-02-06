@@ -23,6 +23,7 @@ package org.wso2.carbon.repository;
  * While the source should be a resource existing on the repository, the destination resource can be
  * anything for which a URL can be given.
  */
+@Deprecated
 public class Association {
 
     /**

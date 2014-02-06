@@ -90,7 +90,7 @@ public class HandlerTest extends BaseTestCase {
         try {
 //            registry.getRegistryContext().getHandlerManager().addHandler(null, filter, handler,
 //                    HandlerLifecycleManager.COMMIT_HANDLER_PHASE);
-            registry.getRegistryService().getHandlerManager().addHandler(null, filter, handler,
+            registry.getRegistryService().addHandler(null, filter, handler,
                     HandlerLifecycleManager.COMMIT_HANDLER_PHASE);
         } finally {
             CurrentSession.removeCallerTenantId();
@@ -136,7 +136,7 @@ public class HandlerTest extends BaseTestCase {
         filter.setPattern(".*");
 
 //        registry.getRegistryContext().getHandlerManager().addHandler(null, filter, handler1);
-        registry.getRegistryService().getHandlerManager().addHandler(null, filter, handler1);
+        registry.getRegistryService().addHandler(null, filter, handler1);
 
         filter = new URLMatcher();
         filter.setPattern(".*");
@@ -145,7 +145,7 @@ public class HandlerTest extends BaseTestCase {
         try {
 //            registry.getRegistryContext().getHandlerManager().addHandler(null, filter, handler,
 //                    HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE);
-            registry.getRegistryService().getHandlerManager().addHandler(null, filter, handler,
+            registry.getRegistryService().addHandler(null, filter, handler,
                     HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE);
         } finally {
             CurrentSession.removeCallerTenantId();

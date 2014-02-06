@@ -21,6 +21,11 @@ package org.wso2.carbon.repository;
  * permissions.
  */
 public class ActionConstants {
+	
+    /**
+     * Action authorize
+     */
+    public static final String AUTHORIZE = "authorize";
 
     /**
      * Action of the getting resource from registry. (Registry.get action)

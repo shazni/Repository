@@ -47,15 +47,25 @@ public class BaseTestCase extends TestCase {
             RealmService realmService = new InMemoryRealmService();
             is = this.getClass().getClassLoader().getResourceAsStream(
                     System.getProperty("registry.config"));
+//            System.out.println("The file path : " + is.);
             ctx = RegistryContext.getBaseInstance(is, realmService, embeddedRegistryService);
             //embeddedRegistryService.init(ctx);// Shazni
         } catch (Exception e) {
+        	e.printStackTrace();
         }
         ctx.setSetup(true);
-        ctx.selectDBConfig("h2-db");
+        
+        if(ctx.selectDBConfig("h2-db") == null) {
+        	System.err.println("\nDatabase configuration is null");
+        }
         
         try {
-			embeddedRegistryService.init(ctx);// Shazni
+        	if(ctx != null) {
+        		embeddedRegistryService.init(ctx); // Shazni
+        	} else {
+        		System.err.print("Registry context is null. Therfore exiting");
+        		System.exit(0);
+        	}
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

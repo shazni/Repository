@@ -109,7 +109,6 @@ public class ResourceIDImpl {
      * @return the string value of the resource id.
      */
     public String toString() {
-        // logic to convert the id to string for the authorization purpose of UM
         return path;
     }
 }

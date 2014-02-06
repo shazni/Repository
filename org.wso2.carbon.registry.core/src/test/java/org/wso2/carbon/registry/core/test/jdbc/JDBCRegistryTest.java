@@ -16,27 +16,29 @@
 
 package org.wso2.carbon.registry.core.test.jdbc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.wso2.carbon.registry.core.CommentImpl;
+import org.wso2.carbon.registry.core.config.RegistryContext;
+import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
+import org.wso2.carbon.registry.core.utils.InternalUtils;
+import org.wso2.carbon.registry.core.utils.MediaTypesUtils;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;
 import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.registry.core.*;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.utils.RepositoryUtils;
-import org.wso2.carbon.registry.core.caching.CacheBackedRegistry;
-import org.wso2.carbon.registry.core.config.RegistryContext;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistry;
-import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
-import org.wso2.carbon.registry.core.session.UserRegistry;
-import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
-import org.wso2.carbon.registry.core.utils.InternalUtils;
-import org.wso2.carbon.registry.core.utils.MediaTypesUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.*;
 
 public class JDBCRegistryTest extends BaseTestCase {
 
@@ -598,7 +600,7 @@ public class JDBCRegistryTest extends BaseTestCase {
         q1.setContent(sql1);
         q1.setMediaType(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
         q1.addProperty(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME,
-                RepositoryConstants.COMMENTS_RESULT_TYPE);
+                /*RepositoryConstants.*/ InternalConstants.COMMENTS_RESULT_TYPE);
         systemRegistry.put("/qs/q4", q1);
 
         Map<String, String> parameters = new HashMap<String, String>();

@@ -208,21 +208,6 @@ public class OperationStatisticsHandler extends Handler {
         super.removeAssociation(requestContext);
     }
 
-    public Association[] getAllAssociations(RequestContext requestContext)
-            throws RepositoryException {
-        if (statsLog.isDebugEnabled()) {
-            incrementRecord(Filter.GET_ALL_ASSOCIATIONS);
-        }
-        return super.getAllAssociations(requestContext);
-    }
-
-    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
-        if (statsLog.isDebugEnabled()) {
-            incrementRecord(Filter.GET_ASSOCIATIONS);
-        }
-        return super.getAssociations(requestContext);
-    }
-
     public Collection executeQuery(RequestContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
             incrementRecord(Filter.EXECUTE_QUERY);
@@ -249,5 +234,22 @@ public class OperationStatisticsHandler extends Handler {
             incrementRecord(Filter.RESTORE);
         }
         super.restore(requestContext);
+    }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    public Association[] getAllAssociations(RequestContext requestContext)
+            throws RepositoryException {
+        if (statsLog.isDebugEnabled()) {
+            incrementRecord(Filter.GET_ALL_ASSOCIATIONS);
+        }
+        return super.getAllAssociations(requestContext);
+    }
+
+    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
+        if (statsLog.isDebugEnabled()) {
+            incrementRecord(Filter.GET_ASSOCIATIONS);
+        }
+        return super.getAssociations(requestContext);
     }
 }

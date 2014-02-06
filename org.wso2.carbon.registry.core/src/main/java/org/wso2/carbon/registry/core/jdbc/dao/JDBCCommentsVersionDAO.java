@@ -18,17 +18,24 @@
  */
 package org.wso2.carbon.registry.core.jdbc.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.registry.core.*;
+import org.wso2.carbon.registry.core.CommentImpl;
+import org.wso2.carbon.registry.core.ResourceIDImpl;
+import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.registry.core.dao.CommentsDAO;
 import org.wso2.carbon.registry.core.dao.ResourceDAO;
 import org.wso2.carbon.registry.core.dataaccess.DAOManager;
 import org.wso2.carbon.registry.core.exceptions.RepositoryDBException;
-import org.wso2.carbon.repository.RepositoryConstants;;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.registry.core.jdbc.DatabaseConstants;
 import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDatabaseTransaction;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.CommentDO;
@@ -36,17 +43,17 @@ import org.wso2.carbon.registry.core.pagination.PaginationConstants;
 import org.wso2.carbon.registry.core.pagination.PaginationContext;
 import org.wso2.carbon.registry.core.pagination.PaginationUtils;
 import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
+import org.wso2.carbon.repository.RepositoryConstants;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.utils.DBUtils;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An extension of {@link JDBCCommentsVersionDAO} implements {@link JDBCCommentsDAO} to store
  * comments on a JDBC-based database, when versioning for comments has been enabled.
  */
+@Deprecated
 public class JDBCCommentsVersionDAO extends JDBCCommentsDAO implements CommentsDAO {
 
     private static final Log log = LogFactory.getLog(JDBCCommentsVersionDAO.class);
@@ -155,7 +162,7 @@ public class JDBCCommentsVersionDAO extends JDBCCommentsDAO implements CommentsD
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -278,7 +285,7 @@ public class JDBCCommentsVersionDAO extends JDBCCommentsDAO implements CommentsD
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -403,7 +410,7 @@ public class JDBCCommentsVersionDAO extends JDBCCommentsDAO implements CommentsD
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }
@@ -502,7 +509,7 @@ public class JDBCCommentsVersionDAO extends JDBCCommentsDAO implements CommentsD
                     }
                 }
             } catch (SQLException ex) {
-                String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                 log.error(msg, ex);
             }
         }

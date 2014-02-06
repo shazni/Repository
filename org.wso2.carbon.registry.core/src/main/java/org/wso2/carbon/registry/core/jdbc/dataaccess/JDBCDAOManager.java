@@ -18,9 +18,24 @@
  */
 package org.wso2.carbon.registry.core.jdbc.dataaccess;
 
-import org.wso2.carbon.registry.core.dao.*;
+import org.wso2.carbon.registry.core.dao.AssociationDAO;
+import org.wso2.carbon.registry.core.dao.CommentsDAO;
+import org.wso2.carbon.registry.core.dao.LogsDAO;
+import org.wso2.carbon.registry.core.dao.RatingsDAO;
+import org.wso2.carbon.registry.core.dao.ResourceDAO;
+import org.wso2.carbon.registry.core.dao.ResourceVersionDAO;
+import org.wso2.carbon.registry.core.dao.TagsDAO;
 import org.wso2.carbon.registry.core.dataaccess.DAOManager;
-import org.wso2.carbon.registry.core.jdbc.dao.*;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCAssociationDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCCommentsDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCCommentsVersionDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCLogsDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCRatingsDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCRatingsVersionDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCResourceDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCResourceVersionDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCTagsDAO;
+import org.wso2.carbon.registry.core.jdbc.dao.JDBCTagsVersionDAO;
 
 /**
  * An implementation of {@link DAOManager} to obtain access to the object representations of various
@@ -58,6 +73,20 @@ public class JDBCDAOManager implements DAOManager {
         this.resourceVersionDAO = new JDBCResourceVersionDAO(this);
     }
 
+    public LogsDAO getLogsDAO() {
+        return logsDAO;
+    }
+
+    public ResourceDAO getResourceDAO() {
+        return resourceDAO;
+    }
+
+    public ResourceVersionDAO getResourceVersionDAO() {
+        return resourceVersionDAO;
+    }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
     public AssociationDAO getAssociationDAO() {
         return associationDAO;
     }
@@ -72,17 +101,5 @@ public class JDBCDAOManager implements DAOManager {
 
     public TagsDAO getTagsDAO(boolean isVersioned) {
         return isVersioned ? tagsVersionDAO : tagsDAO;
-    }
-
-    public LogsDAO getLogsDAO() {
-        return logsDAO;
-    }
-
-    public ResourceDAO getResourceDAO() {
-        return resourceDAO;
-    }
-
-    public ResourceVersionDAO getResourceVersionDAO() {
-        return resourceVersionDAO;
     }
 }

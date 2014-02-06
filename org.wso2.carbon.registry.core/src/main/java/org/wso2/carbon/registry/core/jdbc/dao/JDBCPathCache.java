@@ -37,8 +37,8 @@ import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
 import org.wso2.carbon.registry.core.jdbc.DatabaseConstants;
 import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDataAccessManager;
 import org.wso2.carbon.registry.core.session.CurrentSession;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
-import org.wso2.carbon.repository.RepositoryConstants;;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.utils.DBUtils;
 
@@ -176,7 +176,7 @@ public class JDBCPathCache extends PathCache {
                             }
                         }
                     } catch (SQLException e) {
-                        String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR +
+                        String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR +
                                 e.getMessage();
                         log.error(msg, e);
                     }
@@ -207,7 +207,7 @@ public class JDBCPathCache extends PathCache {
                             }
                         }
                     } catch (SQLException e) {
-                        String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR +
+                        String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR +
                                 e.getMessage();
                         log.error(msg, e);
                     }
@@ -270,7 +270,7 @@ public class JDBCPathCache extends PathCache {
                         }
                     }
                 } catch (SQLException ex) {
-                    String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
+                    String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR;
                     log.error(msg, ex);
                 }
             }
@@ -355,7 +355,7 @@ public class JDBCPathCache extends PathCache {
                         }
                     }
                 } catch (SQLException e) {
-                    String msg = RepositoryConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR +
+                    String msg = InternalConstants.RESULT_SET_PREPARED_STATEMENT_CLOSE_ERROR +
                             e.getMessage();
                     log.error(msg, e);
                 }

@@ -19,12 +19,13 @@ package org.wso2.carbon.registry.core.dao;
 import org.wso2.carbon.registry.core.CommentImpl;
 import org.wso2.carbon.registry.core.ResourceIDImpl;
 import org.wso2.carbon.registry.core.ResourceImpl;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.registry.core.jdbc.dataobjects.CommentDO;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * Data Access Object for Comments
  */
+@Deprecated
 public interface CommentsDAO {
 
     /**

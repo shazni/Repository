@@ -15,15 +15,17 @@
  */
 package org.wso2.carbon.registry.core;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
+import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.registry.core.exceptions.RepositoryServerException;
-import org.wso2.carbon.registry.core.jdbc.dataobjects.ResourceDO;
-
-import java.util.*;
 
 /**
  * The default registry implementation of the Collection interface.
@@ -132,22 +134,15 @@ public class CollectionImpl extends ResourceImpl implements Collection {
         if (content == null) {
             return;
         }
-        // note that string contents are allowed in collection to support custom generated UIs.
         if (content instanceof String[]) {
-//                  super.setContent(content);
-            //We do not update the last modified time when a child resource added to a collection
             super.setContentWithNoUpdate(content);
             childCount = ((String[])content).length;
             return;
         } else if (content instanceof Resource[]) {
-//                  super.setContent(content);
-            //We do not update the last modified time when a child resource added to a collection
             super.setContentWithNoUpdate(content);
             childCount = ((Resource[])content).length;
             return;
         } else if (content instanceof String) {
-//                  super.setContent(content);
-            //We do not update the last modified time when a child resource added to a collection
             super.setContentWithNoUpdate(content);
 
             return;
@@ -169,7 +164,6 @@ public class CollectionImpl extends ResourceImpl implements Collection {
         if (content == null) {
             return;
         }
-        // note that string contents are allowed in collection to support custom generated UIs.
         if (content instanceof String[] ||
                 content instanceof Resource[] ||
                 content instanceof String) {
@@ -351,8 +345,6 @@ public class CollectionImpl extends ResourceImpl implements Collection {
      */
     protected String[] fixPaths(String[] paths) {
         Set<String> temp = new LinkedHashSet<String>();
-        // We want to make sure that each element is added one after the other in the exact order
-        // that they were passed in.
         for (String path : paths) {
             temp.add(path);
         }

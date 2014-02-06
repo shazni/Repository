@@ -20,7 +20,6 @@ package org.wso2.carbon.registry.core.caching;
 
 import java.io.Serializable;
 
-
 /**
  * The container class for the cache entry used in the registry kernel
  */

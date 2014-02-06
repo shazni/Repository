@@ -16,12 +16,12 @@
 
 package org.wso2.carbon.repository.dataaccess;
 
-import org.wso2.carbon.repository.Collection;
-import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.repository.Registry;
-import org.wso2.carbon.repository.exceptions.RepositoryException;
-
 import java.util.Map;
+
+import org.wso2.carbon.repository.Collection;
+import org.wso2.carbon.repository.Registry;
+import org.wso2.carbon.repository.Resource;
+import org.wso2.carbon.repository.exceptions.RepositoryException;
 
 /**
  * All query processors should extend this class. All configured query processor implementations

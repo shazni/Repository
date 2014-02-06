@@ -46,29 +46,28 @@ import org.wso2.carbon.registry.core.jdbc.EmbeddedRegistryService;
 import org.wso2.carbon.registry.core.jdbc.handlers.HandlerLifecycleManager;
 import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.service.RegistryProvider;
-import org.wso2.carbon.registry.core.service.RemoteRegistry;
+//import org.wso2.carbon.registry.core.service.RemoteRegistry;
 import org.wso2.carbon.registry.core.session.CurrentSession;
 import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.registry.core.utils.InternalConstants;
 import org.wso2.carbon.registry.core.utils.InternalUtils;
 import org.wso2.carbon.repository.Association;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;
 import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.RegistryService;
-import org.wso2.carbon.repository.config.StaticConfiguration;
 import org.wso2.carbon.repository.RepositoryConstants;
 import org.wso2.carbon.repository.Resource;
 import org.wso2.carbon.repository.ResourcePath;
 import org.wso2.carbon.repository.Tag;
 import org.wso2.carbon.repository.TaggedResourcePath;
+import org.wso2.carbon.repository.config.StaticConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryErrorCodes;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
 import org.wso2.carbon.repository.exceptions.RepositoryResourceNotFoundException;
 import org.wso2.carbon.repository.exceptions.RepositoryUserContentException;
 import org.wso2.carbon.repository.handlers.Handler;
-import org.wso2.carbon.repository.handlers.HandlerManager;
 import org.wso2.carbon.repository.handlers.RequestContext;
-import org.wso2.carbon.repository.utils.RepositoryUtils;
 
 /**
  * This class is used to handle registry calls to mounted registry instances. This plays a key role
@@ -214,27 +213,27 @@ public class MountHandler extends Handler {
             }
 
             InternalUtils.setTrustStoreSystemProperties();
-            try {
-                if (baseContext != null) {
-                    Registry registry = new RemoteRegistry(this.conURL, this.userName, this.password, null) {
-
-                        public RegistryContext getRegistryContext() {
-                            RegistryContext context = RegistryContext.getCloneContext();
-                            context.setReadOnly(readOnly);
-                            context.setCacheEnabled(cacheEnabled);
-                            return context;
-                        }
-                    };
-                    return new UserRegistry(this.userName, CurrentSession.getTenantId(), registry,
-                            baseContext.getRealmService(), baseContext.getRegistryRoot());
-                }
-                return new RemoteRegistry(this.conURL, this.userName, this.password, null);
-
-            } catch (MalformedURLException e) {
-                String msg = "Unable to connect to the remote registry";
-                log.error(msg, e);
-                throw new RepositoryUserContentException(msg, e, RepositoryErrorCodes.INVALID_OR_MALFORMED_URL);
-            }
+//            try {
+//                if (baseContext != null) {
+//                    Registry registry = new RemoteRegistry(this.conURL, this.userName, this.password, null) {
+//
+//                        public RegistryContext getRegistryContext() {
+//                            RegistryContext context = RegistryContext.getCloneContext();
+//                            context.setReadOnly(readOnly);
+//                            context.setCacheEnabled(cacheEnabled);
+//                            return context;
+//                        }
+//                    };
+//                    return new UserRegistry(this.userName, CurrentSession.getTenantId(), registry,
+//                            baseContext.getRealmService(), baseContext.getRegistryRoot());
+//                }
+//                return new RemoteRegistry(this.conURL, this.userName, this.password, null);
+//
+//            } catch (MalformedURLException e) {
+//                String msg = "Unable to connect to the remote registry";
+//                log.error(msg, e);
+//                throw new RepositoryUserContentException(msg, e, RepositoryErrorCodes.INVALID_OR_MALFORMED_URL);
+//            }
         }
         if (registryService == null) {
             RegistryContext context = RegistryContext.getCloneContext();
@@ -353,7 +352,7 @@ public class MountHandler extends Handler {
                 resourceExists = remoteRegistry.resourceExists(actualPath);
                 if (verify && resourceExists) {
                     Resource resource = remoteRegistry.get(actualPath);
-                    if (resource.getProperty(RepositoryConstants.REGISTRY_LINK_RESTORATION) != null) {
+                    if (resource.getProperty(/*RepositoryConstants.*/ InternalConstants.REGISTRY_LINK_RESTORATION) != null) {
                         resourceExists = false;
                     }
                 }
@@ -381,7 +380,8 @@ public class MountHandler extends Handler {
             remoteRegistry = getRegistry(requestContext);
             beginNestedOperation(new HashMap<String, String>());
             try {
-                registryContext = ((RemoteRegistry) remoteRegistry).getRegistryContext();
+//                registryContext = ((RemoteRegistry) remoteRegistry).getRegistryContext();
+            	registryContext = InternalUtils.getRegistryContext(remoteRegistry);
             } finally {
                 endNestedOperation();
             }
@@ -485,7 +485,7 @@ public class MountHandler extends Handler {
 
         ((ResourceImpl) tempResource).addPropertyWithNoUpdate(RepositoryConstants.REGISTRY_LINK, "true");
         ((ResourceImpl) tempResource).removePropertyWithNoUpdate(RepositoryConstants.REGISTRY_NON_RECURSIVE);
-        ((ResourceImpl) tempResource).removePropertyWithNoUpdate(RepositoryConstants.REGISTRY_LINK_RESTORATION);
+        ((ResourceImpl) tempResource).removePropertyWithNoUpdate(/*RepositoryConstants.*/ InternalConstants.REGISTRY_LINK_RESTORATION);
         ((ResourceImpl) tempResource).addPropertyWithNoUpdate(RepositoryConstants.REGISTRY_MOUNT, "true");
         ((ResourceImpl) tempResource).addPropertyWithNoUpdate(RepositoryConstants.REGISTRY_AUTHOR, author);
         if (remote) {
@@ -517,9 +517,11 @@ public class MountHandler extends Handler {
             requestContext.getRegistry().removeLink(requestContext.getResource().getPath());
             if (/*registryContext != null*/ registryService != null) {
 //                HandlerManager hm = registryContext.getHandlerManager();
-            	HandlerManager hm = registryService.getHandlerManager();
-                hm.removeHandler(this,
+//            	HandlerManager hm = registryService.getHandlerManager();
+            	registryService.removeHandler(this,
                         HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+//                hm.removeHandler(this,
+//                        HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
             }
         } else {
             String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
@@ -645,8 +647,8 @@ public class MountHandler extends Handler {
             requestContext.getRegistry().removeLink(this.mountPoint);
             if (/*registryContext != null*/ registryService != null) {
                 //HandlerManager hm = registryContext.getHandlerManager();
-            	HandlerManager hm = registryService.getHandlerManager();
-                hm.removeHandler(this,
+//            	HandlerManager hm = registryService.getHandlerManager();
+            	registryService.removeHandler(this,
                         HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
             }
         } else {
@@ -709,8 +711,8 @@ public class MountHandler extends Handler {
                 requestContext.getRegistry().removeLink(this.mountPoint);
                 if (/*registryContext != null*/ registryService != null) {
 //                    HandlerManager hm = registryContext.getHandlerManager();
-                	HandlerManager hm = registryService.getHandlerManager();
-                    hm.removeHandler(this,
+//                	HandlerManager hm = registryService.getHandlerManager();
+                	registryService.removeHandler(this,
                             HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
                 }
             } else if (fullResourcePath.startsWith(this.mountPoint)) {
@@ -999,187 +1001,6 @@ public class MountHandler extends Handler {
         }
     }
 
-    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
-        if (isInExecution()) {
-            return super.getComments(requestContext);
-        } else {
-            setInExecution(true);
-        }
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-        Comment[] comments;
-        if (subPath != null) {
-            actualPath = subPath + actualPath;
-        }
-        if (actualPath.length() == 0) {
-            actualPath = "/";
-        }
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            beginNestedOperation(actualPath, fullPath);
-            try {
-                comments = remoteRegistry.getComments(actualPath);
-            } finally {
-                endNestedOperation();
-            }
-        } catch (Exception e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not get comments from" + this.conURL);
-            }
-            log.debug("Caused by: ", e);
-            setInExecution(false);
-            return new CommentImpl[1];
-        }
-        requestContext.setProcessingComplete(true);
-        setInExecution(false);
-        return comments;
-    }
-
-    public String addComment(RequestContext requestContext) throws RepositoryException {
-        if (isInExecution()) {
-            return super.addComment(requestContext);
-        } else {
-            setInExecution(true);
-        }
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-        String commentPath;
-        if (subPath != null) {
-            actualPath = subPath + actualPath;
-        }
-        if (actualPath.length() == 0) {
-            actualPath = "/";
-        }
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            beginNestedOperation(actualPath, fullPath);
-            try {
-                commentPath = remoteRegistry.addComment(actualPath, requestContext.getComment());
-            } finally {
-                endNestedOperation();
-            }
-        } catch (Exception e) {
-            String msg = "Could not add comment to the resource in " + this.conURL;
-            if (log.isWarnEnabled()) {
-                log.warn(msg);
-            }
-            setInExecution(false);
-            throw new RepositoryServerContentException(msg, e);
-        }
-        requestContext.setProcessingComplete(true);
-        setInExecution(false);
-        return commentPath;
-    }
-
-    public Tag[] getTags(RequestContext requestContext) throws RepositoryException {
-        if (isInExecution()) {
-            return super.getTags(requestContext);
-        } else {
-            setInExecution(true);
-        }
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-        Tag[] tags;
-        if (subPath != null) {
-            actualPath = subPath + actualPath;
-        }
-        if (actualPath.length() == 0) {
-            actualPath = "/";
-        }
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            beginNestedOperation(actualPath, fullPath);
-            try {
-                tags = remoteRegistry.getTags(actualPath);
-            } finally {
-                endNestedOperation();
-            }
-        } catch (Exception e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not get tags from" + this.conURL);
-            }
-
-            log.debug("Caused by: ", e);
-            setInExecution(false);
-            return new Tag[1];
-        }
-        requestContext.setProcessingComplete(true);
-        setInExecution(false);
-        return tags;
-    }
-
-    public void applyTag(RequestContext requestContext) throws RepositoryException {
-        if (isInExecution()) {
-            super.applyTag(requestContext);
-            return;
-        } else {
-            setInExecution(true);
-        }
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-        if (subPath != null) {
-            actualPath = subPath + actualPath;
-        }
-        if (actualPath.length() == 0) {
-            actualPath = "/";
-        }
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            beginNestedOperation(actualPath, fullPath);
-            try {
-                remoteRegistry.applyTag(actualPath, requestContext.getTag());
-            } finally {
-                endNestedOperation();
-            }
-            requestContext.setProcessingComplete(true);
-        } catch (Exception e) {
-            String msg = "Could not apply tag to the resource in " + this.conURL;
-            if (log.isWarnEnabled()) {
-                log.warn(msg);
-            }
-            throw new RepositoryServerContentException(msg, e);
-        } finally {
-            setInExecution(false);
-        }
-    }
-
-    public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
-            throws RepositoryException {
-        if (isInExecution()) {
-            return super.getResourcePathsWithTag(requestContext);
-        } else {
-            setInExecution(true);
-        }
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            beginNestedOperation(null);
-            try {
-                TaggedResourcePath[] result =
-                        remoteRegistry.getResourcePathsWithTag(requestContext.getTag());
-                if (result != null) {
-                    for(TaggedResourcePath taggedResourcePath : result) {
-                        String path = taggedResourcePath.getResourcePath();
-                        if (subPath != null && subPath.length() != 0 && path.startsWith(subPath)) {
-                                path = this.mountPoint + path.substring(subPath.length());
-                        }
-                        taggedResourcePath.setResourcePath(path);
-                    }
-                }
-                return result;
-            } finally {
-                endNestedOperation();
-            }
-        } catch (Exception e) {
-            String msg = "Could not get resource paths with tag in " + this.conURL;
-            if (log.isWarnEnabled()) {
-                log.warn(msg);
-            }
-            throw new RepositoryServerContentException(msg, e);
-        } finally {
-            setInExecution(false);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public Collection executeQuery(RequestContext requestContext) throws RepositoryException {
         if (isInExecution()) {
@@ -1254,269 +1075,6 @@ public class MountHandler extends Handler {
             collection.setContent(results.toArray(new String[results.size()]));
         }
         return collection;
-    }
-
-    public Association[] getAllAssociations(RequestContext requestContext)
-            throws RepositoryException {
-        if (isInExecution()) {
-            return super.getAllAssociations(requestContext);
-        } else {
-            setInExecution(true);
-        }
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-        if (subPath != null) {
-            actualPath = subPath + actualPath;
-        }
-        if (actualPath.length() == 0) {
-            actualPath = "/";
-        }
-
-        Association[] associations;
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            beginNestedOperation(actualPath, fullPath);
-            try {
-                associations = remoteRegistry.getAllAssociations(actualPath);
-            } finally {
-                endNestedOperation();
-            }
-        } catch (Exception e) {
-            String msg = "Could not get associations of " + this.conURL;
-            if (log.isWarnEnabled()) {
-                log.warn(msg);
-            }
-            log.debug("Caused by: ", e);
-            setInExecution(false);
-            return new Association[1];
-        }
-        String sourcePath;
-        String destinationPath;
-        for (Association association : associations) {
-            sourcePath = association.getSourcePath();
-            destinationPath = association.getDestinationPath();
-            if (subPath != null && subPath.length() != 0) {
-                association.setSourcePath(this.mountPoint + sourcePath.substring(subPath.length()));
-                if (destinationPath.startsWith(subPath)) {
-                    association.setDestinationPath(
-                            this.mountPoint + destinationPath.substring(subPath.length()));
-                }
-            } else {
-                association.setSourcePath(this.mountPoint + sourcePath);
-                // In this case the '/' of the remote instance has been mounted. We are unable to
-                // exactly figure out whether the path was added locally or remotely, since both
-                // the cases would look similar.
-                // We therefor assume that the associations have been added locally (via the remote
-                // link), and treat it as such.
-                association.setDestinationPath(destinationPath);
-            }
-        }
-        requestContext.setProcessingComplete(true);
-        setInExecution(false);
-        return associations;
-    }
-
-    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
-        if (isInExecution()) {
-            return super.getAssociations(requestContext);
-        } else {
-            setInExecution(true);
-        }
-        String fullPath = requestContext.getResourcePath().getPath();
-        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-        if (subPath != null) {
-            actualPath = subPath + actualPath;
-        }
-        if (actualPath.length() == 0) {
-            actualPath = "/";
-        }
-
-        Association[] associations;
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            beginNestedOperation(actualPath, fullPath);
-            try {
-                associations = remoteRegistry
-                        .getAssociations(actualPath, requestContext.getAssociationType());
-            } finally {
-                endNestedOperation();
-            }
-        } catch (Exception e) {
-            String msg = "Could not get associations of " + this.conURL;
-            if (log.isWarnEnabled()) {
-                log.warn(msg);
-            }
-            log.debug(CAUSED_BY_MSG, e);
-            setInExecution(false);
-            return new Association[1];
-        }
-        String sourcePath;
-        String destinationPath;
-        for (Association association : associations) {
-            sourcePath = association.getSourcePath();
-            destinationPath = association.getDestinationPath();
-            if (subPath != null && subPath.length() != 0) {
-                association.setSourcePath(this.mountPoint + sourcePath.substring(subPath.length()));
-                if (destinationPath.startsWith(subPath)) {
-                    association.setDestinationPath(
-                            this.mountPoint + destinationPath.substring(subPath.length()));
-                }
-            } else {
-                association.setSourcePath(this.mountPoint + sourcePath);
-
-                // TODO: We can return two associations for the following scenario, so that one of 
-                // them would be correct. However, this sounds inconsistent.
-
-                // In this case the '/' of the remote instance has been mounted. We are unable to
-                // exactly figure out whether the path was added locally or remotely, since both
-                // the cases would look similar.
-                // We therefor assume that the associations have been added locally (via the remote
-                // link), and treat it as such.
-                association.setDestinationPath(destinationPath);
-            }
-        }
-        requestContext.setProcessingComplete(true);
-        setInExecution(false);
-        return associations;
-    }
-
-    public void addAssociation(RequestContext requestContext) throws RepositoryException {
-        if (isInExecution()) {
-            super.addAssociation(requestContext);
-            return;
-        } else {
-            setInExecution(true);
-        }
-        String fullPath = requestContext.getSourcePath();
-        String fullTargetPath = requestContext.getTargetPath();
-        String targetPath = fullTargetPath;
-        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-        if (targetPath.startsWith(this.mountPoint)) {
-            targetPath = targetPath.substring(this.mountPoint.length());
-            if (subPath != null) {
-                targetPath = subPath + targetPath;
-            }
-        }
-        if (subPath != null) {
-            actualPath = subPath + actualPath;
-        }
-        if (actualPath != null && actualPath.length() == 0) {
-            actualPath = "/";
-        }
-        if (targetPath != null && targetPath.length() == 0) {
-            targetPath = "/";
-        }
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            Map<String, String> pathMap = new HashMap<String, String>();
-            pathMap.put(actualPath, fullPath);
-            pathMap.put(targetPath, fullTargetPath);
-            beginNestedOperation(pathMap);
-            try {
-                remoteRegistry.addAssociation(actualPath, targetPath,
-                        requestContext.getAssociationType());
-            } finally {
-                endNestedOperation();
-            }
-            requestContext.setProcessingComplete(true);
-        } catch (Exception e) {
-            String msg = "Could not add associations for " + this.conURL;
-            if (log.isWarnEnabled()) {
-                log.warn(msg);
-            }
-            log.debug("Caused by: ", e);
-        } finally {
-            setInExecution(false);
-        }
-    }
-
-    public void removeAssociation(RequestContext requestContext) throws RepositoryException {
-        if (isInExecution()) {
-            super.removeAssociation(requestContext);
-            return;
-        } else {
-            setInExecution(true);
-        }
-        String fullPath = requestContext.getSourcePath();
-        String fullTargetPath = requestContext.getTargetPath();
-        String targetPath = fullTargetPath;
-        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-        if (targetPath.startsWith(this.mountPoint)) {
-            targetPath = targetPath.substring(this.mountPoint.length());
-            if (subPath != null) {
-                targetPath = subPath + targetPath;
-            }
-        }
-        if (subPath != null) {
-            actualPath = subPath + actualPath;
-        }
-        if (actualPath != null && actualPath.length() == 0) {
-            actualPath = "/";
-        }
-        if (targetPath != null && targetPath.length() == 0) {
-            targetPath = "/";
-        }
-        try {
-            Registry remoteRegistry = getRegistry(requestContext);
-            Map<String, String> pathMap = new HashMap<String, String>();
-            pathMap.put(actualPath, fullPath);
-            pathMap.put(targetPath, fullTargetPath);
-            beginNestedOperation(pathMap);
-            try {
-                remoteRegistry.removeAssociation(actualPath, targetPath,
-                            requestContext.getAssociationType());
-            } finally {
-                endNestedOperation();
-            }
-            requestContext.setProcessingComplete(true);
-        } catch (Exception e) {
-            String msg = "Could not remove associations for " + this.conURL;
-            if (log.isWarnEnabled()) {
-                log.warn(msg);
-            }
-            log.debug("Caused by: ", e);
-        } finally {
-            setInExecution(false);
-        }
-
-        /*if ((targetPath != null) && (!targetPath.equals(""))) {
-            String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
-
-            // TODO: This seems to be buggy. Add association does not mutate the target path, but
-            // this does.
-            targetPath = targetPath.substring(this.mountPoint.length(), targetPath.length());
-
-            if (subPath != null) {
-                actualPath = subPath + actualPath;
-                targetPath = subPath + targetPath;
-            }
-            if (actualPath.length() == 0) {
-                actualPath = "/";
-            }
-
-            if (targetPath.length() == 0) {
-                targetPath = "/";
-            }
-
-            try {
-                Registry remoteRegistry = getRegistry();
-                beginNestedOperation(actualPath, fullPath);
-                try {
-                    remoteRegistry.removeAssociation(actualPath, targetPath,
-                            requestContext.getAssociationType());
-                } finally {
-                    endNestedOperation();
-                }
-            } catch (Exception e) {
-                String msg = "Could not remove associations for " + this.conURL;
-                if (log.isWarnEnabled()) {
-                    log.warn(msg);
-                }
-                log.debug("Caused by: ", e);
-            }
-            requestContext.setProcessingComplete(true);
-        }*/
-        setInExecution(false);
     }
 
     public void importResource(RequestContext requestContext)
@@ -1851,5 +1409,451 @@ public class MountHandler extends Handler {
         public long getTotalRead() {
             return totalRead;
         }
+    }
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
+    
+    public Comment[] getComments(RequestContext requestContext) throws RepositoryException {
+        if (isInExecution()) {
+            return super.getComments(requestContext);
+        } else {
+            setInExecution(true);
+        }
+        String fullPath = requestContext.getResourcePath().getPath();
+        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+        Comment[] comments;
+        if (subPath != null) {
+            actualPath = subPath + actualPath;
+        }
+        if (actualPath.length() == 0) {
+            actualPath = "/";
+        }
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            beginNestedOperation(actualPath, fullPath);
+            try {
+                comments = remoteRegistry.getComments(actualPath);
+            } finally {
+                endNestedOperation();
+            }
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not get comments from" + this.conURL);
+            }
+            log.debug("Caused by: ", e);
+            setInExecution(false);
+            return new CommentImpl[1];
+        }
+        requestContext.setProcessingComplete(true);
+        setInExecution(false);
+        return comments;
+    }
+
+    public String addComment(RequestContext requestContext) throws RepositoryException {
+        if (isInExecution()) {
+            return super.addComment(requestContext);
+        } else {
+            setInExecution(true);
+        }
+        String fullPath = requestContext.getResourcePath().getPath();
+        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+        String commentPath;
+        if (subPath != null) {
+            actualPath = subPath + actualPath;
+        }
+        if (actualPath.length() == 0) {
+            actualPath = "/";
+        }
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            beginNestedOperation(actualPath, fullPath);
+            try {
+                commentPath = remoteRegistry.addComment(actualPath, requestContext.getComment());
+            } finally {
+                endNestedOperation();
+            }
+        } catch (Exception e) {
+            String msg = "Could not add comment to the resource in " + this.conURL;
+            if (log.isWarnEnabled()) {
+                log.warn(msg);
+            }
+            setInExecution(false);
+            throw new RepositoryServerContentException(msg, e);
+        }
+        requestContext.setProcessingComplete(true);
+        setInExecution(false);
+        return commentPath;
+    }
+
+    public Tag[] getTags(RequestContext requestContext) throws RepositoryException {
+        if (isInExecution()) {
+            return super.getTags(requestContext);
+        } else {
+            setInExecution(true);
+        }
+        String fullPath = requestContext.getResourcePath().getPath();
+        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+        Tag[] tags;
+        if (subPath != null) {
+            actualPath = subPath + actualPath;
+        }
+        if (actualPath.length() == 0) {
+            actualPath = "/";
+        }
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            beginNestedOperation(actualPath, fullPath);
+            try {
+                tags = remoteRegistry.getTags(actualPath);
+            } finally {
+                endNestedOperation();
+            }
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not get tags from" + this.conURL);
+            }
+
+            log.debug("Caused by: ", e);
+            setInExecution(false);
+            return new Tag[1];
+        }
+        requestContext.setProcessingComplete(true);
+        setInExecution(false);
+        return tags;
+    }
+
+    public void applyTag(RequestContext requestContext) throws RepositoryException {
+        if (isInExecution()) {
+            super.applyTag(requestContext);
+            return;
+        } else {
+            setInExecution(true);
+        }
+        String fullPath = requestContext.getResourcePath().getPath();
+        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+        if (subPath != null) {
+            actualPath = subPath + actualPath;
+        }
+        if (actualPath.length() == 0) {
+            actualPath = "/";
+        }
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            beginNestedOperation(actualPath, fullPath);
+            try {
+                remoteRegistry.applyTag(actualPath, requestContext.getTag());
+            } finally {
+                endNestedOperation();
+            }
+            requestContext.setProcessingComplete(true);
+        } catch (Exception e) {
+            String msg = "Could not apply tag to the resource in " + this.conURL;
+            if (log.isWarnEnabled()) {
+                log.warn(msg);
+            }
+            throw new RepositoryServerContentException(msg, e);
+        } finally {
+            setInExecution(false);
+        }
+    }
+
+    public TaggedResourcePath[] getResourcePathsWithTag(RequestContext requestContext)
+            throws RepositoryException {
+        if (isInExecution()) {
+            return super.getResourcePathsWithTag(requestContext);
+        } else {
+            setInExecution(true);
+        }
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            beginNestedOperation(null);
+            try {
+                TaggedResourcePath[] result =
+                        remoteRegistry.getResourcePathsWithTag(requestContext.getTag());
+                if (result != null) {
+                    for(TaggedResourcePath taggedResourcePath : result) {
+                        String path = taggedResourcePath.getResourcePath();
+                        if (subPath != null && subPath.length() != 0 && path.startsWith(subPath)) {
+                                path = this.mountPoint + path.substring(subPath.length());
+                        }
+                        taggedResourcePath.setResourcePath(path);
+                    }
+                }
+                return result;
+            } finally {
+                endNestedOperation();
+            }
+        } catch (Exception e) {
+            String msg = "Could not get resource paths with tag in " + this.conURL;
+            if (log.isWarnEnabled()) {
+                log.warn(msg);
+            }
+            throw new RepositoryServerContentException(msg, e);
+        } finally {
+            setInExecution(false);
+        }
+    }
+    
+    public Association[] getAllAssociations(RequestContext requestContext)
+            throws RepositoryException {
+        if (isInExecution()) {
+            return super.getAllAssociations(requestContext);
+        } else {
+            setInExecution(true);
+        }
+        String fullPath = requestContext.getResourcePath().getPath();
+        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+        if (subPath != null) {
+            actualPath = subPath + actualPath;
+        }
+        if (actualPath.length() == 0) {
+            actualPath = "/";
+        }
+
+        Association[] associations;
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            beginNestedOperation(actualPath, fullPath);
+            try {
+                associations = remoteRegistry.getAllAssociations(actualPath);
+            } finally {
+                endNestedOperation();
+            }
+        } catch (Exception e) {
+            String msg = "Could not get associations of " + this.conURL;
+            if (log.isWarnEnabled()) {
+                log.warn(msg);
+            }
+            log.debug("Caused by: ", e);
+            setInExecution(false);
+            return new Association[1];
+        }
+        String sourcePath;
+        String destinationPath;
+        for (Association association : associations) {
+            sourcePath = association.getSourcePath();
+            destinationPath = association.getDestinationPath();
+            if (subPath != null && subPath.length() != 0) {
+                association.setSourcePath(this.mountPoint + sourcePath.substring(subPath.length()));
+                if (destinationPath.startsWith(subPath)) {
+                    association.setDestinationPath(
+                            this.mountPoint + destinationPath.substring(subPath.length()));
+                }
+            } else {
+                association.setSourcePath(this.mountPoint + sourcePath);
+                // In this case the '/' of the remote instance has been mounted. We are unable to
+                // exactly figure out whether the path was added locally or remotely, since both
+                // the cases would look similar.
+                // We therefor assume that the associations have been added locally (via the remote
+                // link), and treat it as such.
+                association.setDestinationPath(destinationPath);
+            }
+        }
+        requestContext.setProcessingComplete(true);
+        setInExecution(false);
+        return associations;
+    }
+
+    public Association[] getAssociations(RequestContext requestContext) throws RepositoryException {
+        if (isInExecution()) {
+            return super.getAssociations(requestContext);
+        } else {
+            setInExecution(true);
+        }
+        String fullPath = requestContext.getResourcePath().getPath();
+        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+        if (subPath != null) {
+            actualPath = subPath + actualPath;
+        }
+        if (actualPath.length() == 0) {
+            actualPath = "/";
+        }
+
+        Association[] associations;
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            beginNestedOperation(actualPath, fullPath);
+            try {
+                associations = remoteRegistry
+                        .getAssociations(actualPath, requestContext.getAssociationType());
+            } finally {
+                endNestedOperation();
+            }
+        } catch (Exception e) {
+            String msg = "Could not get associations of " + this.conURL;
+            if (log.isWarnEnabled()) {
+                log.warn(msg);
+            }
+            log.debug(CAUSED_BY_MSG, e);
+            setInExecution(false);
+            return new Association[1];
+        }
+        String sourcePath;
+        String destinationPath;
+        for (Association association : associations) {
+            sourcePath = association.getSourcePath();
+            destinationPath = association.getDestinationPath();
+            if (subPath != null && subPath.length() != 0) {
+                association.setSourcePath(this.mountPoint + sourcePath.substring(subPath.length()));
+                if (destinationPath.startsWith(subPath)) {
+                    association.setDestinationPath(
+                            this.mountPoint + destinationPath.substring(subPath.length()));
+                }
+            } else {
+                association.setSourcePath(this.mountPoint + sourcePath);
+
+                // TODO: We can return two associations for the following scenario, so that one of 
+                // them would be correct. However, this sounds inconsistent.
+
+                // In this case the '/' of the remote instance has been mounted. We are unable to
+                // exactly figure out whether the path was added locally or remotely, since both
+                // the cases would look similar.
+                // We therefor assume that the associations have been added locally (via the remote
+                // link), and treat it as such.
+                association.setDestinationPath(destinationPath);
+            }
+        }
+        requestContext.setProcessingComplete(true);
+        setInExecution(false);
+        return associations;
+    }
+
+    public void addAssociation(RequestContext requestContext) throws RepositoryException {
+        if (isInExecution()) {
+            super.addAssociation(requestContext);
+            return;
+        } else {
+            setInExecution(true);
+        }
+        String fullPath = requestContext.getSourcePath();
+        String fullTargetPath = requestContext.getTargetPath();
+        String targetPath = fullTargetPath;
+        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+        if (targetPath.startsWith(this.mountPoint)) {
+            targetPath = targetPath.substring(this.mountPoint.length());
+            if (subPath != null) {
+                targetPath = subPath + targetPath;
+            }
+        }
+        if (subPath != null) {
+            actualPath = subPath + actualPath;
+        }
+        if (actualPath != null && actualPath.length() == 0) {
+            actualPath = "/";
+        }
+        if (targetPath != null && targetPath.length() == 0) {
+            targetPath = "/";
+        }
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            Map<String, String> pathMap = new HashMap<String, String>();
+            pathMap.put(actualPath, fullPath);
+            pathMap.put(targetPath, fullTargetPath);
+            beginNestedOperation(pathMap);
+            try {
+                remoteRegistry.addAssociation(actualPath, targetPath,
+                        requestContext.getAssociationType());
+            } finally {
+                endNestedOperation();
+            }
+            requestContext.setProcessingComplete(true);
+        } catch (Exception e) {
+            String msg = "Could not add associations for " + this.conURL;
+            if (log.isWarnEnabled()) {
+                log.warn(msg);
+            }
+            log.debug("Caused by: ", e);
+        } finally {
+            setInExecution(false);
+        }
+    }
+
+    public void removeAssociation(RequestContext requestContext) throws RepositoryException {
+        if (isInExecution()) {
+            super.removeAssociation(requestContext);
+            return;
+        } else {
+            setInExecution(true);
+        }
+        String fullPath = requestContext.getSourcePath();
+        String fullTargetPath = requestContext.getTargetPath();
+        String targetPath = fullTargetPath;
+        String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+        if (targetPath.startsWith(this.mountPoint)) {
+            targetPath = targetPath.substring(this.mountPoint.length());
+            if (subPath != null) {
+                targetPath = subPath + targetPath;
+            }
+        }
+        if (subPath != null) {
+            actualPath = subPath + actualPath;
+        }
+        if (actualPath != null && actualPath.length() == 0) {
+            actualPath = "/";
+        }
+        if (targetPath != null && targetPath.length() == 0) {
+            targetPath = "/";
+        }
+        try {
+            Registry remoteRegistry = getRegistry(requestContext);
+            Map<String, String> pathMap = new HashMap<String, String>();
+            pathMap.put(actualPath, fullPath);
+            pathMap.put(targetPath, fullTargetPath);
+            beginNestedOperation(pathMap);
+            try {
+                remoteRegistry.removeAssociation(actualPath, targetPath,
+                            requestContext.getAssociationType());
+            } finally {
+                endNestedOperation();
+            }
+            requestContext.setProcessingComplete(true);
+        } catch (Exception e) {
+            String msg = "Could not remove associations for " + this.conURL;
+            if (log.isWarnEnabled()) {
+                log.warn(msg);
+            }
+            log.debug("Caused by: ", e);
+        } finally {
+            setInExecution(false);
+        }
+
+        /*if ((targetPath != null) && (!targetPath.equals(""))) {
+            String actualPath = fullPath.substring(this.mountPoint.length(), fullPath.length());
+
+            // TODO: This seems to be buggy. Add association does not mutate the target path, but
+            // this does.
+            targetPath = targetPath.substring(this.mountPoint.length(), targetPath.length());
+
+            if (subPath != null) {
+                actualPath = subPath + actualPath;
+                targetPath = subPath + targetPath;
+            }
+            if (actualPath.length() == 0) {
+                actualPath = "/";
+            }
+
+            if (targetPath.length() == 0) {
+                targetPath = "/";
+            }
+
+            try {
+                Registry remoteRegistry = getRegistry();
+                beginNestedOperation(actualPath, fullPath);
+                try {
+                    remoteRegistry.removeAssociation(actualPath, targetPath,
+                            requestContext.getAssociationType());
+                } finally {
+                    endNestedOperation();
+                }
+            } catch (Exception e) {
+                String msg = "Could not remove associations for " + this.conURL;
+                if (log.isWarnEnabled()) {
+                    log.warn(msg);
+                }
+                log.debug("Caused by: ", e);
+            }
+            requestContext.setProcessingComplete(true);
+        }*/
+        setInExecution(false);
     }
 }

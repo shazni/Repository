@@ -17,17 +17,15 @@
 package org.wso2.carbon.registry.core.service;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.axiom.om.OMElement;
+import org.w3c.dom.Element;
+import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.repository.Collection;
 import org.wso2.carbon.repository.Comment;
 import org.wso2.carbon.repository.Registry;
 import org.wso2.carbon.repository.Resource;
-import org.wso2.carbon.repository.config.RemoteConfiguration;
 import org.wso2.carbon.repository.exceptions.RepositoryException;
-import org.wso2.carbon.repository.handlers.HandlerManager;
-import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.user.core.service.RealmService;
 
@@ -40,6 +38,83 @@ import org.wso2.carbon.user.core.service.RealmService;
  */
 @SuppressWarnings("unused")
 public interface RegistryService extends org.wso2.carbon.repository.RegistryService {
+	
+    /**
+     * This will return a realm specific to the tenant.
+     *
+     * @param tenantId tenant id of the user tenant. The tenant id '0', corresponds to the super
+     *                 tenant of the system, whereas identifiers greater than '0' correspond to
+     *                 valid tenants.
+     *
+     * @return UserRealm instance associated with the tenant id.
+     * @throws RepositoryException if an error occurs
+     */
+    UserRealm getUserRealm(int tenantId) throws RepositoryException;
+    
+    void setReadOnly(boolean readOnly);
+    
+    boolean isReadOnly();
+    
+    List<String> getRemoteInstanceIds();
+    
+    boolean isCacheEnabled() ;
+
+    /**
+     * Set whether the registry caching is enabled or not.
+     *
+     * @param enableCache the enable-cache flag
+     */
+    void setCacheEnabled(boolean enableCache) ;
+    
+    boolean isClone();
+    
+    void setIsClone(boolean isClone);
+    
+    RealmService getRealmService();
+    
+    boolean updateHandler(Element configElement, Registry registryContext, String lifecyclePhase) throws RepositoryException ;
+    
+    /**
+     * Method to determine whether a system resource (or collection) path has been registered.
+     *
+     * @param absolutePath the absolute path of the system resource (or collection)
+     *
+     * @return true if the system resource (or collection) path is registered or false if not.
+     */
+    boolean isSystemResourcePathRegistered(String absolutePath) ;
+
+    /**
+     * Method to register a system resource (or collection) path.
+     *
+     * @param absolutePath the absolute path of the system resource (or collection)
+     */
+    void registerSystemResourcePath(String absolutePath) ;
+    
+    void setRegistryRoot(String registryRoot);
+    
+    String getRegistryRoot();
+    
+    void setServicePath(String storagePath);
+    
+    String getServicePath();
+    
+//    HandlerManager getHandlerManager();
+    
+    boolean isNoCachePath(String path);
+
+    /**
+     * Method to register a no-cache path. If caching is disabled for a collection, all downstream
+     * resources and collections won't be cached.
+     *
+     * @param path the path of a resource (or collection) for which caching is disabled.
+     */
+    void registerNoCachePath(String path) ;
+    
+    Collection newCollection(String[] paths);
+    
+    Resource newResource();
+    
+    // Following methods are deprecated and eventually move out of the code ---------------------------------------------------------
 
     /**
      * Creates a UserRegistry instance for anonymous user. Permissions set for anonymous user will
@@ -204,18 +279,6 @@ public interface RegistryService extends org.wso2.carbon.repository.RegistryServ
      */
     @Deprecated UserRegistry getUserRegistry(String userName, int tenantId, String chroot)
             throws RepositoryException;
-
-    /**
-     * This will return a realm specific to the tenant.
-     *
-     * @param tenantId tenant id of the user tenant. The tenant id '0', corresponds to the super
-     *                 tenant of the system, whereas identifiers greater than '0' correspond to
-     *                 valid tenants.
-     *
-     * @return UserRealm instance associated with the tenant id.
-     * @throws RepositoryException if an error occurs
-     */
-    UserRealm getUserRealm(int tenantId) throws RepositoryException;
 
     ////////////////////////////////////////////////////////
     // According to the registry separation concept, there
@@ -589,68 +652,5 @@ public interface RegistryService extends org.wso2.carbon.repository.RegistryServ
      */
     UserRegistry getGovernanceUserRegistry(String userName, int tenantId) throws RepositoryException;
     
-    void setRegistryRoot(String registryRoot);
-    
-    String getRegistryRoot();
-    
-    void setServicePath(String storagePath);
-    
-    String getServicePath();
-    
-    HandlerManager getHandlerManager();
-    
-    boolean isNoCachePath(String path);
-
-    /**
-     * Method to register a no-cache path. If caching is disabled for a collection, all downstream
-     * resources and collections won't be cached.
-     *
-     * @param path the path of a resource (or collection) for which caching is disabled.
-     */
-    void registerNoCachePath(String path) ;
-    
-    Collection newCollection(String[] paths);
-    
-    Resource newResource();
-    
     Comment newComment(String comment);
-    
-    void setReadOnly(boolean readOnly);
-    
-    boolean isReadOnly();
-    
-    List<RemoteConfiguration> getRemoteInstances();
-    
-    boolean isCacheEnabled() ;
-
-    /**
-     * Set whether the registry caching is enabled or not.
-     *
-     * @param enableCache the enable-cache flag
-     */
-    void setCacheEnabled(boolean enableCache) ;
-    
-    boolean isClone();
-    
-    void setIsClone(boolean isClone);
-    
-    RealmService getRealmService();
-    
-    boolean updateHandler(OMElement configElement, Registry registryContext, String lifecyclePhase) throws RepositoryException ;
-    
-    /**
-     * Method to determine whether a system resource (or collection) path has been registered.
-     *
-     * @param absolutePath the absolute path of the system resource (or collection)
-     *
-     * @return true if the system resource (or collection) path is registered or false if not.
-     */
-    boolean isSystemResourcePathRegistered(String absolutePath) ;
-
-    /**
-     * Method to register a system resource (or collection) path.
-     *
-     * @param absolutePath the absolute path of the system resource (or collection)
-     */
-    void registerSystemResourcePath(String absolutePath) ;
 }

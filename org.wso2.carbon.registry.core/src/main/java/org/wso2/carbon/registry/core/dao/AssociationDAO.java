@@ -22,6 +22,7 @@ import org.wso2.carbon.repository.exceptions.RepositoryException;
 /**
  * Data Access Object for Associations
  */
+@Deprecated
 public interface AssociationDAO {
 
     /**
