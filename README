@@ -1,0 +1,12 @@
+Repository API/SPI and Implementation
+
+This is the Repository API/SPI and implementation for the carbon-kernel of C5.
+
+It contains the API, SPI and a JDBC implementation of the API/SPI. 
+
+Note that API is still subjected to change. The implementation is almost complete an we provide no guarantee in using in this form
+as it's still subjected to change. There are few more additions and modifications to be done.
+
+Hope this will be useful in some form to develop your middleware application.
+
+Thanks
