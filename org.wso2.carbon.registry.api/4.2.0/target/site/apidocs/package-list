@@ -1,7 +1,0 @@
-org.wso2.carbon.repository
-org.wso2.carbon.repository.config
-org.wso2.carbon.repository.dataaccess
-org.wso2.carbon.repository.exceptions
-org.wso2.carbon.repository.handlers
-org.wso2.carbon.repository.handlers.filters
-org.wso2.carbon.repository.utils
