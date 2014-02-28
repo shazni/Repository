@@ -20,7 +20,6 @@ import org.wso2.carbon.repository.api.Collection;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.handlers.Handler;
 
 /**
  * Base class of all handler implementations. Provides the methods that handlers should implement.

@@ -61,7 +61,6 @@ import org.wso2.carbon.repository.core.utils.DumpWriter;
 import org.wso2.carbon.repository.core.utils.InternalConstants;
 import org.wso2.carbon.repository.core.utils.InternalUtils;
 import org.wso2.carbon.repository.core.utils.MediaTypesUtils;
-import org.wso2.carbon.repository.exceptions.org;
 import org.wso2.carbon.repository.spi.dao.ResourceDAO;
 import org.wso2.carbon.repository.spi.dao.ResourceVersionDAO;
 import org.wso2.carbon.repository.spi.dataaccess.DataAccessManager;

@@ -27,7 +27,7 @@ import org.wso2.carbon.repository.api.Collection;
 import org.wso2.carbon.repository.api.Repository;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.ResourcePath;
-import org.wso2.carbon.repository.handlers.Handler;
+import org.wso2.carbon.repository.api.handlers.Handler;
 
 /**
  * Objects of this class contains the information about the current request to the repository. All

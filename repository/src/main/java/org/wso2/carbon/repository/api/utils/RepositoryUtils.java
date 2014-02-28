@@ -38,8 +38,6 @@ import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.StatisticsCollector;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.exceptions.RepositoryUserContentException;
-import org.wso2.carbon.repository.api.utils.RepositoryUtils;
-import org.wso2.carbon.repository.exceptions.org;
 
 /**
  * This class contains a set of useful utility methods used by the Repository Kernel. These can also
