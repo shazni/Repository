@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.wso2.carbon.registry.core.test.jdbc.PathsTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.245 sec

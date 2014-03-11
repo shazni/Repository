@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.TransactionsTest" tests="6" failures="0" timestamp="11 Mar 2014 06:15:59 GMT" time="2.033" errors="0">
-  <testcase name="testFailedMultiOperationTransaction" time="0.038" classname="org.wso2.carbon.registry.core.test.jdbc.TransactionsTest"/>
-  <testcase name="testFailedSimpleTransaction" time="0.018" classname="org.wso2.carbon.registry.core.test.jdbc.TransactionsTest"/>
-  <testcase name="testNestedFailedMultiOperationTransaction" time="0.014" classname="org.wso2.carbon.registry.core.test.jdbc.TransactionsTest"/>
-  <testcase name="testNestedSuccessfulMultiOperationTransaction" time="0.015" classname="org.wso2.carbon.registry.core.test.jdbc.TransactionsTest"/>
-  <testcase name="testSuccessfulMultiOperationTransaction" time="0.017" classname="org.wso2.carbon.registry.core.test.jdbc.TransactionsTest"/>
-  <testcase name="testSuccessfulSimpleTransaction" time="0.012" classname="org.wso2.carbon.registry.core.test.jdbc.TransactionsTest"/>
-</testsuite>

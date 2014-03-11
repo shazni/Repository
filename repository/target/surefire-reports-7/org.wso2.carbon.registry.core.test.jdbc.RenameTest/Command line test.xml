@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.RenameTest" tests="4" failures="0" timestamp="11 Mar 2014 06:15:23 GMT" time="1.96" errors="0">
-  <testcase name="testGeneralCollectionRename" time="0.057" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest"/>
-  <testcase name="testGeneralResourceRename" time="0.02" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest"/>
-  <testcase name="testRootLevelCollectionRename" time="0.034" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest"/>
-  <testcase name="testRootLevelResourceRename" time="0.02" classname="org.wso2.carbon.registry.core.test.jdbc.RenameTest"/>
-</testsuite>
