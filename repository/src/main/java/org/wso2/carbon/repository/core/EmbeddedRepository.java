@@ -66,6 +66,7 @@ import org.wso2.carbon.repository.core.utils.DumpReader;
 import org.wso2.carbon.repository.core.utils.InternalConstants;
 import org.wso2.carbon.repository.core.utils.InternalUtils;
 import org.wso2.carbon.repository.core.utils.VersionedPath;
+import org.wso2.carbon.repository.spi.ResourceActivity;
 import org.wso2.carbon.repository.spi.dao.LogsDAO;
 import org.wso2.carbon.repository.spi.dao.ResourceDAO;
 import org.wso2.carbon.repository.spi.dataaccess.DataAccessManager;
@@ -369,10 +370,8 @@ public class EmbeddedRepository implements Repository {
             transactionSucceeded = true;
             
             if (resource != null) {
-                ((ResourceImpl) resource).setUserName(userName);
                 ((ResourceImpl) resource).setTenantId(tenantId);
-
-                resource = (ResourceImpl) chrootWrapper.getOutResource(resource);
+                resource = chrootWrapper.getOutResource(resource);
             }
 
             return resource;
@@ -1141,7 +1140,6 @@ public class EmbeddedRepository implements Repository {
             
             if (output != null) {
                 ResourceImpl resourceImpl = (ResourceImpl) output;
-                resourceImpl.setUserName(userName);
                 resourceImpl.setTenantId(tenantId);
 
                 output = chrootWrapper.filterSearchResult(output);
@@ -1179,20 +1177,20 @@ public class EmbeddedRepository implements Repository {
             // start the transaction
             beginTransaction();
 
-            List<?> logEntryList = logsDAO.getLogs(resourcePath, action, userName, from, to, recentFirst);
+            List<Activity> logEntryList = logsDAO.getLogs(resourcePath, action, userName, from, to, recentFirst);
 
             // We go on two iterations to avoid null values in the following array. Need better way
             // in a single iteration
             for (int i = logEntryList.size() - 1; i >= 0; i--) {
-            	Activity logEntry = (Activity) logEntryList.get(i);
+            	ResourceActivity logEntry = (ResourceActivity) logEntryList.get(i);
                 if (logEntry == null) {
                     logEntryList.remove(i);
                 }
             }
 
-            Activity[] logEntries = new Activity[logEntryList.size()];
+            ResourceActivity[] logEntries = new ResourceActivity[logEntryList.size()];
             for (int i = 0; i < logEntryList.size(); i++) {
-                logEntries[i] = (Activity) logEntryList.get(i);
+                logEntries[i] = (ResourceActivity) logEntryList.get(i);
             }
 
             transactionSucceeded = true;
@@ -1283,8 +1281,7 @@ public class EmbeddedRepository implements Repository {
             } finally {
                 CurrentContext.removeAttribute(ResourceStorer.IS_LOGGING_ACTIVITY);
             }
-            
-            resource.discard();
+
             HandlerManager hm = registryContext.getHandlerManager();
 
             ResourcePath resourcePath = new ResourcePath(path);
@@ -1371,8 +1368,6 @@ public class EmbeddedRepository implements Repository {
                 CurrentContext.removeAttribute(ResourceStorer.IS_LOGGING_ACTIVITY);
             }
             
-            resource.discard();
-
             HandlerManager hm = registryContext.getHandlerManager();
 
             ResourcePath resourcePath = new ResourcePath(path);
@@ -1484,7 +1479,7 @@ public class EmbeddedRepository implements Repository {
                     if (repository.resourceExists(path)) {
                         Resource r = repository.get(path);
                         if (!Boolean.toString(true).equals(
-                                r.getProperty(InternalConstants.REGISTRY_EXISTING_RESOURCE))) {
+                                r.getPropertyValue(InternalConstants.REGISTRY_EXISTING_RESOURCE))) {
                             repository.delete(path);
                         }
                     }
@@ -1762,8 +1757,8 @@ public class EmbeddedRepository implements Repository {
 				Cache<RepositoryCacheKey, CacheResource> cache = getCache();
 	            if ((ghostResourceObject = cache.get(registryCacheKey)) == null) {
 	                resource = getResource(path);
-	                if (resource.getProperty(RepositoryConstants.REGISTRY_LINK) == null ||
-	                        resource.getProperty(RepositoryConstants.REGISTRY_MOUNT) != null) {
+	                if (resource.getPropertyValue(RepositoryConstants.REGISTRY_LINK) == null ||
+	                        resource.getPropertyValue(RepositoryConstants.REGISTRY_MOUNT) != null) {
 	                    cache.put(registryCacheKey, new CacheResource<Resource>(resource));
 	                }
 	            } else {
@@ -1773,8 +1768,8 @@ public class EmbeddedRepository implements Repository {
 	                
 	                if (resource == null) {
 	                    resource = getResource(path);
-	                    if (resource.getProperty(RepositoryConstants.REGISTRY_LINK) == null ||
-	                            resource.getProperty(RepositoryConstants.REGISTRY_MOUNT) != null) {
+	                    if (resource.getPropertyValue(RepositoryConstants.REGISTRY_LINK) == null ||
+	                            resource.getPropertyValue(RepositoryConstants.REGISTRY_MOUNT) != null) {
 	                        ghostResource.setResource(resource);
 	                    }
 	                }
@@ -1791,7 +1786,6 @@ public class EmbeddedRepository implements Repository {
 		                  }
 		          	}
 	          	
-		          	((ResourceImpl) resource).setUserName(userName);
 		          	((ResourceImpl) resource).setTenantId(tenantId);
 
 		          	resource = (ResourceImpl) chrootWrapper.getOutResource(resource);
@@ -1812,7 +1806,6 @@ public class EmbeddedRepository implements Repository {
 		                  }
 		          	}
 		          	
-		          	((ResourceImpl) resource).setUserName(userName);
 		          	((ResourceImpl) resource).setTenantId(tenantId);
 
 		          	resource = (ResourceImpl) chrootWrapper.getOutResource(resource);
@@ -1851,7 +1844,7 @@ public class EmbeddedRepository implements Repository {
 				Cache<RepositoryCacheKey, CacheResource> cache = getCache();
 	            if (!cache.containsKey(registryCacheKey)) {
 	                collection = getCollection(path, start, pageSize);
-	                if (collection.getProperty(RepositoryConstants.REGISTRY_LINK) == null) {
+	                if (collection.getPropertyValue(RepositoryConstants.REGISTRY_LINK) == null) {
 	                    cache.put(registryCacheKey, new CacheResource<Resource>(collection));
 	                }
 	            } else {
@@ -1860,7 +1853,7 @@ public class EmbeddedRepository implements Repository {
 	                collection = (Collection) ghostResource.getResource();
 	                if (collection == null) {
 	                    collection = getCollection(path, start, pageSize);
-	                    if (collection.getProperty(RepositoryConstants.REGISTRY_LINK) == null) {
+	                    if (collection.getPropertyValue(RepositoryConstants.REGISTRY_LINK) == null) {
 	                        ghostResource.setResource(collection);
 	                    }
 	                }
@@ -1877,7 +1870,6 @@ public class EmbeddedRepository implements Repository {
 	            	
 					// collection implementation extends from the resource implementation.
 					ResourceImpl resourceImpl = (ResourceImpl) collection;
-					resourceImpl.setUserName(userName);
 					resourceImpl.setTenantId(tenantId);
 
 					collection = chrootWrapper.getOutCollection(collection);
@@ -1898,7 +1890,6 @@ public class EmbeddedRepository implements Repository {
 				    	
 					// collection implementation extends from the resource implementation.
 					ResourceImpl resourceImpl = (ResourceImpl) collection;
-					resourceImpl.setUserName(userName);
 					resourceImpl.setTenantId(tenantId);
 	
 					collection = chrootWrapper.getOutCollection(collection);

@@ -44,7 +44,6 @@ public class Worker4 extends Worker {
                 r.setProperty("p1", "v1");
                 r.setProperty("p2", "v2");
                 registry.put(rPath, r);
-                r.discard();
                 Thread.yield();
 
                 // read and update the resource
@@ -55,7 +54,6 @@ public class Worker4 extends Worker {
                 rr.setContent(content2);
                 rr.setProperty("p1", "vvv1");
                 registry.put(rPath, rr);
-                rr.discard();
                 Thread.yield();
 
                 // copy the resource
@@ -67,7 +65,6 @@ public class Worker4 extends Worker {
                 
                 if (versions.length > 0) {
                     Resource rVersion = registry.get(versions[0]);
-                    rVersion.discard();
                     registry.restoreVersion(versions[0]);
                 }
                 

@@ -75,13 +75,4 @@ public interface Collection extends Resource {
      * @throws 		RepositoryException if the operation fails.
      */
     int getChildCount() throws RepositoryException;
-
-//    /**
-//     * Method to set the absolute paths of the children belonging to this collection. Absolute paths
-//     * begin from the ROOT collection.
-//     *
-//     * @param paths the array of absolute paths of the children
-//     * @throws 		RepositoryException if the operation fails.
-//     */
-//    void setChildren(String[] paths) throws RepositoryException;
 }

@@ -62,7 +62,7 @@ public class StaticConfigurationTrueTest extends BaseTestCase {
         registry.put("/testProperties", r);
 
         r = registry.get("/testProperties");
-        Assert.assertEquals(r.getProperties().size(), 3);
+        Assert.assertEquals(r.getPropertyKeys().size(), 3);
 
         // retrieve versions
         String []versionPaths = registry.getVersions("/testProperties");
@@ -73,14 +73,14 @@ public class StaticConfigurationTrueTest extends BaseTestCase {
 
         r = registry.get("/testProperties");
         // still there should be a resource
-        Assert.assertEquals(r.getProperties().size(), 2);
-        Assert.assertEquals(r.getProperty("key1"), "value1");
+        Assert.assertEquals(r.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r.getPropertyValue("key1"), "value1");
 
         // again getting the latest version
         r = registry.get(versionPaths[0]);
         // still there should be a resource
-        Assert.assertEquals(r.getProperties().size(), 3);
-        Assert.assertEquals(r.getProperty("key1"), "value1dup");
+        Assert.assertEquals(r.getPropertyKeys().size(), 3);
+        Assert.assertEquals(r.getPropertyValue("key1"), "value1dup");
 
         // same should be done to collections as well
         Resource c = registry.newCollection();
@@ -98,7 +98,7 @@ public class StaticConfigurationTrueTest extends BaseTestCase {
         // to create the version
         registry.createVersion("/testPropertiesC");
         c = registry.get("/testPropertiesC");
-        Assert.assertEquals(c.getProperties().size(), 3);
+        Assert.assertEquals(c.getPropertyKeys().size(), 3);
 
         // retrieve versions
         versionPaths = registry.getVersions("/testPropertiesC");
@@ -109,12 +109,12 @@ public class StaticConfigurationTrueTest extends BaseTestCase {
 
         c = registry.get("/testPropertiesC");
         // still there should be a resource
-        Assert.assertEquals(c.getProperties().size(), 2);
-        Assert.assertEquals(c.getProperty("key1"), "value1");
+        Assert.assertEquals(c.getPropertyKeys().size(), 2);
+        Assert.assertEquals(c.getPropertyValue("key1"), "value1");
 
         c = registry.get(versionPaths[0]);
         // still there should be a resource
-        Assert.assertEquals(c.getProperties().size(), 3);
-        Assert.assertEquals(c.getProperty("key1"), "value1dup");
+        Assert.assertEquals(c.getPropertyKeys().size(), 3);
+        Assert.assertEquals(c.getPropertyValue("key1"), "value1dup");
     }
 }

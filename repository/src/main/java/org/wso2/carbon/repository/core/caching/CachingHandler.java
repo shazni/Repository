@@ -232,8 +232,8 @@ public class CachingHandler extends Handler {
     @SuppressWarnings("unchecked")
     public void put(HandlerContext requestContext) throws RepositoryException {
         Resource resource = requestContext.getResource();
-        if (resource.getProperty(RepositoryConstants.REGISTRY_LINK) != null) {
-            String path = resource.getProperty(RepositoryConstants.REGISTRY_REAL_PATH);
+        if (resource.getPropertyValue(RepositoryConstants.REGISTRY_LINK) != null) {
+            String path = resource.getPropertyValue(RepositoryConstants.REGISTRY_REAL_PATH);
             if (path != null) {
                 path = path.substring(path.indexOf("/resourceContent?path=") +
                         "/resourceContent?path=".length());

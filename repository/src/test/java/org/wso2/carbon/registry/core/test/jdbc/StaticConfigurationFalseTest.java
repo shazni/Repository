@@ -24,7 +24,6 @@ import org.wso2.carbon.repository.api.Repository;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.core.config.StaticConfiguration;
-import org.wso2.carbon.user.api.RealmConfiguration;
 
 public class StaticConfigurationFalseTest extends BaseTestCase {
     protected static Repository registry = null;
@@ -61,15 +60,15 @@ public class StaticConfigurationFalseTest extends BaseTestCase {
         registry.put("/testProperties", r);
 
         r = registry.get("/testProperties");
-        Assert.assertEquals(r.getProperties().size(), 2);
+        Assert.assertEquals(r.getPropertyKeys().size(), 2);
         // retrieve versions
         String []versionPaths = registry.getVersions("/testProperties");
 
         Assert.assertEquals(versionPaths.length, 2);
         r = registry.get(versionPaths[1]);
         // still there should be a resource
-        Assert.assertEquals(r.getProperties().size(), 2);
-        Assert.assertEquals(r.getProperty("key2"), "value2");
+        Assert.assertEquals(r.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r.getPropertyValue("key2"), "value2");
 
         // same should be done to collections as well
         Resource c = registry.newCollection();
@@ -88,7 +87,7 @@ public class StaticConfigurationFalseTest extends BaseTestCase {
         Assert.assertEquals(versionPaths.length, 2);
         c = registry.get(versionPaths[1]);
         // still there should be a resource
-        Assert.assertEquals(c.getProperties().size(), 2);
-        Assert.assertEquals(c.getProperty("key2"), "value2");
+        Assert.assertEquals(c.getPropertyKeys().size(), 2);
+        Assert.assertEquals(c.getPropertyValue("key2"), "value2");
     }
 }

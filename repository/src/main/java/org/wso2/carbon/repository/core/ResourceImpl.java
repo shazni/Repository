@@ -18,10 +18,7 @@ package org.wso2.carbon.repository.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import org.wso2.carbon.repository.api.Repository;
 import org.wso2.carbon.repository.api.RepositoryConstants;
@@ -58,11 +55,6 @@ import org.wso2.carbon.repository.spi.dataaccess.DataAccessManager;
  * fileBasedContentID is set (fileBasedContentID = dbBasedContentID).
  */
 public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
-
-    /**
-     * UUID to identify the resource. currently this is same as the path
-     */
-    protected String id;
 
     /**
      * Snapshot for which this resource instance is created. Any resource and all its version-ed
@@ -260,7 +252,6 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
         if (dataAccessManager != null) {
             this.resourceDAO = dataAccessManager.getDAOManager().getResourceDAO();
         }
-        this.id = null;
         this.snapshotID = -1;
         this.matchingSnapshotID = -1;
     }
@@ -272,7 +263,6 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
      * @param resourceDO the resource data object.
      */
     public ResourceImpl(String path, ResourceDO resourceDO) {
-        this.id = path;
         this.snapshotID = -1;
         this.versionNumber = resourceDO.getVersion();
         this.authorUserName = resourceDO.getAuthor();
@@ -281,6 +271,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
         this.lastModified = resourceDO.getLastUpdatedOn();
         this.description = resourceDO.getDescription();
         this.path = path;
+        this.name = RepositoryUtils.getResourceName(path);
         this.matchingSnapshotID = -1;
         this.mediaType = resourceDO.getMediaType();
         this.parentPath = RepositoryUtils.getParentPath(path);
@@ -313,7 +304,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
      * @param resource the resource of which the copy is created.
      */
     public ResourceImpl(ResourceImpl resource) {
-        this.id = resource.id;
+        this.name = resource.name;
         this.snapshotID = resource.snapshotID;
         this.versionNumber = resource.versionNumber;
         this.authorUserName = resource.authorUserName;
@@ -380,39 +371,12 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
     }
 
     /**
-     * Method to set the user name.
-     *
-     * @param userName the user name.
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    /**
      * Method to set the tenant id associated with the resource.
      *
      * @param tenantId the tenant id.
      */
     public void setTenantId(int tenantId) {
         this.tenantId = tenantId;
-    }
-
-    /**
-     * The Resource ID, In the default implementation this returns the path.
-     *
-     * @return the resource id
-     */
-    public String getId() {
-        return path;
-    }
-
-    /**
-     * Method to set the resource id, currently it will just set the path.
-     *
-     * @param id the path
-     */
-    public void setId(String id) {
-        this.path = id;
     }
 
     /**
@@ -543,27 +507,21 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
     }
 
     /**
-     * Method to get the matching snapshot id.
+     * Get the resource name.
      *
-     * @return the snapshot id.
+     * @return the resource name.
      */
-    public long getMatchingSnapshotID() {
-        return matchingSnapshotID;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Method to set the matching snapshot id.
+     * Method to set the name.
      *
-     * @param matchingSnapshotID the snapshot id.
+     * @param name the name.
      */
-    public void setMatchingSnapshotID(long matchingSnapshotID) {
-        this.matchingSnapshotID = matchingSnapshotID;
-
-        if (matchingSnapshotID == -1) {
-            permanentPath = null;
-        } else {
-            permanentPath = path + RepositoryConstants.URL_SEPARATOR + "version:" + matchingSnapshotID;
-        }
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -652,7 +610,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
      *
      * @return the property value.
      */
-    public String getProperty(String key) {
+    public String getPropertyValue(String key) {
         List<String> propValues = getPropertyValues(key);
         
         if (propValues == null) {
@@ -685,8 +643,8 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
      *
      * @return All properties of the resource.
      */
-    public Properties getProperties() {
-        return properties;
+    public List<String> getPropertyKeys() {
+        return (List<String>) Collections.list(properties.propertyNames());
     }
 
     /**
@@ -708,39 +666,6 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
     public void removePropertyWithNoUpdate(String key) {
         if (key != null) {
             properties.remove(key);
-        }
-    }
-
-    /**
-     * Remove property value.
-     *
-     * @param key   the property key.
-     * @param value the property value.
-     */
-    public void removePropertyValue(String key, String value) {
-        List<String> propValues = getPropertyValues(key);
-
-        if (propValues != null) {
-            propValues.remove(value);
-            setPropertiesModified(true);
-        }
-    }
-
-    /**
-     * Edit property value.
-     *
-     * @param key      the key.
-     * @param oldValue the old value.
-     * @param newValue the new value.
-     */
-    public void editPropertyValue(String key, String oldValue, String newValue) {
-
-        List<String> propValues = getPropertyValues(key);
-
-        if (propValues != null) {
-            propValues.remove(oldValue);
-            propValues.add(newValue);
-            setPropertiesModified(true);
         }
     }
 
@@ -816,7 +741,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
      *
      * @param properties the properties.
      */
-    public void setProperties(Properties properties) {
+    private void setProperties(Properties properties) {
         if (properties != null) {
             this.properties = properties;
         }
@@ -1057,13 +982,6 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
     }
 
     /**
-     * Method to discard the resource
-     */
-    public void discard() {
-
-    }
-
-    /**
      * Set the session information.
      */
     protected void setContextInformation() {
@@ -1098,24 +1016,6 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
     }
 
     /**
-     * Get the resource name.
-     *
-     * @return the resource name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Method to set the name.
-     *
-     * @param name the name.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
      * Get the resource id implementation instance.
      *
      * @return the resource id.
@@ -1124,11 +1024,11 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
         ResourceIDImpl resourceIDImpl = new ResourceIDImpl();
         resourceIDImpl.setCollection(this instanceof CollectionImpl);
         resourceIDImpl.setPathID(pathID);
-        
+
         if (name == null && !(this instanceof CollectionImpl)) {
             name = RepositoryUtils.getResourceName(path);
         }
-        
+
         resourceIDImpl.setName(name);
         resourceIDImpl.setPath(path);
 
@@ -1142,7 +1042,6 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
      */
     public ResourceDO getResourceDO() {
         ResourceDO resourceDO = new ResourceDO();
-        
         resourceDO.setPathID(this.getPathID());
         resourceDO.setName(this.name);
         resourceDO.setVersion(this.versionNumber);
@@ -1157,7 +1056,6 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
         
         return resourceDO;
     }
-
 
     /**
      * Create a shallow copy of the resource.
@@ -1181,7 +1079,7 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
      * @throws RepositoryException throws if the operation fail.
      */
     protected ResourceImpl fillResourceCopy(ResourceImpl resource) throws RepositoryException {
-        resource.setId(this.id);
+        resource.setName(name);
         resource.setSnapshotID(this.snapshotID);
         resource.setVersionNumber(this.versionNumber);
         resource.setAuthorUserName(this.authorUserName);
@@ -1205,10 +1103,8 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
         }
         
         resource.setDataAccessManager(this.dataAccessManager);
-        resource.setUserName(this.userName);
         resource.setTenantId(this.tenantId);
         resource.setPathID(this.pathID);
-        resource.setName(this.name);
         resource.setUUID(this.uuid);
 
         // having these two fields at the end is a must, as above field have an affect of them
@@ -1217,4 +1113,30 @@ public class ResourceImpl implements org.wso2.carbon.repository.api.Resource {
 
         return resource;
     }
+
+    /**
+     * Method to get the matching snapshot id.
+     *
+     * @return the snapshot id.
+     */
+    public long getMatchingSnapshotID() {
+        return matchingSnapshotID;
+    }
+
+    /**
+     * Method to set the matching snapshot id.
+     *
+     * @param matchingSnapshotID the snapshot id.
+     */
+    public void setMatchingSnapshotID(long matchingSnapshotID) {
+        this.matchingSnapshotID = matchingSnapshotID;
+
+        if (matchingSnapshotID == -1) {
+            permanentPath = null;
+        } else {
+            permanentPath =
+                    path + RepositoryConstants.URL_SEPARATOR + "version:" + matchingSnapshotID;
+        }
+    }
+
 }

@@ -72,11 +72,11 @@ public class BaseTestCase {
 
     protected void setupCarbonHome() {
         if (System.getProperty("carbon.home") == null) {
-            File file = new File("../../distribution/kernel/carbon-home");
+            File file = new File("../carbon-home/");
             if (file.exists()) {
                 System.setProperty("carbon.home", file.getAbsolutePath());
             }
-            file = new File("../../../../distribution/kernel/carbon-home");
+            file = new File("../carbon-home/");
             if (file.exists()) {
                 System.setProperty("carbon.home", file.getAbsolutePath());
             }

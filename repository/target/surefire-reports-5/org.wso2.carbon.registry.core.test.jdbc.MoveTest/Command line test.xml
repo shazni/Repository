@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.MoveTest" tests="7" failures="0" timestamp="11 Mar 2014 05:31:00 GMT" time="1.749" errors="0">
+  <testcase name="testCollectionMoveWithChild" time="0.065" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest"/>
+  <testcase name="testGeneralCacheCollectionMove" time="0.02" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest"/>
+  <testcase name="testGeneralCacheResourceMove" time="0.017" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest"/>
+  <testcase name="testGeneralCollectionMove" time="0.072" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest"/>
+  <testcase name="testGeneralResourceMove" time="0.066" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest"/>
+  <testcase name="testResourceMoveFromRoot" time="0.046" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest"/>
+  <testcase name="testResourceMoveToRoot" time="0.04" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest"/>
+</testsuite>

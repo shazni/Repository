@@ -16,8 +16,6 @@
 
 package org.wso2.carbon.repository.api.exceptions;
 
-import org.wso2.carbon.repository.api.exceptions.RepositoryUserException;
-
 @SuppressWarnings("serial")
 public class RepositoryUserContentException extends RepositoryUserException {
 

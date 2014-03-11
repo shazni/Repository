@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" tests="17" failures="0" timestamp="11 Mar 2014 05:25:50 GMT" time="3.11" errors="0">
+  <testcase name="testCollectionDetails" time="0.049" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testCollectionVersioning" time="0.092" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testCombinedScenario" time="0.111" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testFlatResourceHandling" time="0.027" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testGetMetaData" time="0.011" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testHierarchicalResourceHandling" time="0.035" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testIllegalCharacters" time="0.066" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testLastUpdateWithGet" time="0.514" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testLastUpdateWithPut" time="0.023" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testLogs" time="0.005" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testMediaTypesInCaps" time="0.308" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testPutOnSamePath" time="0.02" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testResourceCollectionMix" time="0.041" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testResourceDelete" time="0.051" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testResourceVersioning" time="0.073" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testUserDefinedResourceQuery" time="0.051" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+  <testcase name="testValueChange" time="0.022" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest"/>
+</testsuite>

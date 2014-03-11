@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest" tests="11" failures="0" timestamp="11 Mar 2014 05:33:50 GMT" time="0.344" errors="0">
+  <testcase name="testDump1" time="0.118" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDump2" time="0.007" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDump3" time="0.009" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDump4" time="0.031" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDump5" time="0.008" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDump6" time="0.013" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDump7" time="0.102" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDump9" time="0.003" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDumpWriter1" time="0.022" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDumpWriterWithNameLast" time="0.001" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDumpWriterWithNameLastAndManyAttribute" time="0.002" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+</testsuite>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" tests="19" failures="0" timestamp="11 Mar 2014 05:26:05 GMT" time="3.03" errors="0">
+  <testcase name="testCollectionDetails" time="0.047" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testCollectionVersioning" time="0.075" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testCombinedScenario" time="0.089" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testFlatResourceHandling" time="0.023" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testGetMetaData" time="0.01" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testHierarchicalResourceHandling" time="0.041" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testIllegalCharacters" time="0.047" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testLastUpdateWithGet" time="0.519" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testLastUpdateWithPut" time="0.015" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testLogs" time="0.005" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testMediaTypesInCaps" time="0.283" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testPutOnSamePath" time="0.018" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testResourceCollectionMix" time="0.04" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testResourceDelete" time="0.043" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testResourceVersioning" time="0.065" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testUserDefinedResourceQuery" time="0.045" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testValueChange" time="0.019" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testExportResourceToFile" time="0.023" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+  <testcase name="testImportResourceFromFile" time="0.018" classname="org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest"/>
+</testsuite>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.QueryTest" tests="4" failures="0" timestamp="11 Mar 2014 05:25:53 GMT" time="2.09" errors="0">
+  <testcase name="testDefaultQuery" time="0.137" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
+  <testcase name="testWithSpecialCharactersQuery" time="0.076" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
+  <testcase name="testWithoutTableParamsQuery" time="0.057" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
+  <testcase name="testWithoutWhereQuery" time="0.082" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
+</testsuite>

@@ -19,21 +19,6 @@
 
 package org.wso2.carbon.repository.core.jdbc.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.repository.api.Activity;
@@ -51,8 +36,14 @@ import org.wso2.carbon.repository.core.jdbc.dataaccess.JDBCDatabaseTransaction;
 import org.wso2.carbon.repository.core.utils.InternalConstants;
 import org.wso2.carbon.repository.core.utils.InternalUtils;
 import org.wso2.carbon.repository.core.utils.LogRecord;
+import org.wso2.carbon.repository.spi.ResourceActivity;
 import org.wso2.carbon.repository.spi.dao.LogsDAO;
 import org.wso2.carbon.repository.spi.dataaccess.DataAccessManager;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.*;
+import java.util.Date;
 
 /**
  * An implementation of the {@link LogsDAO} to store logs on a JDBC-based database.
@@ -197,7 +188,7 @@ public class JDBCLogsDAO implements LogsDAO {
         }
     }
 
-    public List getLogList(String path, int action, String userName, Date from, Date to, boolean descending, DataAccessManager dataAccessManager)
+    public List<ResourceActivity> getLogList(String path, int action, String userName, Date from, Date to, boolean descending, DataAccessManager dataAccessManager)
             throws RepositoryException {
     	userName = CurrentContext.getUser() ;
     	
@@ -222,7 +213,7 @@ public class JDBCLogsDAO implements LogsDAO {
                 boolean transactionSucceeded = false;
                 try {
                     beginTransaction(jdbcDataAccessManager);
-                    List<Activity> logEntries = internalGetLogs(true, resourcePath, action, userName, from, to, descending,
+                    List<ResourceActivity> logEntries = internalGetLogs(true, resourcePath, action, userName, from, to, descending,
                             JDBCDatabaseTransaction.getConnection());
                     transactionSucceeded = true;
                     return logEntries;
@@ -237,13 +228,13 @@ public class JDBCLogsDAO implements LogsDAO {
             // if it is not inside the mount, then it could be partially inside a mount and the rest from the local
             // repository.
             boolean foundMounts = false;
-            List<Activity> logEntries = new LinkedList<Activity>();
+            List<ResourceActivity> logEntries = new LinkedList<ResourceActivity>();
             for (String sourcePath : dbConfigs.keySet()) {
                 if (sourcePath.startsWith(resourcePath)) {
                     // first search everything inside mounts if required.
                     boolean transactionSucceeded = false;
                     JDBCDataAccessManager manager = new JDBCDataAccessManager(dbConfigs.get(sourcePath));
-                    List<Activity> temp = null;
+                    List<ResourceActivity> temp = null;
                     try {
                         beginTransaction(manager);
                         foundMounts = true;
@@ -260,7 +251,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     if (temp == null) {
                         continue;
                     }
-                    for (Activity entry : temp) {
+                    for (ResourceActivity entry : temp) {
                         //fixLogEntries(logEntries, sourcePath, entry);
                     }
                 }
@@ -280,12 +271,12 @@ public class JDBCLogsDAO implements LogsDAO {
             JDBCDataAccessManager jdbcDataAccessManager = (JDBCDataAccessManager) dataAccessManager;
             boolean foundMounts = false;
             // if you don't have a path, then search all over.
-            List<Activity> logEntries = new LinkedList<Activity>();
+            List<ResourceActivity> logEntries = new LinkedList<ResourceActivity>();
             if (dbConfigs.size() > 0) {
                 for (String sourcePath : dbConfigs.keySet()) {
                     boolean transactionSucceeded = false;
                     JDBCDataAccessManager manager = new JDBCDataAccessManager(dbConfigs.get(sourcePath));
-                    List<Activity> temp = null;
+                    List<ResourceActivity> temp = null;
                     try {
                         beginTransaction(manager);
                         foundMounts = true;
@@ -302,7 +293,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     if (temp == null) {
                         continue;
                     }
-                    for (Activity entry : temp) {
+                    for (ResourceActivity entry : temp) {
                         //fixLogEntries(logEntries, sourcePath, entry);
                     }
                 }
@@ -329,7 +320,7 @@ public class JDBCLogsDAO implements LogsDAO {
         Transaction.popTransaction();
     }
 
-    private List<Activity> internalGetLogs(boolean paginate, String resourcePath, int action, String userName,
+    private List<ResourceActivity> internalGetLogs(boolean paginate, String resourcePath, int action, String userName,
                                            Date from, Date to, boolean descending, Connection conn)
             throws RepositoryException {
         try {
@@ -418,7 +409,7 @@ public class JDBCLogsDAO implements LogsDAO {
 
             results = s.executeQuery();
 
-            List<Activity> resultList = new ArrayList<Activity>();
+            List<ResourceActivity> resultList = new ArrayList<ResourceActivity>();
             if (paginated) {
                 if (results.relative(start)) {
                     //This is to get cursor to correct position to execute results.next().
@@ -472,10 +463,10 @@ public class JDBCLogsDAO implements LogsDAO {
         }
     }
 
-    private Activity getActivity(ResultSet results) throws SQLException {
+    private ResourceActivity getActivity(ResultSet results) throws SQLException {
 
-        Activity logEntry = new Activity();
-        logEntry.setResourcePath(results.getString(DatabaseConstants.PATH_FIELD));
+        ResourceActivity logEntry = new ResourceActivity();
+        logEntry.setPath(results.getString(DatabaseConstants.PATH_FIELD));
         logEntry.setUserName(results.getString(DatabaseConstants.USER_ID_FIELD));
         logEntry.setDate(
                 new Date(results.getTimestamp(
@@ -541,7 +532,7 @@ public class JDBCLogsDAO implements LogsDAO {
         return sql;
     }
 
-    public Activity[] getLogs(String resourcePath, int action, String userName, Date from, Date to, boolean descending,
+    public ResourceActivity[] getLogs(String resourcePath, int action, String userName, Date from, Date to, boolean descending,
                               int start, int pageLen, DataAccessManager dataAccessManager) throws RepositoryException {
         String sql = "SELECT REG_PATH, REG_USER_ID, REG_LOGGED_TIME, REG_ACTION, REG_ACTION_DATA FROM REG_LOG";
         boolean queryStarted = false;
@@ -589,13 +580,13 @@ public class JDBCLogsDAO implements LogsDAO {
 
             results = s.executeQuery();
 
-            List<Activity> resultList = new ArrayList<Activity>();
+            List<ResourceActivity> resultList = new ArrayList<ResourceActivity>();
             int current = 0;
             
             while (results.next()) {
                 if (current >= start && (pageLen == -1 || current < start + pageLen)) {
-                    Activity logEntry = new Activity();
-                    logEntry.setResourcePath(results.getString(DatabaseConstants.PATH_FIELD));
+                    ResourceActivity logEntry = new ResourceActivity();
+                    logEntry.setPath(results.getString(DatabaseConstants.PATH_FIELD));
                     logEntry.setUserName(results.getString(DatabaseConstants.USER_ID_FIELD));
                     logEntry.setDate(
                             new Date(results.getTimestamp(
@@ -608,7 +599,7 @@ public class JDBCLogsDAO implements LogsDAO {
                 current++;
             }
             
-            return resultList.toArray(new Activity[resultList.size()]);
+            return resultList.toArray(new ResourceActivity[resultList.size()]);
         } catch (SQLException e) {
             String msg = "Failed to get logs. " + e.getMessage();
             log.error(msg, e);
@@ -637,7 +628,7 @@ public class JDBCLogsDAO implements LogsDAO {
         }
     }
 
-    public Activity[] getLogs(String resourcePath, int action, String userName, Date from,
+    public ResourceActivity[] getLogs(String resourcePath, int action, String userName, Date from,
                               Date to, boolean descending, DataAccessManager dataAccessManager) throws RepositoryException {
         if (!(dataAccessManager instanceof JDBCDataAccessManager)) {
             String msg = "Failed to get logs. Invalid data access manager.";
@@ -664,17 +655,17 @@ public class JDBCLogsDAO implements LogsDAO {
             }
             // if it is not inside the mount, then it could be partially inside a mount and the rest from the local
             // repository.
-            List<Activity> logEntries = new LinkedList<Activity>();
+            List<ResourceActivity> logEntries = new LinkedList<ResourceActivity>();
             
             for (String sourcePath : dbConfigs.keySet()) {
                 if (sourcePath.startsWith(resourcePath)) {
                     // first search everything inside mounts if required.
-                    Activity[] temp = internalGetLogs(action, userName, from, to, descending, 
+                    ResourceActivity[] temp = internalGetLogs(action, userName, from, to, descending,
                     		resourcePath, new JDBCDataAccessManager(dbConfigs.get(sourcePath)).getDataSource());
                     if (temp == null) {
                         continue;
                     }
-                    for (Activity entry : temp) {
+                    for (ResourceActivity entry : temp) {
                         //fixLogEntries(logEntries, sourcePath, entry);
                     }
                 }
@@ -682,29 +673,29 @@ public class JDBCLogsDAO implements LogsDAO {
             // finally search inside the local repository.
             logEntries.addAll(Arrays.asList(internalGetLogs(action, userName, from, to, descending,
                     resourcePath, ((JDBCDataAccessManager) dataAccessManager).getDataSource())));
-            return logEntries.toArray(new Activity[logEntries.size()]);
+            return logEntries.toArray(new ResourceActivity[logEntries.size()]);
         } else {
             // if you don't have a path, then search all over.
-            List<Activity> logEntries = new LinkedList<Activity>();
+            List<ResourceActivity> logEntries = new LinkedList<ResourceActivity>();
             if (dbConfigs.size() > 0) {
                 for (String sourcePath : dbConfigs.keySet()) {
-                    Activity[] temp = internalGetLogs(action, userName, from, to, descending,
+                    ResourceActivity[] temp = internalGetLogs(action, userName, from, to, descending,
                             resourcePath, new JDBCDataAccessManager(dbConfigs.get(sourcePath)).getDataSource());
                     if (temp == null) {
                         continue;
                     }
-                    for (Activity entry : temp) {
+                    for (ResourceActivity entry : temp) {
                         //fixLogEntries(logEntries, sourcePath, entry);
                     }
                 }
             }
             logEntries.addAll(Arrays.asList(internalGetLogs(action, userName, from, to, descending,
                     resourcePath, ((JDBCDataAccessManager) dataAccessManager).getDataSource())));
-            return logEntries.toArray(new Activity[logEntries.size()]);
+            return logEntries.toArray(new ResourceActivity[logEntries.size()]);
         }
     }
 
-    private Activity[] internalGetLogs(int action, String userName, Date from, Date to, boolean descending,
+    private ResourceActivity[] internalGetLogs(int action, String userName, Date from, Date to, boolean descending,
                                        String resourcePath, DataSource dataSource) throws RepositoryException {
         boolean queryStarted = false;
         PreparedStatement s = null;
@@ -753,11 +744,11 @@ public class JDBCLogsDAO implements LogsDAO {
 
             results = s.executeQuery();
 
-            List<Activity> resultList = new ArrayList<Activity>();
+            List<ResourceActivity> resultList = new ArrayList<ResourceActivity>();
             
             while (results.next()) {
-            	Activity logEntry = new Activity();
-                logEntry.setResourcePath(results.getString(DatabaseConstants.PATH_FIELD));
+            	ResourceActivity logEntry = new ResourceActivity();
+                logEntry.setPath(results.getString(DatabaseConstants.PATH_FIELD));
                 logEntry.setUserName(results.getString(DatabaseConstants.USER_ID_FIELD));
                 logEntry.setDate(
                         new Date(results.getTimestamp(
@@ -768,7 +759,7 @@ public class JDBCLogsDAO implements LogsDAO {
                 resultList.add(logEntry);
             }
             
-            return resultList.toArray(new Activity[resultList.size()]);
+            return resultList.toArray(new ResourceActivity[resultList.size()]);
         } catch (SQLException e) {
             String msg = "Failed to get logs. " + e.getMessage();
             log.error(msg, e);
@@ -872,7 +863,7 @@ public class JDBCLogsDAO implements LogsDAO {
         return count;
     }
 	
-    public List getLogs(String resourcePath, int action, String userName, Date from, Date to, boolean descending) throws RepositoryException {
+    public List<Activity> getLogs(String resourcePath, int action, String userName, Date from, Date to, boolean descending) throws RepositoryException {
         JDBCDatabaseTransaction.ManagedRegistryConnection conn = JDBCDatabaseTransaction.getConnection();
         
         try {
@@ -1020,9 +1011,9 @@ public class JDBCLogsDAO implements LogsDAO {
         }
     }
 	
-    private Activity getLogEntry(ResultSet results) throws SQLException {
-        Activity logEntry = new Activity();
-        logEntry.setResourcePath(results.getString(DatabaseConstants.PATH_FIELD));
+    private ResourceActivity getLogEntry(ResultSet results) throws SQLException {
+        ResourceActivity logEntry = new ResourceActivity();
+        logEntry.setPath(results.getString(DatabaseConstants.PATH_FIELD));
         logEntry.setUserName(results.getString(DatabaseConstants.USER_ID_FIELD));
         logEntry.setDate(new Date(results.getTimestamp(DatabaseConstants.LOGGED_TIME_FIELD).getTime()));
         logEntry.setAction(results.getInt(DatabaseConstants.ACTION_FIELD));

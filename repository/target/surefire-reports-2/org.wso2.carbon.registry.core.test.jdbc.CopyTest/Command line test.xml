@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.CopyTest" tests="2" failures="0" timestamp="11 Mar 2014 05:27:50 GMT" time="1.807" errors="0">
+  <testcase name="testCollectionCopy" time="0.091" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest"/>
+  <testcase name="testResourceCopy" time="0.035" classname="org.wso2.carbon.registry.core.test.jdbc.CopyTest"/>
+</testsuite>

@@ -67,9 +67,8 @@ public class MultiTenantTest extends BaseTestCase {
 
         Repository registry2 = embeddedRegistryService.getRepository("admin", 1);
         r = registry2.get("/");
-        Properties p = r.getProperties();
         
-        Assert.assertEquals(p.size(), 0, "The properties in the second registry should be 0");
+        Assert.assertEquals(r.getPropertyKeys().size(), 0, "The properties in the second registry should be 0");
 
         boolean notExist = false;
         
@@ -83,7 +82,7 @@ public class MultiTenantTest extends BaseTestCase {
 
         Repository registry3 = embeddedRegistryService.getRepository("don1", MultitenantConstants.SUPER_TENANT_ID);
         r = registry3.get("/");
-        Assert.assertEquals(r.getProperty("name"), "value", "The property name should be value");
+        Assert.assertEquals(r.getPropertyValue("name"), "value", "The property name should be value");
 
         String[] children = (String[]) r.getContent();
         Assert.assertEquals(children[0], "/test", "child should be /test");

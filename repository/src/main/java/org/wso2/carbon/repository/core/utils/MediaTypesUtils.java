@@ -99,26 +99,17 @@ public class MediaTypesUtils {
         } else {
             resource = configSystemRegistry.get(resourcePath + RepositoryConstants.PATH_SEPARATOR + COLLECTION_MIME_TYPE_INDEX);
         }
-        
-        Properties properties = resource.getProperties();
-        
-        if (properties.size() > 0) {
-            Set<Object> keySet = properties.keySet();
-            
-            for (Object key : keySet) {
-                if (key instanceof String) {
-                    String ext = (String) key;
-                    if (RepositoryUtils.isHiddenProperty(ext)) {
-                        continue;
-                    }
-                    String value = resource.getProperty(ext);
-                    String mediaTypeMapping = ext + ":" + value;
-                    if (mediaTypeString == null) {
-                        mediaTypeString = mediaTypeMapping;
-                    } else {
-                        mediaTypeString = mediaTypeString + "," + mediaTypeMapping;
-                    }
-                }
+
+        for (String key : resource.getPropertyKeys()) {
+            if (RepositoryUtils.isHiddenProperty(key)) {
+                continue;
+            }
+            String value = resource.getPropertyValue(key);
+            String mediaTypeMapping = key + ":" + value;
+            if (mediaTypeString == null) {
+                mediaTypeString = mediaTypeMapping;
+            } else {
+                mediaTypeString = mediaTypeString + "," + mediaTypeMapping;
             }
         }
 
@@ -160,26 +151,17 @@ public class MediaTypesUtils {
         } else {
             resource = configSystemRegistry.get(resourcePath + RepositoryConstants.PATH_SEPARATOR + CUSTOM_UI_MIME_TYPE_INDEX);
         }
-        
-        Properties properties = resource.getProperties();
-        
-        if (properties.size() > 0) {
-            Set<Object> keySet = properties.keySet();
-            
-            for (Object key : keySet) {
-                if (key instanceof String) {
-                    String ext = (String) key;
-                    if (RepositoryUtils.isHiddenProperty(ext)) {
-                        continue;
-                    }
-                    String value = resource.getProperty(ext);
-                    String mediaTypeMapping = ext + ":" + value;
-                    if (mediaTypeString == null) {
-                        mediaTypeString = mediaTypeMapping;
-                    } else {
-                        mediaTypeString = mediaTypeString + "," + mediaTypeMapping;
-                    }
-                }
+
+        for (String key : resource.getPropertyKeys()) {
+            if (RepositoryUtils.isHiddenProperty(key)) {
+                continue;
+            }
+            String value = resource.getPropertyValue(key);
+            String mediaTypeMapping = key + ":" + value;
+            if (mediaTypeString == null) {
+                mediaTypeString = mediaTypeMapping;
+            } else {
+                mediaTypeString = mediaTypeString + "," + mediaTypeMapping;
             }
         }
 
@@ -212,27 +194,18 @@ public class MediaTypesUtils {
             resource = configSystemRegistry.newCollection();
         } else {
             resource = configSystemRegistry.get(resourcePath);
-            Properties properties = resource.getProperties();
-            
-            if (properties.size() > 0) {
-                Set<Object> keySet = properties.keySet();
-                
-                for (Object key : keySet) {
-                    if (key instanceof String) {
-                        String ext = (String) key;
-                        
-                        if (RepositoryUtils.isHiddenProperty(ext)) {
-                            continue;
-                        }
-                        String value = resource.getProperty(ext);
-                        String mediaTypeMapping = ext + ":" + value;
-                        
-                        if (mediaTypeString == null) {
-                            mediaTypeString = mediaTypeMapping;
-                        } else {
-                            mediaTypeString = mediaTypeString + "," + mediaTypeMapping;
-                        }
-                    }
+
+            for (String key : resource.getPropertyKeys()) {
+                if (RepositoryUtils.isHiddenProperty(key)) {
+                    continue;
+                }
+                String value = resource.getPropertyValue(key);
+                String mediaTypeMapping = key + ":" + value;
+
+                if (mediaTypeString == null) {
+                    mediaTypeString = mediaTypeMapping;
+                } else {
+                    mediaTypeString = mediaTypeString + "," + mediaTypeMapping;
                 }
             }
 

@@ -952,9 +952,15 @@ public class JDBCResourceVersionDAO implements ResourceVersionDAO {
 
         if (StaticConfiguration.isVersioningProperties()) {
             resourceDAO.fillResourceProperties(oldResource);
-            newResource.setProperties(oldResource.getProperties());
+
+            List<String> keys = oldResource.getPropertyKeys();
+
+            for (String key : keys) {
+                newResource.addProperty(key, oldResource.getPropertyValue(key));
+            }
+
             resourceDAO.addProperties(newResource);
-            String linkRestoration = newResource.getProperty(InternalConstants.REGISTRY_LINK_RESTORATION);
+            String linkRestoration = newResource.getPropertyValue(InternalConstants.REGISTRY_LINK_RESTORATION);
             
             if (linkRestoration != null) {
                 String[] parts = linkRestoration.split(RepositoryConstants.URL_SEPARATOR);

@@ -29,177 +29,177 @@ public abstract class Filter {
      * Represents a get operation on the registry.
      */
     public static final String GET = "GET";
-    
+
     /**
      * Represents a put operation on the registry.
      */
     public static final String PUT = "PUT";
-    
+
     /**
      * Represents a delete operation on the registry.
      */
     public static final String DELETE = "DELETE";
-    
+
     /**
      * Represents an import operation on the registry.
      */
     public static final String IMPORT = "IMPORT";
-    
+
     /**
      * Represents a putChild operation on the registry.
      */
     public static final String PUT_CHILD = "PUT_CHILD";
-    
+
     /**
      * Represents an importChild operation on the registry.
      */
     public static final String IMPORT_CHILD = "IMPORT_CHILD";
-    
+
     /**
      * Represents an invokeAspect operation on the registry.
      */
     public static final String INVOKE_ASPECT = "INVOKE_ASPECT";
-    
+
     /**
      * Represents a move operation on the registry.
      */
     public static final String MOVE = "MOVE";
-    
+
     /**
      * Represents a copy operation on the registry.
      */
     public static final String COPY = "COPY";
-    
+
     /**
      * Represents a rename operation on the registry.
      */
     public static final String RENAME = "RENAME";
-    
+
     /**
      * Represents a createLink operation on the registry.
      */
     public static final String CREATE_LINK = "CREATE_LINK";
-    
+
     /**
      * Represents a removeLink operation on the registry.
      */
     public static final String REMOVE_LINK = "REMOVE_LINK";
-    
+
     /**
      * Represents an addAssociation operation on the registry.
      */
     public static final String ADD_ASSOCIATION = "ADD_ASSOCIATION";
-    
+
     /**
      * Represents a removeAssociation operation on the registry.
      */
     public static final String REMOVE_ASSOCIATION = "REMOVE_ASSOCIATION";
-    
+
     /**
      * Represents a getAssociations operation on the registry.
      */
     public static final String GET_ASSOCIATIONS = "GET_ASSOCIATIONS";
-    
+
     /**
      * Represents a getAllAssociations operation on the registry.
      */
     public static final String GET_ALL_ASSOCIATIONS = "GET_ALL_ASSOCIATIONS";
-    
+
     /**
      * Represents an applyTag operation on the registry.
      */
     public static final String APPLY_TAG = "APPLY_TAG";
-    
+
     /**
      * Represents a getResourcePathsWithTag operation on the registry.
      */
     public static final String GET_RESOURCE_PATHS_WITH_TAG = "GET_RESOURCE_PATHS_WITH_TAG";
-    
+
     /**
      * Represents a getTags operation on the registry.
      */
     public static final String GET_TAGS = "GET_TAGS";
-    
+
     /**
      * Represents a removeTag operation on the registry.
      */
     public static final String REMOVE_TAG = "REMOVE_TAG";
-    
+
     /**
      * Represents an addComment operation on the registry.
      */
     public static final String ADD_COMMENT = "ADD_COMMENT";
-    
+
     /**
      * Represents an editComment operation on the registry.
      */
     public static final String EDIT_COMMENT = "EDIT_COMMENT";
-    
+
     /**
      * Represents a removeComment operation on the registry.
      */
     public static final String REMOVE_COMMENT = "REMOVE_COMMENT";
-    
+
     /**
      * Represents a getComments operation on the registry.
      */
     public static final String GET_COMMENTS = "GET_COMMENTS";
-    
+
     /**
      * Represents a rateResource operation on the registry.
      */
     public static final String RATE_RESOURCE = "RATE_RESOURCE";
-    
+
     /**
      * Represents a getAverageRating operation on the registry.
      */
     public static final String GET_AVERAGE_RATING = "GET_AVERAGE_RATING";
-    
+
     /**
      * Represents a getRating operation on the registry.
      */
     public static final String GET_RATING = "GET_RATING";
-    
+
     /**
      * Represents a createVersions operation on the registry.
      */
     public static final String CREATE_VERSION = "CREATE_VERSION";
-    
+
     /**
      * Represents a getVersions operation on the registry.
      */
     public static final String GET_VERSIONS = "GET_VERSIONS";
-    
+
     /**
      * Represents a restoreVersion operation on the registry.
      */
     public static final String RESTORE_VERSION = "RESTORE_VERSION";
-    
+
     /**
      * Represents an executeQuery operation on the registry.
      */
     public static final String EXECUTE_QUERY = "EXECUTE_QUERY";
-    
+
     /**
      * Represents a searchContent operation on the registry.
      */
     public static final String SEARCH_CONTENT = "SEARCH_CONTENT";
-    
+
     /**
      * Represents a resourceExists operation on the registry.
      */
     public static final String RESOURCE_EXISTS = "RESOURCE_EXISTS";
-    
+
     /**
      * Represents a getRegistryContext operation on the registry.
      */
     public static final String GET_REGISTRY_CONTEXT = "GET_REGISTRY_CONTEXT";
-    
+
     /**
      * Represents a dump operation on the registry.
      */
     public static final String DUMP = "DUMP";
-    
+
     /**
      * Represents a restore operation on the registry.
      */

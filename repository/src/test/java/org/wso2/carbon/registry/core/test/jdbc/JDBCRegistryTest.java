@@ -104,7 +104,6 @@ public class JDBCRegistryTest extends BaseTestCase {
         r1.setDescription("This is test description");
         r1.addProperty("p1", "value1");
         registry.put("/c1/c2/c3", r1);
-        r1.discard();
 
         r1 = registry.get("/c1/c2/c3/c4/r1");
         InputStream inContent = r1.getContentStream();
@@ -118,7 +117,6 @@ public class JDBCRegistryTest extends BaseTestCase {
         
         inContent.close();
         Assert.assertEquals(str, RepositoryUtils.decodeBytes(outStream.toByteArray()));
-        r1.discard();
     }
 
     @Test
@@ -137,7 +135,7 @@ public class JDBCRegistryTest extends BaseTestCase {
 
         Assert.assertEquals(r1.getDescription(), r1f.getDescription(), "Description is not equal.");
 
-        Assert.assertEquals(r1f.getProperty("p1"), "v1", "Property p1 should contain the value v1");
+        Assert.assertEquals(r1f.getPropertyValue("p1"), "v1", "Property p1 should contain the value v1");
 
         registry.delete("/r1");
 
@@ -151,8 +149,6 @@ public class JDBCRegistryTest extends BaseTestCase {
 
         Assert.assertTrue(failed, "Deleted resource /r1 is returned on get.");
 
-        r1.discard();
-        r1f.discard();
     }
 
     @Test

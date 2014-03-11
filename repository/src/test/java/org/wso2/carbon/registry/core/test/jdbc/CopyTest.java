@@ -56,10 +56,10 @@ public class CopyTest extends BaseTestCase {
         registry.copy("/test/copy/c1/copy1", "/test/copy/c2/copy1");
 
         Resource newR1 = registry.get("/test/copy/c2/copy1");
-        Assert.assertEquals(newR1.getProperty("test"), "copy", "Copied resource should have a property named 'test' with value 'copy'.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "copy", "Copied resource should have a property named 'test' with value 'copy'.");
 
         Resource oldR1 = registry.get("/test/copy/c1/copy1");
-        Assert.assertEquals(oldR1.getProperty("test"), "copy", "Original resource should have a property named 'test' with value 'copy'.");
+        Assert.assertEquals(oldR1.getPropertyValue("test"), "copy", "Original resource should have a property named 'test' with value 'copy'.");
 
         String newContent = RepositoryUtils.decodeBytes((byte[]) newR1.getContent());
         String oldContent = RepositoryUtils.decodeBytes((byte[]) oldR1.getContent());
@@ -79,9 +79,9 @@ public class CopyTest extends BaseTestCase {
         registry.copy("/test/copy/copy3", "/test/newCol/copy3");
 
         Resource newR1 = registry.get("/test/newCol/copy3/c3/resource1");
-        Assert.assertEquals(newR1.getProperty("test"), "copy", "Copied resource should have a property named 'test' with value 'copy'.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "copy", "Copied resource should have a property named 'test' with value 'copy'.");
 
         Resource oldR1 = registry.get("/test/copy/copy3/c3/resource1");
-        Assert.assertEquals(oldR1.getProperty("test"), "copy", "Original resource should have a property named 'test' with value 'copy'.");
+        Assert.assertEquals(oldR1.getPropertyValue("test"), "copy", "Original resource should have a property named 'test' with value 'copy'.");
     }
 }

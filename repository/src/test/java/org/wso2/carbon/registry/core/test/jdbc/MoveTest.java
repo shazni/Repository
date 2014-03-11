@@ -54,7 +54,7 @@ public class MoveTest extends BaseTestCase {
         registry.move("/move1", "/test/move/move1");
 
         Resource newR1 = registry.get("/test/move/move1");
-        Assert.assertEquals(newR1.getProperty("test"), "move", "Moved resource should have a property named 'test' with value 'move'.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "move", "Moved resource should have a property named 'test' with value 'move'.");
 
         boolean failed = false;
         
@@ -77,7 +77,7 @@ public class MoveTest extends BaseTestCase {
         registry.move("/test/move/move2", "/move2");
 
         Resource newR1 = registry.get("/move2");
-        Assert.assertEquals(newR1.getProperty("test"), "move", "Moved resource should have a property named 'test' with value 'move'.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "move", "Moved resource should have a property named 'test' with value 'move'.");
 
         boolean failed = false;
         
@@ -103,7 +103,7 @@ public class MoveTest extends BaseTestCase {
         registry.move("/test/c1/move/move3", "/test/c2/move/move3");
 
         Resource newR1 = registry.get("/test/c2/move/move3");
-        Assert.assertEquals(newR1.getProperty("test"), "move", "Moved resource should have a property named 'test' with value 'move'.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "move", "Moved resource should have a property named 'test' with value 'move'.");
 
         boolean failed = false;
         
@@ -129,7 +129,7 @@ public class MoveTest extends BaseTestCase {
         registry.move("/test/c1/move5", "/test/c3/move5");
 
         Resource newR1 = registry.get("/test/c3/move5/move/dummy");
-        Assert.assertEquals(newR1.getProperty("test"), "move", "Moved resource should have a property named 'test' with value 'move'.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "move", "Moved resource should have a property named 'test' with value 'move'.");
 
         boolean failed = false;
         
@@ -152,7 +152,7 @@ public class MoveTest extends BaseTestCase {
         registry.move("/testX/c1/", "/testX/c2/");
 
         Resource newR1 = registry.get("/testX/c2/move/move3");
-        Assert.assertEquals(newR1.getProperty("testX"), "move", "Moved resource should have a property named 'testX' with value 'move'.");
+        Assert.assertEquals(newR1.getPropertyValue("testX"), "move", "Moved resource should have a property named 'testX' with value 'move'.");
 
         boolean failed = false;
         

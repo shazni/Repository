@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.ResourcesTest" tests="1" failures="0" timestamp="11 Mar 2014 05:32:31 GMT" time="1.719" errors="0">
+  <testcase name="testResourceUpdate" time="0.045" classname="org.wso2.carbon.registry.core.test.jdbc.ResourcesTest"/>
+</testsuite>

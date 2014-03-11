@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.DumpTest" tests="10" failures="0" timestamp="11 Mar 2014 05:30:39 GMT" time="3.203" errors="0">
+  <testcase name="testAbsoluteAssociationPath" time="0.002" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testCollectionDump" time="0.094" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testDumpWithSymLink" time="0.24" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testNewRestore" time="0.176" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testNewerVersionException" time="0.068" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testRelativeAssociationPath" time="0.0" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testResourceDump" time="0.021" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testRootDump" time="0.779" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testRootRestore" time="0.064" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+  <testcase name="testSimpleNewRestore" time="0.048" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest"/>
+</testsuite>

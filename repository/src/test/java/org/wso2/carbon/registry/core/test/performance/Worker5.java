@@ -46,7 +46,6 @@ public class Worker5 extends Worker {
                 resource.setContent("updated");
                 resource.setProperty("abc","abc");
                 registry.put("/ama/test/path",resource);
-                resource.discard();
                 long end = System.nanoTime();
                 timePerThread += (end-start);                
                 

@@ -99,13 +99,13 @@ public class VersionHandlingTest extends BaseTestCase {
 
         Resource r1vv1 = registry.get(r1Versions[1]);
 
-        Assert.assertEquals(r1vv1.getProperty("p1"), "v1", "r1's first version should contain a property p1 with value v1");
+        Assert.assertEquals(r1vv1.getPropertyValue("p1"), "v1", "r1's first version should contain a property p1 with value v1");
 
         Resource r1vv2 = registry.get(r1Versions[0]);
 
-        Assert.assertEquals(r1vv2.getProperty("p1"), "v1", "r1's second version should contain a property p1 with value v1");
+        Assert.assertEquals(r1vv2.getPropertyValue("p1"), "v1", "r1's second version should contain a property p1 with value v1");
 
-        Assert.assertEquals(r1vv2.getProperty("p2"), "v2", "r1's second version should contain a property p2 with value v2");
+        Assert.assertEquals(r1vv2.getPropertyValue("p2"), "v2", "r1's second version should contain a property p2 with value v2");
     }
 
     @Test

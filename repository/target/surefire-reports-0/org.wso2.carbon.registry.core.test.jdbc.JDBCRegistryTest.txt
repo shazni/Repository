@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest
+-------------------------------------------------------------------------------
+Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.598 sec
