@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.wso2.carbon.registry.core.test.jdbc.ResourceImportExportTest
 -------------------------------------------------------------------------------
-Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.82 sec
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.525 sec

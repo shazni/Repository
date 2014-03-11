@@ -7,7 +7,7 @@ Bundle-Vendor: WSO2 Inc
 DynamicImport-Package: *
 Build-Jdk: 1.7.0_45
 Bundle-Version: 4.2.0
-Bnd-LastModified: 1394515451530
+Bnd-LastModified: 1394517979080
 Bundle-ManifestVersion: 2
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-Description: OSGi Bundle for Carbon WSO2 Registry Impl

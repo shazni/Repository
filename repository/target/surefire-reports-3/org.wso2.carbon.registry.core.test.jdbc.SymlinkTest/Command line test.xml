@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest" tests="17" failures="0" timestamp="11 Mar 2014 05:29:15 GMT" time="3.476" errors="0">
-  <testcase name="testCopyBothSymLink" time="0.117" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testCopyParentWithSymlink" time="0.326" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testCopySourceFromSymlink" time="0.045" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testCopySourceSymLinkRoot" time="0.041" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest" tests="17" failures="0" timestamp="11 Mar 2014 06:11:15 GMT" time="3.481" errors="0">
+  <testcase name="testCopyBothSymLink" time="0.085" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testCopyParentWithSymlink" time="0.318" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testCopySourceFromSymlink" time="0.056" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testCopySourceSymLinkRoot" time="0.048" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
   <testcase name="testCopyTargetToSymLink" time="0.044" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testMoveBothSymLink" time="0.056" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testMoveParentWithSymlink" time="0.247" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testMoveSourceFromSymlink" time="0.054" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testMoveSourceSymLinkRoot" time="0.076" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testMoveSourceSymLinkRootCollection" time="0.14" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testMoveTargetToSymLink" time="0.045" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testRenameParentWithSymlink" time="0.222" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testSymbolicLinks" time="0.047" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testSymbolicLinksRoots" time="0.029" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testSymlinkOrder" time="0.041" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testSymlinkOrder2" time="0.044" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
-  <testcase name="testTransitiveSymLinks" time="0.247" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testMoveBothSymLink" time="0.057" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testMoveParentWithSymlink" time="0.243" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testMoveSourceFromSymlink" time="0.049" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testMoveSourceSymLinkRoot" time="0.071" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testMoveSourceSymLinkRootCollection" time="0.138" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testMoveTargetToSymLink" time="0.049" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testRenameParentWithSymlink" time="0.209" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testSymbolicLinks" time="0.051" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testSymbolicLinksRoots" time="0.032" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testSymlinkOrder" time="0.044" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testSymlinkOrder2" time="0.055" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
+  <testcase name="testTransitiveSymLinks" time="0.257" classname="org.wso2.carbon.registry.core.test.jdbc.SymlinkTest"/>
 </testsuite>

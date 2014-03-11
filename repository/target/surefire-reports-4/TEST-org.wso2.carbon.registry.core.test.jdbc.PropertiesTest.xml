@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.217" errors="0" skipped="0" tests="8" name="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest">
+<testsuite failures="0" time="0.17" errors="0" skipped="0" tests="8" name="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_45/jre/lib/amd64"/>
@@ -59,12 +59,12 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="0.061" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testEditingMultivaluedProperties"/>
-  <testcase time="0.014" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testMultiValuedProperties"/>
-  <testcase time="0.016" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testNullMultiValuedProperties"/>
-  <testcase time="0.013" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testNullValuedProperties"/>
-  <testcase time="0.034" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testRemovingMultivaluedProperties"/>
-  <testcase time="0.042" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testRemovingProperties"/>
-  <testcase time="0.022" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testRootLevelProperties"/>
-  <testcase time="0.015" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testSingleValuedProperties"/>
+  <testcase time="0.049" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testEditingMultivaluedProperties"/>
+  <testcase time="0.013" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testMultiValuedProperties"/>
+  <testcase time="0.014" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testNullMultiValuedProperties"/>
+  <testcase time="0.012" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testNullValuedProperties"/>
+  <testcase time="0.028" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testRemovingMultivaluedProperties"/>
+  <testcase time="0.029" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testRemovingProperties"/>
+  <testcase time="0.014" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testRootLevelProperties"/>
+  <testcase time="0.011" classname="org.wso2.carbon.registry.core.test.jdbc.PropertiesTest" name="testSingleValuedProperties"/>
 </testsuite>

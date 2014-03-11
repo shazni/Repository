@@ -48,6 +48,7 @@ import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.exceptions.RepositoryResourceNotFoundException;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.Actions;
 import org.wso2.carbon.repository.core.caching.CacheResource;
 import org.wso2.carbon.repository.core.caching.RepositoryCacheKey;
 import org.wso2.carbon.repository.core.config.DataBaseConfiguration;
@@ -187,7 +188,7 @@ public class EmbeddedRepository implements Repository {
      * @param registryContext RegistryContext containing our configuration and data access manager.
      *                        Note that this may or may not be the same data source as the User
      *                        Manager.
-     * @param realmService    User manager realm service handle authorizations.
+     * @param registryService Registry service
      *
      * @throws RepositoryException If something went wrong
      */
@@ -203,7 +204,6 @@ public class EmbeddedRepository implements Repository {
      * useful for changing underlying databases at run-time.
      *
      * @param dataAccessManager the data access manager to use
-     * @param realmService      the User manager realm service handle authorizations.
      *
      * @throws RepositoryException If something went wrong while init
      */
@@ -539,7 +539,7 @@ public class EmbeddedRepository implements Repository {
                 if (savedPath != null) {
                     if (context.isLoggingActivity()) {
                         registryContext.getLogWriter().addLog(
-                                savedPath, CurrentContext.getUser(), Activity.UPDATE, null);
+                                savedPath, CurrentContext.getUser(), Actions.UPDATE, null);
                     }
                 }
                 
@@ -608,7 +608,7 @@ public class EmbeddedRepository implements Repository {
                     if (context.isLoggingActivity()) {
                         registryContext.getLogWriter().addLog(
                                 resourcePath.getPath(), CurrentContext.getUser(),
-                                Activity.DELETE_RESOURCE,
+                                Actions.DELETE_RESOURCE,
                                 null);
                     }
                 }
@@ -677,7 +677,7 @@ public class EmbeddedRepository implements Repository {
                     }
                 }
                 if (context.isLoggingActivity()) {
-                    registryContext.getLogWriter().addLog(newPath, CurrentContext.getUser(), Activity.RENAME, currentPath);
+                    registryContext.getLogWriter().addLog(newPath, CurrentContext.getUser(), Actions.RENAME, currentPath);
                 }
 
                 registryContext.getHandlerManager(HandlerLifecycleManager.COMMIT_HANDLER_PHASE).rename(context);
@@ -748,7 +748,7 @@ public class EmbeddedRepository implements Repository {
                 }
                 if (context.isLoggingActivity()) {
                     registryContext.getLogWriter().addLog(
-                            newPath, CurrentContext.getUser(), Activity.MOVE, currentPath);
+                            newPath, CurrentContext.getUser(), Actions.MOVE, currentPath);
                 }
 
                 registryContext.getHandlerManager(
@@ -819,7 +819,7 @@ public class EmbeddedRepository implements Repository {
                 }
                 if (context.isLoggingActivity()) {
                     registryContext.getLogWriter().addLog(
-                            sourcePath, CurrentContext.getUser(), Activity.COPY, targetPath);
+                            sourcePath, CurrentContext.getUser(), Actions.COPY, targetPath);
                 }
 
                 registryContext.getHandlerManager(
@@ -987,7 +987,7 @@ public class EmbeddedRepository implements Repository {
                     		InternalUtils.getVersionedPath(versionedResourcePath);
                     if (context.isLoggingActivity()) {
                         registryContext.getLogWriter().addLog(
-                                path, CurrentContext.getUser(), Activity.RESTORE,
+                                path, CurrentContext.getUser(), Actions.RESTORE,
                                 Long.toString(versionedPath.getVersion()));
                     }
                 }
@@ -1297,7 +1297,7 @@ public class EmbeddedRepository implements Repository {
                     InternalUtils.addMountEntry(InternalUtils.getSystemRegistry(this), registryContext, path, target, false, author);
 
                     if (context.isLoggingActivity()) {
-                        registryContext.getLogWriter().addLog(path, CurrentContext.getUser(), Activity.CREATE_SYMBOLIC_LINK, target);
+                        registryContext.getLogWriter().addLog(path, CurrentContext.getUser(), Actions.CREATE_SYMBOLIC_LINK, target);
                     }
                 }
 
@@ -1386,7 +1386,7 @@ public class EmbeddedRepository implements Repository {
                     InternalUtils.addMountEntry(InternalUtils.getSystemRegistry(this), registryContext, path, instanceId, targetSubPath, author);
 
                     if (context.isLoggingActivity()) {
-                        registryContext.getLogWriter().addLog(path, CurrentContext.getUser(), Activity.CREATE_REMOTE_LINK, instanceId + ";" + targetSubPath);
+                        registryContext.getLogWriter().addLog(path, CurrentContext.getUser(), Actions.CREATE_REMOTE_LINK, instanceId + ";" + targetSubPath);
                     }
                 }
 
@@ -1485,7 +1485,7 @@ public class EmbeddedRepository implements Repository {
                     }
 
                     if (context.isLoggingActivity()) {
-                        registryContext.getLogWriter().addLog(path, CurrentContext.getUser(), Activity.REMOVE_LINK, null);
+                        registryContext.getLogWriter().addLog(path, CurrentContext.getUser(), Actions.REMOVE_LINK, null);
                     }
                 }
 
@@ -1549,7 +1549,7 @@ public class EmbeddedRepository implements Repository {
                     }
                     if (context.isLoggingActivity()) {
                         registryContext.getLogWriter().addLog(
-                                path, CurrentContext.getUser(), Activity.RESTORE, null);
+                                path, CurrentContext.getUser(), Actions.RESTORE, null);
                     }
                 }
 

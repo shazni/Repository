@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.wso2.carbon.registry.core.test.jdbc.DumpTest
 -------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.48 sec
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.738 sec

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="1.57" errors="0" skipped="0" tests="18" name="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest">
+<testsuite failures="0" time="1.457" errors="0" skipped="0" tests="18" name="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_45/jre/lib/amd64"/>
@@ -61,20 +61,20 @@
   </properties>
   <testcase time="0.092" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testPrefixManagement"/>
   <testcase time="0.033" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testCollectionDetails"/>
-  <testcase time="0.083" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testCollectionVersioning"/>
-  <testcase time="0.116" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testCombinedScenario"/>
-  <testcase time="0.063" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testFlatResourceHandling"/>
-  <testcase time="0.024" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testGetMetaData"/>
-  <testcase time="0.051" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testHierarchicalResourceHandling"/>
-  <testcase time="0.058" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testIllegalCharacters"/>
-  <testcase time="0.515" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testLastUpdateWithGet"/>
-  <testcase time="0.02" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testLastUpdateWithPut"/>
+  <testcase time="0.081" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testCollectionVersioning"/>
+  <testcase time="0.099" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testCombinedScenario"/>
+  <testcase time="0.024" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testFlatResourceHandling"/>
+  <testcase time="0.01" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testGetMetaData"/>
+  <testcase time="0.027" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testHierarchicalResourceHandling"/>
+  <testcase time="0.05" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testIllegalCharacters"/>
+  <testcase time="0.514" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testLastUpdateWithGet"/>
+  <testcase time="0.017" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testLastUpdateWithPut"/>
   <testcase time="0.005" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testLogs"/>
-  <testcase time="0.274" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testMediaTypesInCaps"/>
-  <testcase time="0.02" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testPutOnSamePath"/>
-  <testcase time="0.038" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testResourceCollectionMix"/>
-  <testcase time="0.046" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testResourceDelete"/>
+  <testcase time="0.271" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testMediaTypesInCaps"/>
+  <testcase time="0.019" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testPutOnSamePath"/>
+  <testcase time="0.037" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testResourceCollectionMix"/>
+  <testcase time="0.044" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testResourceDelete"/>
   <testcase time="0.067" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testResourceVersioning"/>
-  <testcase time="0.046" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testUserDefinedResourceQuery"/>
-  <testcase time="0.019" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testValueChange"/>
+  <testcase time="0.047" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testUserDefinedResourceQuery"/>
+  <testcase time="0.02" classname="org.wso2.carbon.registry.core.test.jdbc.ChrootJDBCTest" name="testValueChange"/>
 </testsuite>

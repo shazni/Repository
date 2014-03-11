@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationFalseTest" tests="1" failures="0" timestamp="11 Mar 2014 05:26:57 GMT" time="1.653" errors="0">
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationFalseTest" tests="1" failures="0" timestamp="11 Mar 2014 06:09:01 GMT" time="1.727" errors="0">
   <testcase name="testVersioningProperties" time="0.092" classname="org.wso2.carbon.registry.core.test.jdbc.StaticConfigurationFalseTest"/>
 </testsuite>

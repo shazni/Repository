@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.105" errors="0" skipped="0" tests="3" name="org.wso2.carbon.registry.core.test.jdbc.PathsTest">
+<testsuite failures="0" time="0.11" errors="0" skipped="0" tests="3" name="org.wso2.carbon.registry.core.test.jdbc.PathsTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_45/jre/lib/amd64"/>
@@ -59,7 +59,7 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="0.042" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest" name="testColon"/>
-  <testcase time="0.029" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest" name="testGetOnPaths"/>
-  <testcase time="0.034" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest" name="testPutOnPaths"/>
+  <testcase time="0.044" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest" name="testColon"/>
+  <testcase time="0.031" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest" name="testGetOnPaths"/>
+  <testcase time="0.035" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest" name="testPutOnPaths"/>
 </testsuite>

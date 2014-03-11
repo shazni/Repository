@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="1.402" errors="0" skipped="0" tests="10" name="org.wso2.carbon.registry.core.test.jdbc.DumpTest">
+<testsuite failures="0" time="1.234" errors="0" skipped="0" tests="10" name="org.wso2.carbon.registry.core.test.jdbc.DumpTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_45/jre/lib/amd64"/>
@@ -60,13 +60,13 @@
     <property name="sun.cpu.isalist" value=""/>
   </properties>
   <testcase time="0.002" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testAbsoluteAssociationPath"/>
-  <testcase time="0.093" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testCollectionDump"/>
-  <testcase time="0.185" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testDumpWithSymLink"/>
-  <testcase time="0.184" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testNewRestore"/>
-  <testcase time="0.074" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testNewerVersionException"/>
-  <testcase time="0.001" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testRelativeAssociationPath"/>
-  <testcase time="0.018" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testResourceDump"/>
-  <testcase time="0.695" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testRootDump"/>
-  <testcase time="0.091" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testRootRestore"/>
-  <testcase time="0.059" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testSimpleNewRestore"/>
+  <testcase time="0.091" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testCollectionDump"/>
+  <testcase time="0.183" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testDumpWithSymLink"/>
+  <testcase time="0.163" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testNewRestore"/>
+  <testcase time="0.064" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testNewerVersionException"/>
+  <testcase time="0" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testRelativeAssociationPath"/>
+  <testcase time="0.017" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testResourceDump"/>
+  <testcase time="0.604" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testRootDump"/>
+  <testcase time="0.068" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testRootRestore"/>
+  <testcase time="0.042" classname="org.wso2.carbon.registry.core.test.jdbc.DumpTest" name="testSimpleNewRestore"/>
 </testsuite>

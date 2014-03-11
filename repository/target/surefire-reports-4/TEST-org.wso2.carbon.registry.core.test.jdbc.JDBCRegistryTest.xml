@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="1.507" errors="0" skipped="0" tests="17" name="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest">
+<testsuite failures="0" time="1.493" errors="0" skipped="0" tests="17" name="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_45/jre/lib/amd64"/>
@@ -59,21 +59,21 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="0.063" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testCollectionDetails"/>
-  <testcase time="0.073" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testCollectionVersioning"/>
-  <testcase time="0.1" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testCombinedScenario"/>
-  <testcase time="0.02" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testFlatResourceHandling"/>
-  <testcase time="0.01" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testGetMetaData"/>
-  <testcase time="0.03" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testHierarchicalResourceHandling"/>
-  <testcase time="0.065" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testIllegalCharacters"/>
-  <testcase time="0.515" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testLastUpdateWithGet"/>
-  <testcase time="0.029" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testLastUpdateWithPut"/>
+  <testcase time="0.057" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testCollectionDetails"/>
+  <testcase time="0.078" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testCollectionVersioning"/>
+  <testcase time="0.094" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testCombinedScenario"/>
+  <testcase time="0.022" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testFlatResourceHandling"/>
+  <testcase time="0.011" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testGetMetaData"/>
+  <testcase time="0.055" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testHierarchicalResourceHandling"/>
+  <testcase time="0.089" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testIllegalCharacters"/>
+  <testcase time="0.521" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testLastUpdateWithGet"/>
+  <testcase time="0.022" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testLastUpdateWithPut"/>
   <testcase time="0.006" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testLogs"/>
-  <testcase time="0.307" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testMediaTypesInCaps"/>
-  <testcase time="0.018" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testPutOnSamePath"/>
-  <testcase time="0.038" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testResourceCollectionMix"/>
-  <testcase time="0.053" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testResourceDelete"/>
-  <testcase time="0.089" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testResourceVersioning"/>
-  <testcase time="0.067" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testUserDefinedResourceQuery"/>
-  <testcase time="0.024" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testValueChange"/>
+  <testcase time="0.284" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testMediaTypesInCaps"/>
+  <testcase time="0.017" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testPutOnSamePath"/>
+  <testcase time="0.034" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testResourceCollectionMix"/>
+  <testcase time="0.047" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testResourceDelete"/>
+  <testcase time="0.082" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testResourceVersioning"/>
+  <testcase time="0.052" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testUserDefinedResourceQuery"/>
+  <testcase time="0.022" classname="org.wso2.carbon.registry.core.test.jdbc.JDBCRegistryTest" name="testValueChange"/>
 </testsuite>

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.utils.RegistryUtilsTest" tests="1" failures="0" timestamp="11 Mar 2014 05:24:40 GMT" time="0.026" errors="0">
-  <testcase name="testGetResourceName" time="0.017" classname="org.wso2.carbon.registry.core.test.utils.RegistryUtilsTest"/>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.utils.RegistryUtilsTest" tests="1" failures="0" timestamp="11 Mar 2014 06:06:45 GMT" time="0.023" errors="0">
+  <testcase name="testGetResourceName" time="0.014" classname="org.wso2.carbon.registry.core.test.utils.RegistryUtilsTest"/>
 </testsuite>

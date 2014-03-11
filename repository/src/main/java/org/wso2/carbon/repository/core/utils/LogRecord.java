@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.repository.core.utils;
 
+import org.wso2.carbon.repository.api.utils.Actions;
+
 import java.util.Date;
 
 /**
@@ -28,7 +30,7 @@ public class LogRecord {
     private String resourcePath;
     private String userName;
     private long timestamp;
-    private int action;
+    private Actions action;
     private String actionData;
     private int tenantId;
 
@@ -91,7 +93,7 @@ public class LogRecord {
      *
      * @return the action.
      */
-    public int getAction() {
+    public Actions getAction() {
         return action;
     }
 
@@ -100,7 +102,7 @@ public class LogRecord {
      *
      * @param action the action.
      */
-    public void setAction(int action) {
+    public void setAction(Actions action) {
         this.action = action;
     }
 

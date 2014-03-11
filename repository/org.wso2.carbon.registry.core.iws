@@ -16,7 +16,6 @@
     <file path="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/spi/dataaccess/DataAccessManager.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394514465592" ignored="false" />
     <file path="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/DumpReader.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394514465592" ignored="false" />
     <file path="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/InternalConstants.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394514465592" ignored="false" />
-    <file path="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/LogRecord.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394514465592" ignored="false" />
     <file path="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/VersionedPath.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394514465592" ignored="false" />
     <file path="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/api/dataaccess/QueryProcessor.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394514465592" ignored="false" />
     <file path="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/XMLSchema.xsd" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394514465592" ignored="false" />
@@ -28,6 +27,14 @@
     <file path="$PROJECT_DIR$/target/site/apidocs/org/wso2/carbon/repository/core/EmbeddedRepository.html" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394514876886" ignored="false" />
     <file path="$PROJECT_DIR$/target/surefire-reports-3/testng-results.xml" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394515423254" ignored="false" />
     <file path="$PROJECT_DIR$/target/surefire-reports-5/testng-results.xml" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394516078093" ignored="false" />
+    <file path="/Actions.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394517864561" ignored="false" />
+    <file path="/Activity.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394517012416" ignored="false" />
+    <file path="/EmbeddedRepository.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394517394954" ignored="false" />
+    <file path="/LogWriter.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394517321212" ignored="false" />
+    <file path="/LogRecord.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394517449125" ignored="false" />
+    <file path="/JDBCLogsDAO.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394517960469" ignored="false" />
+    <file path="/ResourceStorer.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394517709344" ignored="false" />
+    <file path="/ResourceActivity.java" changelist="76b10d3f-4cc6-4f41-8454-18f9cad97dae" time="1394517738416" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,28 +233,69 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="JDBCLogsDAO.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="JDBCLogsDAO.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/jdbc/dao/JDBCLogsDAO.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="49" selection-start="1645" selection-end="1645" vertical-scroll-proportion="0.0">
+            <state line="474" column="113" selection-start="21525" selection-end="21525" vertical-scroll-proportion="0.33333334">
               <folding>
-                <element signature="e#10613#10631#0" expanded="true" />
-                <element signature="e#12941#12959#0" expanded="true" />
-                <element signature="e#18874#18892#0" expanded="true" />
-                <element signature="e#24981#24999#0" expanded="true" />
-                <element signature="e#28452#28470#0" expanded="true" />
-                <element signature="e#29647#29665#0" expanded="true" />
-                <element signature="e#32241#32259#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#10674#10692#0" expanded="true" />
+                <element signature="e#13002#13020#0" expanded="true" />
+                <element signature="e#18935#18953#0" expanded="true" />
+                <element signature="e#25061#25079#0" expanded="true" />
+                <element signature="e#28551#28569#0" expanded="true" />
+                <element signature="e#29746#29764#0" expanded="true" />
+                <element signature="e#32340#32358#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EmbeddedRepository.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="EmbeddedRepository.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/EmbeddedRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1157" column="78" selection-start="43152" selection-end="43152" vertical-scroll-proportion="0.70526314">
+            <state line="1914" column="91" selection-start="71783" selection-end="71783" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LogWriter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/LogWriter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="153" column="22" selection-start="5077" selection-end="5077" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LogRecord.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/LogRecord.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="95" column="21" selection-start="2240" selection-end="2240" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Actions.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/api/utils/Actions.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="109" column="36" selection-start="2432" selection-end="2432" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Activity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/api/Activity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="109" column="17" selection-start="2733" selection-end="2733" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -270,33 +318,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaseTestCase.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/org/wso2/carbon/registry/core/test/utils/BaseTestCase.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#0#3794#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ResourceActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/spi/ResourceActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="13" selection-start="770" selection-end="770" vertical-scroll-proportion="0.0">
+            <state line="41" column="81" selection-start="1197" selection-end="1197" vertical-scroll-proportion="0.0">
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChrootWrapper.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/ChrootWrapper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="331" column="22" selection-start="11557" selection-end="11557" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#11786#11804#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -316,11 +342,17 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/jdbc/dao/JDBCLogsDAO.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/EmbeddedRepository.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/ChrootWrapper.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/ResourceImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/api/Resource.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/api/Activity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/LogWriter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/EmbeddedRepository.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/LogRecord.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/ResourceStorer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/spi/ResourceActivity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/api/utils/Actions.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/jdbc/dao/JDBCLogsDAO.java" />
       </list>
     </option>
   </component>
@@ -521,6 +553,40 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="repository" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="utils" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org.wso2.carbon.registry.core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="repository" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="assembly" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -556,6 +622,34 @@
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
       <method />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
@@ -669,7 +763,7 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3287483" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -684,7 +778,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.6712517" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -817,34 +911,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/jdbc/dao/JDBCLogsDAO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="49" selection-start="1645" selection-end="1645" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#10613#10631#0" expanded="true" />
-            <element signature="e#12941#12959#0" expanded="true" />
-            <element signature="e#18874#18892#0" expanded="true" />
-            <element signature="e#24981#24999#0" expanded="true" />
-            <element signature="e#28452#28470#0" expanded="true" />
-            <element signature="e#29647#29665#0" expanded="true" />
-            <element signature="e#32241#32259#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/ChrootWrapper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="331" column="22" selection-start="11557" selection-end="11557" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#11786#11804#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/spi/ResourceActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="13" selection-start="770" selection-end="770" vertical-scroll-proportion="0.0">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -871,10 +943,72 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/api/Activity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="17" selection-start="2733" selection-end="2733" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/LogWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="153" column="22" selection-start="5077" selection-end="5077" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/ResourceStorer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="953" column="91" selection-start="40850" selection-end="40850" vertical-scroll-proportion="0.12206573">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/api/utils/Actions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="36" selection-start="2432" selection-end="2432" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/EmbeddedRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1157" column="78" selection-start="43152" selection-end="43152" vertical-scroll-proportion="0.70526314">
+        <state line="1914" column="91" selection-start="71783" selection-end="71783" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/utils/LogRecord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="95" column="21" selection-start="2240" selection-end="2240" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/spi/ResourceActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="81" selection-start="1197" selection-end="1197" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/wso2/carbon/repository/core/jdbc/dao/JDBCLogsDAO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="474" column="113" selection-start="21525" selection-end="21525" vertical-scroll-proportion="0.33333334">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#10674#10692#0" expanded="true" />
+            <element signature="e#13002#13020#0" expanded="true" />
+            <element signature="e#18935#18953#0" expanded="true" />
+            <element signature="e#25061#25079#0" expanded="true" />
+            <element signature="e#28551#28569#0" expanded="true" />
+            <element signature="e#29746#29764#0" expanded="true" />
+            <element signature="e#32340#32358#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.QueryTest" tests="4" failures="0" timestamp="11 Mar 2014 05:30:54 GMT" time="1.765" errors="0">
-  <testcase name="testDefaultQuery" time="0.162" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
-  <testcase name="testWithSpecialCharactersQuery" time="0.085" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
-  <testcase name="testWithoutTableParamsQuery" time="0.076" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
-  <testcase name="testWithoutWhereQuery" time="0.075" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.QueryTest" tests="4" failures="0" timestamp="11 Mar 2014 06:12:55 GMT" time="2.191" errors="0">
+  <testcase name="testDefaultQuery" time="0.116" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
+  <testcase name="testWithSpecialCharactersQuery" time="0.055" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
+  <testcase name="testWithoutTableParamsQuery" time="0.048" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
+  <testcase name="testWithoutWhereQuery" time="0.058" classname="org.wso2.carbon.registry.core.test.jdbc.QueryTest"/>
 </testsuite>

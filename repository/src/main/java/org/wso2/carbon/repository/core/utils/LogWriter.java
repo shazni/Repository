@@ -23,6 +23,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
+import org.wso2.carbon.repository.api.utils.Actions;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.spi.dao.LogsDAO;
 import org.wso2.carbon.repository.spi.dataaccess.DataAccessManager;
@@ -136,7 +137,7 @@ public class LogWriter extends Thread {
      *
      * @throws RepositoryException if the operation failed.
      */
-    public void addLog(String resourcePath, String userName, int action, String actionData) throws RepositoryException {
+    public void addLog(String resourcePath, String userName, Actions action, String actionData) throws RepositoryException {
         if (logQueue != null && isCanWriteLogs()) {
             LogRecord logRecord = new LogRecord();
             

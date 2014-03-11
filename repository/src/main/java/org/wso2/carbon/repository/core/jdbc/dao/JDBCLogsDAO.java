@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.repository.api.Activity;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
+import org.wso2.carbon.repository.api.utils.Actions;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.DatabaseConstants;
 import org.wso2.carbon.repository.core.Transaction;
@@ -150,7 +151,7 @@ public class JDBCLogsDAO implements LogsDAO {
                 s.setString(1, logRecord.getResourcePath());
                 s.setString(2, logRecord.getUserName());
                 s.setTimestamp(3, new Timestamp(logRecord.getTimestamp().getTime()));
-                s.setInt(4, logRecord.getAction());
+                s.setInt(4, logRecord.getAction().getId());
                 s.setString(5, logRecord.getActionData());
                 s.setInt(6, logRecord.getTenantId());
                 s.addBatch();
@@ -471,7 +472,7 @@ public class JDBCLogsDAO implements LogsDAO {
         logEntry.setDate(
                 new Date(results.getTimestamp(
                         DatabaseConstants.LOGGED_TIME_FIELD).getTime()));
-        logEntry.setAction(results.getInt(DatabaseConstants.ACTION_FIELD));
+        logEntry.setAction(Actions.getAction(results.getInt(DatabaseConstants.ACTION_FIELD)));
         logEntry.setActionData(results.getString(DatabaseConstants.ACTION_DATA_FIELD));
 
         return logEntry;
@@ -591,7 +592,7 @@ public class JDBCLogsDAO implements LogsDAO {
                     logEntry.setDate(
                             new Date(results.getTimestamp(
                                     DatabaseConstants.LOGGED_TIME_FIELD).getTime()));
-                    logEntry.setAction(results.getInt(DatabaseConstants.ACTION_FIELD));
+                    logEntry.setAction(Actions.getAction(results.getInt(DatabaseConstants.ACTION_FIELD)));
                     logEntry.setActionData(results.getString(DatabaseConstants.ACTION_DATA_FIELD));
 
                     resultList.add(logEntry);
@@ -753,7 +754,7 @@ public class JDBCLogsDAO implements LogsDAO {
                 logEntry.setDate(
                         new Date(results.getTimestamp(
                                 DatabaseConstants.LOGGED_TIME_FIELD).getTime()));
-                logEntry.setAction(results.getInt(DatabaseConstants.ACTION_FIELD));
+                logEntry.setAction(Actions.getAction(results.getInt(DatabaseConstants.ACTION_FIELD)));
                 logEntry.setActionData(results.getString(DatabaseConstants.ACTION_DATA_FIELD));
 
                 resultList.add(logEntry);
@@ -1016,7 +1017,7 @@ public class JDBCLogsDAO implements LogsDAO {
         logEntry.setPath(results.getString(DatabaseConstants.PATH_FIELD));
         logEntry.setUserName(results.getString(DatabaseConstants.USER_ID_FIELD));
         logEntry.setDate(new Date(results.getTimestamp(DatabaseConstants.LOGGED_TIME_FIELD).getTime()));
-        logEntry.setAction(results.getInt(DatabaseConstants.ACTION_FIELD));
+        logEntry.setAction(Actions.getAction(results.getInt(DatabaseConstants.ACTION_FIELD)));
         logEntry.setActionData(results.getString(DatabaseConstants.ACTION_DATA_FIELD));
 
         return logEntry;

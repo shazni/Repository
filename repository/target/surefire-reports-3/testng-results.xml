@@ -2,14 +2,14 @@
 <testng-results skipped="0" failed="0" total="1" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="org.wso2.carbon.registry.core.test.multitenant.MultiTenantTest" duration-ms="1766" started-at="2014-03-11T10:59:50Z" finished-at="2014-03-11T10:59:52Z">
+  <suite name="org.wso2.carbon.registry.core.test.multitenant.MultiTenantTest" duration-ms="1672" started-at="2014-03-11T11:41:51Z" finished-at="2014-03-11T11:41:53Z">
     <groups>
     </groups>
-    <test name="Command line test" duration-ms="1766" started-at="2014-03-11T10:59:50Z" finished-at="2014-03-11T10:59:52Z">
+    <test name="Command line test" duration-ms="1672" started-at="2014-03-11T11:41:51Z" finished-at="2014-03-11T11:41:53Z">
       <class name="org.wso2.carbon.registry.core.test.multitenant.MultiTenantTest">
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1650" started-at="2014-03-11T10:59:50Z" finished-at="2014-03-11T10:59:52Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1586" started-at="2014-03-11T11:41:51Z" finished-at="2014-03-11T11:41:53Z">
         </test-method>
-        <test-method status="PASS" signature="testVirtualRoots()" name="testVirtualRoots" duration-ms="108" started-at="2014-03-11T10:59:52Z" finished-at="2014-03-11T10:59:52Z">
+        <test-method status="PASS" signature="testVirtualRoots()" name="testVirtualRoots" duration-ms="81" started-at="2014-03-11T11:41:53Z" finished-at="2014-03-11T11:41:53Z">
         </test-method>
       </class>
     </test>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.219" errors="0" skipped="0" tests="7" name="org.wso2.carbon.registry.core.test.jdbc.MoveTest">
+<testsuite failures="0" time="0.256" errors="0" skipped="0" tests="7" name="org.wso2.carbon.registry.core.test.jdbc.MoveTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_45/jre/lib/amd64"/>
@@ -60,10 +60,10 @@
     <property name="sun.cpu.isalist" value=""/>
   </properties>
   <testcase time="0.068" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testCollectionMoveWithChild"/>
-  <testcase time="0.019" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testGeneralCacheCollectionMove"/>
-  <testcase time="0.015" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testGeneralCacheResourceMove"/>
-  <testcase time="0.044" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testGeneralCollectionMove"/>
-  <testcase time="0.03" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testGeneralResourceMove"/>
-  <testcase time="0.025" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testResourceMoveFromRoot"/>
-  <testcase time="0.018" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testResourceMoveToRoot"/>
+  <testcase time="0.024" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testGeneralCacheCollectionMove"/>
+  <testcase time="0.018" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testGeneralCacheResourceMove"/>
+  <testcase time="0.052" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testGeneralCollectionMove"/>
+  <testcase time="0.038" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testGeneralResourceMove"/>
+  <testcase time="0.032" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testResourceMoveFromRoot"/>
+  <testcase time="0.024" classname="org.wso2.carbon.registry.core.test.jdbc.MoveTest" name="testResourceMoveToRoot"/>
 </testsuite>

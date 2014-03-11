@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.PathsTest" tests="3" failures="0" timestamp="11 Mar 2014 05:25:00 GMT" time="1.73" errors="0">
-  <testcase name="testColon" time="0.059" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest"/>
-  <testcase name="testGetOnPaths" time="0.031" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest"/>
-  <testcase name="testPutOnPaths" time="0.035" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest"/>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.PathsTest" tests="3" failures="0" timestamp="11 Mar 2014 06:07:05 GMT" time="2.506" errors="0">
+  <testcase name="testColon" time="0.047" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest"/>
+  <testcase name="testGetOnPaths" time="0.029" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest"/>
+  <testcase name="testPutOnPaths" time="0.038" classname="org.wso2.carbon.registry.core.test.jdbc.PathsTest"/>
 </testsuite>

@@ -24,6 +24,7 @@ import org.wso2.carbon.repository.api.exceptions.RepositoryErrorCodes;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.exceptions.RepositoryResourceNotFoundException;
 import org.wso2.carbon.repository.api.exceptions.RepositoryUserContentException;
+import org.wso2.carbon.repository.api.utils.Actions;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.config.RepositoryContext;
 import org.wso2.carbon.repository.core.config.StaticConfiguration;
@@ -832,7 +833,7 @@ public class ResourceStorer {
         
         if (!Boolean.FALSE.equals(CurrentContext.getAttribute(IS_LOGGING_ACTIVITY))) {
             registryContext.getLogWriter().addLog(
-                    path, CurrentContext.getUser(), Activity.ADD, null);
+                    path, CurrentContext.getUser(), Actions.ADD, null);
         }
         
         if (!(resource instanceof CollectionImpl)) {
@@ -879,7 +880,7 @@ public class ResourceStorer {
         
         if (!Boolean.FALSE.equals(CurrentContext.getAttribute(IS_LOGGING_ACTIVITY))) {
             registryContext.getLogWriter().addLog(resourceID.getPath(), CurrentContext.getUser(),
-                    Activity.UPDATE, null);
+                    Actions.UPDATE, null);
         }
         
         if (!(resource instanceof CollectionImpl)) {
@@ -956,7 +957,7 @@ public class ResourceStorer {
         }
         if (!Boolean.FALSE.equals(CurrentContext.getAttribute(IS_LOGGING_ACTIVITY))) {
             registryContext.getLogWriter().addLog(
-                    path, CurrentContext.getUser(), Activity.ADD, null);
+                    path, CurrentContext.getUser(), Actions.ADD, null);
         }
         if(collection.getUUID() == null){
             setUUIDForResource(collection);

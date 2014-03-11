@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest" tests="11" failures="0" timestamp="11 Mar 2014 05:29:20 GMT" time="0.273" errors="0">
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest" tests="11" failures="0" timestamp="11 Mar 2014 06:11:20 GMT" time="0.284" errors="0">
   <testcase name="testDump1" time="0.091" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
   <testcase name="testDump2" time="0.005" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
   <testcase name="testDump3" time="0.007" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
   <testcase name="testDump4" time="0.025" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
   <testcase name="testDump5" time="0.006" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
   <testcase name="testDump6" time="0.011" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
-  <testcase name="testDump7" time="0.081" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDump7" time="0.088" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
   <testcase name="testDump9" time="0.002" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
-  <testcase name="testDumpWriter1" time="0.019" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDumpWriter1" time="0.023" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
   <testcase name="testDumpWriterWithNameLast" time="0.001" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
-  <testcase name="testDumpWriterWithNameLastAndManyAttribute" time="0.002" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
+  <testcase name="testDumpWriterWithNameLastAndManyAttribute" time="0.001" classname="org.wso2.carbon.registry.core.test.jdbc.DumpReaderTest"/>
 </testsuite>

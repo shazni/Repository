@@ -17,6 +17,7 @@
 package org.wso2.carbon.repository.spi;
 
 import org.wso2.carbon.repository.api.Activity;
+import org.wso2.carbon.repository.api.utils.Actions;
 
 import java.util.Date;
 
@@ -26,7 +27,7 @@ public class ResourceActivity extends Activity {
      *
      * @param action the action.
      */
-    public void setAction(int action) {
+    public void setAction(Actions action) {
         this.action = action;
     }
 

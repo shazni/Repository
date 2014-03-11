@@ -16,6 +16,8 @@
 
 package org.wso2.carbon.repository.api;
 
+import org.wso2.carbon.repository.api.utils.Actions;
+
 import java.util.Date;
 
 /**
@@ -25,61 +27,6 @@ import java.util.Date;
  * entry, which is a record of a single action performed on the repository.
  */
 public abstract class Activity {
-
-    /**
-     * The log action to filter with. All is for don't filter at all.
-     */
-    public static final int ALL = -1;
-
-    /**
-     * Filter value for the resource adding action.
-     */
-    public static final int ADD = 0;
-
-    /**
-     * Filter value for the resource updating action.
-     */
-    public static final int UPDATE = 1;
-
-    /**
-     * Filter value for the resource deleting action.
-     */
-    public static final int DELETE_RESOURCE = 7;
-
-    /**
-     * Filter value for the resource restoring action.
-     */
-    public static final int RESTORE = 8;
-
-    /**
-     * Filter value for the resource renaming action.
-     */
-    public static final int RENAME = 9;
-
-    /**
-     * Filter value for the resource moving action.
-     */
-    public static final int MOVE = 10;
-
-    /**
-     * Filter value for the resource copying action.
-     */
-    public static final int COPY = 11;
-
-    /**
-     * Filter value for the create remote link action.
-     */
-    public static final int CREATE_REMOTE_LINK = 12;
-
-    /**
-     * Filter value for the create symbolic link action.
-     */
-    public static final int CREATE_SYMBOLIC_LINK = 13;
-
-    /**
-     * Filter value for the removing link action.
-     */
-    public static final int REMOVE_LINK = 14;
 
     /**
      * Path of the resource on which the action is performed.
@@ -99,7 +46,7 @@ public abstract class Activity {
     /**
      * Name of the actions. e.g. put, get
      */
-    protected int action;
+    protected Actions action;
 
     /**
      * Additional data to describe the actions. This depends on the action.
@@ -138,7 +85,7 @@ public abstract class Activity {
      *
      * @return the action.
      */
-    public int getAction() {
+    public Actions getAction() {
         return action;
     }
 

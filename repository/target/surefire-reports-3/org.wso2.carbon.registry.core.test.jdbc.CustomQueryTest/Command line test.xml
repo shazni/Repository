@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" tests="1" failures="0" timestamp="11 Mar 2014 05:29:39 GMT" time="1.842" errors="0">
-  <testcase name="testCustomQueryResultsOrderForResources" time="0.111" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest"/>
+<testsuite hostname="eranda" name="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest" tests="1" failures="0" timestamp="11 Mar 2014 06:11:39 GMT" time="1.702" errors="0">
+  <testcase name="testCustomQueryResultsOrderForResources" time="0.106" classname="org.wso2.carbon.registry.core.test.jdbc.CustomQueryTest"/>
 </testsuite>
