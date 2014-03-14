@@ -29,6 +29,7 @@ import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.METHODS;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.ResourceStorer;
@@ -65,7 +66,7 @@ public class SystemRegistryInHandlerTest  extends BaseTestCase {
         URLMatcher myPrivateHandlerMatcher = new URLMatcher();
         myPrivateHandlerMatcher.setGetPattern(".*/to/my/private/handler");
         myPrivateHandlerMatcher.setPutPattern(".*/to/my/private/handler");
-        handlerManager.addHandler(new String[] {Filter.GET, Filter.PUT} , myPrivateHandlerMatcher, myPrivateHandler);
+        handlerManager.addHandler(new METHODS[] {METHODS.GET, METHODS.PUT} , myPrivateHandlerMatcher, myPrivateHandler);
 
         Resource r = adminRegistry.newResource();
         String originalContent = "original content";

@@ -29,6 +29,7 @@ import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.METHODS;
 import org.wso2.carbon.repository.core.CurrentContext;
 
 /**
@@ -50,24 +51,24 @@ public class UserDefinedHandlerManager extends HandlerManager {
     }
 
     @Override
-    public void addHandler(String[] methods, Filter filter, Handler handler) {
+    public void addHandler(METHODS[] methods, Filter filter, Handler handler) {
         getUserHandlerManager().addHandler(methods, filter, handler);
     }
 
     @Override
-    public void addHandler(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+    public void addHandler(METHODS[] methods, Filter filter, Handler handler, String lifecyclePhase) {
         getUserHandlerManager().addHandler(methods, filter, handler, lifecyclePhase);
     }
 
-    @Override
-    public void addHandlerWithPriority(String[] methods, Filter filter, Handler handler) {
-        getUserHandlerManager().addHandlerWithPriority(methods, filter, handler);
-    }
-
-    @Override
-    public void addHandlerWithPriority(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
-        getUserHandlerManager().addHandlerWithPriority(methods, filter, handler, lifecyclePhase);
-    }
+//    @Override
+//    public void addHandlerWithPriority(String[] methods, Filter filter, Handler handler) {
+//        getUserHandlerManager().addHandlerWithPriority(methods, filter, handler);
+//    }
+//
+//    @Override
+//    public void addHandlerWithPriority(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+//        getUserHandlerManager().addHandlerWithPriority(methods, filter, handler, lifecyclePhase);
+//    }
 
     @Override
     public void removeHandler(Handler handler) {
@@ -77,16 +78,6 @@ public class UserDefinedHandlerManager extends HandlerManager {
     @Override
     public void removeHandler(Handler handler, String lifecyclePhase) {
         getUserHandlerManager().removeHandler(handler, lifecyclePhase);
-    }
-
-    @Override
-    public void removeHandler(String[] methods, Filter filter, Handler handler) {
-        getUserHandlerManager().removeHandler(methods, filter, handler);
-    }
-
-    @Override
-    public void removeHandler(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
-        getUserHandlerManager().removeHandler(methods, filter, handler, lifecyclePhase);
     }
 
     @Override

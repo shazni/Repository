@@ -228,7 +228,7 @@ public class EmbeddedRepository implements Repository {
     	return concatenatedChroot ;
     }
 
-    public RepositoryContext getRegistryContext() {
+    public RepositoryContext getRegistryContext() throws RepositoryException {
         beginDBQueryLog(2);
         HandlerContext context = new HandlerContext(this);
         
@@ -2136,7 +2136,7 @@ public class EmbeddedRepository implements Repository {
      *
      * @return RegistryCacheKey
      */
-    private RepositoryCacheKey getRegistryCacheKey(Repository registry, String path) {
+    private RepositoryCacheKey getRegistryCacheKey(Repository registry, String path) throws RepositoryException {
         String connectionId = "";
 
         int tenantId;

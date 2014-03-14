@@ -24,6 +24,7 @@ import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
+import org.wso2.carbon.repository.api.utils.METHODS;
 
 /**
  * This interface can be used to implement an OSGi Service of the Repository. By doing so, the
@@ -272,7 +273,7 @@ public interface RepositoryService {
     
     /**
      * This method is not needed
-     * @param registryRoot
+     * @param repositoryRoot
      */
     void setRepositoryRoot(String repositoryRoot);
     
@@ -395,7 +396,7 @@ public interface RepositoryService {
      * @param filter  Filter instance associated with the handler.
      * @param handler Handler instance to be registered.
      */
-    void addHandler(String[] methods, Filter filter, Handler handler);
+    void addHandler(METHODS[] methods, Filter filter, Handler handler);
     
     /**
      * Registers handlers belonging to the given lifecycle phase with the handler manager. Each
@@ -417,31 +418,16 @@ public interface RepositoryService {
      * @param lifecyclePhase The name of the lifecycle phase.
      * @param handler        Handler instance to be registered.
      */
-    void addHandler(String[] methods, Filter filter, Handler handler, String lifecyclePhase);
-    
+    void addHandler(METHODS[] methods, Filter filter, Handler handler, String lifecyclePhase);
+
     /**
-     * Removes handlers belonging to the given lifecycle phase with the handler manager. Each
-     * handler should be registered with a Filter. If a handler should be disengaged only for a
-     * subset of allowed methods, those methods can be specified as a string array.
+     * remove a handler belonging to the given lifecycle phase from all the filters, all the
+     * methods
      *
-     * @param methods        Methods for which the registered handler should be disengaged. Allowed
-     *                       values in the string array are "GET", "PUT", "IMPORT", "DELETE",
-     *                       "PUT_CHILD", "IMPORT_CHILD", "MOVE", "COPY", "RENAME", "CREATE_LINK",
-     *                       "REMOVE_LINK", "ADD_ASSOCIATION", "RESOURCE_EXISTS",
-     *                       "REMOVE_ASSOCIATION", "GET_ASSOCIATIONS", "GET_ALL_ASSOCIATIONS",
-     *                       "APPLY_TAG", "GET_RESOURCE_PATHS_WITH_TAG", "GET_TAGS", "REMOVE_TAG",
-     *                       "ADD_COMMENT", "EDIT_COMMENT", "GET_COMMENTS", "RATE_RESOURCE",
-     *                       "GET_AVERAGE_RATING", "GET_RATING", "CREATE_VERSION", "GET_VERSIONS",
-     *                       "RESTORE_VERSION", "EXECUTE_QUERY", "SEARCH_CONTENT", and
-     *                       "INVOKE_ASPECT". If null is given, handler will be disengaged to all
-     *                       methods.
-     * @param filter         Filter instance associated with the handler. Each filter that you pass
-     *                       in must have the associated handler set to it.
-     * @param handler        Handler instance to be unregistered.
-     * @param lifecyclePhase The name of the lifecycle phase.
+     * @param handler        the handler to remove.
      */
-    void removeHandler(String[] methods, Filter filter, Handler handler, String lifecyclePhase);
-    
+    public void removeHandler(Handler handler);
+
     /**
      * remove a handler belonging to the given lifecycle phase from all the filters, all the
      * methods

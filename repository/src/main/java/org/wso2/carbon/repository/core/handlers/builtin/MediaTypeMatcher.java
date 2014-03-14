@@ -23,6 +23,7 @@ import org.wso2.carbon.repository.api.ResourcePath;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.METHODS;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.EmbeddedRepository;
 import org.wso2.carbon.repository.core.exceptions.RepositoryServerContentException;
@@ -104,6 +105,39 @@ public class MediaTypeMatcher extends Filter {
         return false;
     }
 
+    @Override
+    public boolean filter(HandlerContext handlerContext, METHODS method) throws RepositoryException {
+        switch (method) {
+            case GET:
+                return handleGet(handlerContext);
+            case COPY:
+                return handleCopy(handlerContext);
+            case CREATE_LINK:
+                return handleCreateLink(handlerContext);
+            case DELETE:
+                return handleDelete(handlerContext);
+            case IMPORT_CHILD:
+                return handleImportChild(handlerContext);
+            case IMPORT:
+                return handleImportResource(handlerContext);
+            case INVOKE_ASPECT:
+                return handleInvokeAspect(handlerContext);
+            case MOVE:
+                return handleMove(handlerContext);
+            case PUT:
+                return handlePut(handlerContext);
+            case PUT_CHILD:
+                return handlePutChild(handlerContext);
+            case REMOVE_LINK:
+                return handleRemoveLink(handlerContext);
+            case RENAME:
+                return handleRename(handlerContext);
+            default:
+                return false;
+
+        }
+    }
+
     /**
      * Matches if the media type of the current resource is equal to the handler's media type. If a
      * resource is not set in the RequestContext, this method will retrieve the resource for given
@@ -123,7 +157,7 @@ public class MediaTypeMatcher extends Filter {
     public boolean handleGet(HandlerContext requestContext) throws RepositoryException {
         // check if the request is for new resource
         ResourcePath resourcePath = requestContext.getResourcePath();
-        
+
         if (resourcePath.parameterExists("new")) {
             String mediaType = resourcePath.getParameterValue("mediaType");
             return (mediaType != null && (invert != this.mediaType.equals(mediaType)));
@@ -134,9 +168,9 @@ public class MediaTypeMatcher extends Filter {
             VersionedPath versionedPath =
                     InternalUtils.getVersionedPath(requestContext.getResourcePath());
 
-            if (versionedPath.getVersion() == -1) {            	
+            if (versionedPath.getVersion() == -1) {
             	Repository registry = requestContext.getRepository();
-            	
+
             	if(registry instanceof EmbeddedRepository) {
 	                resource = ((EmbeddedRepository) requestContext.getRepository()).getRepository().
 	                        get(requestContext.getResourcePath().getPath());
@@ -168,13 +202,11 @@ public class MediaTypeMatcher extends Filter {
      */
     public boolean handlePut(HandlerContext requestContext) throws RepositoryException {
         Resource resource = requestContext.getResource();
-        
         if (resource == null) {
             return false;
         }
 
         String mType = resource.getMediaType();
-        
         return mType != null && (invert != mType.equals(mediaType));
     }
 
@@ -188,13 +220,13 @@ public class MediaTypeMatcher extends Filter {
      */
     public boolean handleImportResource(HandlerContext requestContext) throws RepositoryException {
         Resource resource = requestContext.getResource();
-        
+
         if (resource == null) {
             return false;
         }
 
         String mType = resource.getMediaType();
-        
+
         return mType != null && (invert != mType.equals(mediaType));
 
     }
@@ -210,10 +242,10 @@ public class MediaTypeMatcher extends Filter {
     public boolean handleDelete(HandlerContext requestContext) throws RepositoryException {
 
         Resource resource = requestContext.getResource();
-        
-        if (resource == null) {        	
+
+        if (resource == null) {
         	Repository registry = requestContext.getRepository();
-        	
+
         	if(registry instanceof EmbeddedRepository) {
                 resource = ((EmbeddedRepository) requestContext.getRepository()).getRepository().get(requestContext.getResourcePath().getPath());
         	} else {
@@ -268,7 +300,7 @@ public class MediaTypeMatcher extends Filter {
     public boolean handleCopy(HandlerContext requestContext) throws RepositoryException {
     	Repository registry = requestContext.getRepository();
     	Resource resource = null ;
-    	
+
     	if(registry instanceof EmbeddedRepository) {
             resource = ((EmbeddedRepository) requestContext.getRepository()).getRepository().get(requestContext.getSourcePath());
     	} else {
@@ -321,10 +353,10 @@ public class MediaTypeMatcher extends Filter {
      */
     public boolean handleInvokeAspect(HandlerContext requestContext) throws RepositoryException {
         Resource resource = requestContext.getResource();
-        
+
         if (resource == null) {
         	Repository registry = requestContext.getRepository();
-        	
+
         	if(registry instanceof EmbeddedRepository) {
                 resource = ((EmbeddedRepository) requestContext.getRepository()).getRepository().get(requestContext.getResourcePath().getPath());
         	} else {
@@ -358,7 +390,7 @@ public class MediaTypeMatcher extends Filter {
      */
     public boolean handlePutChild(HandlerContext requestContext) throws RepositoryException {
         Collection parentCollection = requestContext.getParentCollection();
-        
+
         if (parentCollection == null) {
             String parentPath = requestContext.getParentPath();
             if (parentPath == null) {
@@ -370,7 +402,7 @@ public class MediaTypeMatcher extends Filter {
 
             if (versionedPath.getVersion() == -1) {
             	Resource parentResource = ((EmbeddedRepository) requestContext.getRepository()).getRepository().get(parentPath);
-            	
+
                 if (parentResource != null) {
                     if (parentResource instanceof Collection) {
                         parentCollection = (Collection) parentResource;
@@ -386,7 +418,7 @@ public class MediaTypeMatcher extends Filter {
 
         if (parentCollection != null) {
             String parentMediaType = parentCollection.getMediaType();
-            
+
             if (parentMediaType != null && (invert != parentMediaType.equals(mediaType))) {
                 return true;
             }
@@ -409,10 +441,10 @@ public class MediaTypeMatcher extends Filter {
      */
     public boolean handleImportChild(HandlerContext requestContext) throws RepositoryException {
         Collection parentCollection = requestContext.getParentCollection();
-        
+
         if (parentCollection == null) {
             String parentPath = requestContext.getParentPath();
-            
+
             if (parentPath == null) {
                 parentPath = RepositoryUtils.getParentPath(requestContext.getResourcePath().getPath());
                 requestContext.setParentPath(parentPath);
@@ -422,44 +454,26 @@ public class MediaTypeMatcher extends Filter {
 
             if (versionedPath.getVersion() == -1) {
             	Repository registry = requestContext.getRepository();
-            	
+
             	if(registry instanceof EmbeddedRepository) {
             		parentCollection = (Collection) ((EmbeddedRepository) requestContext.getRepository()).getRepository().
 	                        get(parentPath);
             	} else {
             		throw new RepositoryServerException("The registry is not an Embedded or Cachebacked registry");
             	}
-            	
+
                 requestContext.setParentCollection(parentCollection);
             }
         }
 
         if (parentCollection != null) {
             String parentMediaType = parentCollection.getMediaType();
-            
+
             if (parentMediaType != null && (invert != parentMediaType.equals(mediaType))) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * Method to obtain media type.
-     *
-     * @return the media type.
-     */
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    /**
-     * Method to set media type.
-     *
-     * @param mediaType the media type.
-     */
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
     }
 }

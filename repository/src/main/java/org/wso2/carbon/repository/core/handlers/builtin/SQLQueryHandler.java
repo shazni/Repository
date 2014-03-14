@@ -82,7 +82,6 @@ public class SQLQueryHandler extends Handler {
 
         try{
             Resource resource = requestContext.getResource();
-
             Object content = resource.getContent();
             
             if (content instanceof String) {

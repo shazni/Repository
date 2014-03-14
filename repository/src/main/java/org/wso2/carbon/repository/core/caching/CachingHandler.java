@@ -87,7 +87,7 @@ public class CachingHandler extends Handler {
      * @param cachePath      cached resource path
      * @param recursive      whether this operation must be recursively applied on child resources
      */
-    private void clearCache(HandlerContext requestContext, String cachePath, boolean recursive) {
+    private void clearCache(HandlerContext requestContext, String cachePath, boolean recursive) throws RepositoryException {
         clearCache(requestContext, cachePath, recursive, false);
     }
 
@@ -100,7 +100,7 @@ public class CachingHandler extends Handler {
      * @param local          whether this is to clear the local path.
      */
     private void clearCache(HandlerContext requestContext, String cachePath, boolean recursive,
-                            boolean local) {
+                            boolean local) throws RepositoryException {
         String connectionId = "";
         DataBaseConfiguration dataBaseConfiguration = null;
         boolean doLocalCleanup = false;

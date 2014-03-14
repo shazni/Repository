@@ -53,6 +53,7 @@ import org.wso2.carbon.repository.api.ResourcePath;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.METHODS;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.CollectionImpl;
 import org.wso2.carbon.repository.core.CurrentContext;
@@ -940,16 +941,16 @@ public class InternalUtils {
      *
      * @return the list of operations.
      */
-    public static String[] getMountingMethods() {
-        return new String[]{Filter.RESOURCE_EXISTS, Filter.GET, Filter.PUT, Filter.DELETE,
-                Filter.RENAME,
-                Filter.MOVE, Filter.COPY, Filter.GET_AVERAGE_RATING, Filter.GET_RATING,
-                Filter.RATE_RESOURCE, Filter.GET_COMMENTS, Filter.ADD_COMMENT, Filter.EDIT_COMMENT,
-                Filter.REMOVE_COMMENT, Filter.GET_TAGS, Filter.APPLY_TAG, Filter.REMOVE_TAG,
-                Filter.GET_ALL_ASSOCIATIONS, Filter.GET_ASSOCIATIONS, Filter.ADD_ASSOCIATION,
-                Filter.DUMP, Filter.RESTORE, Filter.REMOVE_ASSOCIATION, Filter.IMPORT,
-                Filter.EXECUTE_QUERY, Filter.GET_RESOURCE_PATHS_WITH_TAG,
-                Filter.GET_REGISTRY_CONTEXT, Filter.REMOVE_LINK };
+    public static METHODS[] getMountingMethods() {
+        return new METHODS[]{METHODS.RESOURCE_EXISTS, METHODS.GET, METHODS.PUT, METHODS.DELETE,
+                METHODS.RENAME,
+                METHODS.MOVE, METHODS.COPY, METHODS.GET_AVERAGE_RATING, METHODS.GET_RATING,
+                METHODS.RATE_RESOURCE, METHODS.GET_COMMENTS, METHODS.ADD_COMMENT, METHODS.EDIT_COMMENT,
+                METHODS.REMOVE_COMMENT, METHODS.GET_TAGS, METHODS.APPLY_TAG, METHODS.REMOVE_TAG,
+                METHODS.GET_ALL_ASSOCIATIONS, METHODS.GET_ASSOCIATIONS, METHODS.ADD_ASSOCIATION,
+                METHODS.DUMP, METHODS.RESTORE, METHODS.REMOVE_ASSOCIATION, METHODS.IMPORT,
+                METHODS.EXECUTE_QUERY, METHODS.GET_RESOURCE_PATHS_WITH_TAG,
+                METHODS.GET_REGISTRY_CONTEXT, METHODS.REMOVE_LINK };
     }
     
     /**
@@ -1224,7 +1225,7 @@ public class InternalUtils {
         return resourceImpl;
     }
     
-    public static RepositoryContext getRepositoryContext(Repository repository) {
+    public static RepositoryContext getRepositoryContext(Repository repository) throws RepositoryException {
     	RepositoryContext registryContext = null ;
 
         if(repository instanceof EmbeddedRepository) {
@@ -1252,7 +1253,7 @@ public class InternalUtils {
         System.setProperty("javax.net.ssl.trustStorePassword", password);
     }
     
-    public static boolean isRepositoryReadOnly(Repository repository) {
+    public static boolean isRepositoryReadOnly(Repository repository) throws RepositoryException {
         String repositoryWriteModeProperty = System.getProperty(ServerConstants.REPO_WRITE_MODE);
         
         if (repositoryWriteModeProperty != null) {

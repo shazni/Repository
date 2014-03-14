@@ -51,6 +51,7 @@ import org.wso2.carbon.repository.api.RepositoryService;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
+import org.wso2.carbon.repository.api.utils.METHODS;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.exceptions.RepositoryConfigurationException;
 import org.wso2.carbon.repository.core.exceptions.RepositoryDBException;
@@ -427,7 +428,7 @@ public class RepositoryConfigurationProcessor {
     		String lifecyclePhase) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, RepositoryConfigurationException {
     	
         HandlerDefinitionObject handlerDefinitionObject = new HandlerDefinitionObject(customEditManager, handlerConfigElement).invoke();
-        String[] methods = handlerDefinitionObject.getMethods();
+        METHODS[] methods = handlerDefinitionObject.getMethods();
         Filter filter = handlerDefinitionObject.getFilter();
         Handler handler = handlerDefinitionObject.getHandler();
         
@@ -644,7 +645,7 @@ public class RepositoryConfigurationProcessor {
     	
         private CustomEditManager customEditManager;
         private Element handlerConfigElement;
-        private List<String> methods;
+        private List<METHODS> methods;
         private Handler handler;
         private Filter filter;
         private int tenantId;
@@ -675,11 +676,11 @@ public class RepositoryConfigurationProcessor {
          *
          * @return array of methods
          */
-        public String[] getMethods() {
+        public METHODS[] getMethods() {
             if (methods == null) {
                 return null;
             }
-            return methods.toArray(new String[methods.size()]);
+            return methods.toArray(new METHODS[methods.size()]);
         }
 
         /**
@@ -745,14 +746,13 @@ public class RepositoryConfigurationProcessor {
                 }
             }
 
-            String[] methods;
-            
             if (methodsValue != null && !methodsValue.isEmpty()) {
-                methods = methodsValue.split(",");
+                String[] methods = methodsValue.split(",");
+                METHODS[] handlerMethods = new METHODS[methods.length];
                 for (int i = 0; i < methods.length; i++) {
-                    methods[i] = methods[i].trim();
+                    handlerMethods[i] = METHODS.valueOf(methods[i].trim().toUpperCase());
                 }
-                this.methods = Arrays.asList(methods);
+                this.methods = Arrays.asList(handlerMethods);
             }
 
             Class<?> handlerClass;

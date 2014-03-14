@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.METHODS;
 
 /**
  * This is a built-in Filter implementation to match against the URL (path) of the resources. This
@@ -778,5 +779,10 @@ public class URLMatcher extends Filter {
         setInvokeAspectPattern(pattern);
         setImportChildPattern(pattern);
         setPutChildPattern(pattern);
+    }
+
+    @Override
+    public boolean filter(HandlerContext handlerContext, METHODS method) throws RepositoryException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

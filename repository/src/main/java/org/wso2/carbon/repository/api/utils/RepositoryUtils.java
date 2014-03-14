@@ -248,7 +248,7 @@ public final class RepositoryUtils {
      * @param relativePath        the relative path of which absolute path is required
      * @return                    the absolute path of the given relative path
      */
-    public static String getAbsolutePath(Repository registry, String relativePath) {
+    public static String  getAbsolutePath(Repository registry, String relativePath) {
     	if(registry.getRepositoryService() != null) {
     		return getAbsolutePathToOriginal(relativePath, registry.getRepositoryService().getRepositoryRoot());
     	}

@@ -518,6 +518,7 @@ public class JDBCRegistryTest extends BaseTestCase {
         Assert.assertTrue(r instanceof Collection, "R should be a collection");
         Assert.assertTrue(registry.resourceExists("/system/gadgets"), "R should exist");
 
+        registry.delete("/system/gadgets");
 
         defaultGadgetCollection = registry.newResource();
         registry.put("/system/gadgets", defaultGadgetCollection);
