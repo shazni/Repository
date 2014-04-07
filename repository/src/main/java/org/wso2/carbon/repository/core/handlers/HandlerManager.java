@@ -1173,6 +1173,7 @@ public class HandlerManager {
      */
     public void delete(HandlerContext requestContext) throws RepositoryException {
         Set<Handler> handlers =  handlerMap.get(METHODS.DELETE);
+
         if (handlers != null) {
             for (Handler handler : handlers) {
                 if (handler.engageHandler(requestContext, METHODS.DELETE)) {

@@ -783,6 +783,76 @@ public class URLMatcher extends Filter {
 
     @Override
     public boolean filter(HandlerContext handlerContext, METHODS method) throws RepositoryException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        switch (method) {
+            case GET:
+                return handleGet(handlerContext);
+            case EXECUTE_QUERY:
+                return handleExecuteQuery(handlerContext);
+            case PUT:
+                return handlePut(handlerContext);
+            case IMPORT:
+                return handleImportResource(handlerContext);
+            case DELETE:
+                return handleDelete(handlerContext);
+            case PUT_CHILD:
+                return handlePutChild(handlerContext);
+            case IMPORT_CHILD:
+                return handleImportChild(handlerContext);
+            case INVOKE_ASPECT:
+                return handleInvokeAspect(handlerContext);
+            case COPY:
+                return handleCopy(handlerContext);
+            case MOVE:
+                return handleMove(handlerContext);
+            case RENAME:
+                return handleRename(handlerContext);
+            case CREATE_LINK:
+                return handleCreateLink(handlerContext);
+            case REMOVE_LINK:
+                return handleRemoveLink(handlerContext);
+            case RESOURCE_EXISTS:
+                return handleResourceExists(handlerContext);
+            case GET_REGISTRY_CONTEXT:
+                return handleGetRegistryContext(handlerContext);
+            case ADD_ASSOCIATION:
+                return handleAddAssociation(handlerContext);
+            case REMOVE_ASSOCIATION:
+                return handleRemoveAssociation(handlerContext);
+            case GET_ALL_ASSOCIATIONS:
+                return handleGetAllAssociations(handlerContext);
+            case GET_ASSOCIATIONS:
+                return handleGetAssociations(handlerContext);
+            case APPLY_TAG:
+                return handleApplyTag(handlerContext);
+            case GET_TAGS:
+                return handleGetTags(handlerContext);
+            case REMOVE_TAG:
+                return handleRemoveTag(handlerContext);
+            case ADD_COMMENT:
+                return handleAddComment(handlerContext);
+            case EDIT_COMMENT:
+                return handleEditComment(handlerContext);
+            case REMOVE_COMMENT:
+                return handleRemoveComment(handlerContext);
+            case GET_COMMENT:
+                return handleGetComments(handlerContext);
+            case RATE_RESOURCE:
+                return handleRateResource(handlerContext);
+            case GET_AVERAGE_RATING:
+                return handleGetAverageRating(handlerContext);
+            case GET_RATING:
+                return handleGetRating(handlerContext);
+            case CREATE_VERSION:
+                return handleCreateVersion(handlerContext);
+            case GET_VERSIONS:
+                return handleGetVersions(handlerContext);
+            case RESTORE_VERSION:
+                return handleRestoreVersion(handlerContext);
+            case DUMP:
+                return handleDump(handlerContext);
+            case RESTORE:
+                return handleRestore(handlerContext);
+        }
+        return false;
     }
 }

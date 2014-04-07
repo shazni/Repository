@@ -573,7 +573,7 @@ public class EmbeddedRepository implements Repository {
 
     @Override
     public void delete(String path) throws RepositoryException {
-    	if(!embeddedRegistryInitialized) {
+        if(!embeddedRegistryInitialized) {
     		init();
     	}
     	
@@ -1808,7 +1808,7 @@ public class EmbeddedRepository implements Repository {
 		          	
 		          	((ResourceImpl) resource).setTenantId(tenantId);
 
-		          	resource = (ResourceImpl) chrootWrapper.getOutResource(resource);
+		          	resource = chrootWrapper.getOutResource(resource);
 	            }
 	            
 	            return resource ;

@@ -362,13 +362,12 @@ public class ResourceStorer {
      * @throws RepositoryException if the operation failed.
      */
     public void delete(String _path) throws RepositoryException {
-
         String path = _path;
         path = InternalUtils.getPureResourcePath(path);
 
         ResourceIDImpl resourceID = resourceDAO.getResourceID(path);
         ResourceDO resourceDO = resourceDAO.getResourceDO(resourceID);
-        
+
         if (resourceDO == null) {
             boolean isCollection = resourceID.isCollection();
             // then we will check for non-collections as the getResourceID only check the collection exist

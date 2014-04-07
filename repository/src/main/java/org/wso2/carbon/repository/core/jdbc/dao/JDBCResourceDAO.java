@@ -1506,7 +1506,6 @@ public class JDBCResourceDAO implements ResourceDAO {
     public void deleteResource(ResourceDO resourceDO) throws RepositoryException {
         JDBCDatabaseTransaction.ManagedRegistryConnection conn = JDBCDatabaseTransaction.getConnection();
         PreparedStatement ps = null;
-        
         try {
             if (resourceDO.getName() == null) {
                 String sql = "DELETE FROM REG_RESOURCE WHERE REG_PATH_ID=? AND REG_NAME IS NULL AND REG_TENANT_ID=?";

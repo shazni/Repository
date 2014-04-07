@@ -71,9 +71,9 @@ public class JDBCRegistryTest extends BaseTestCase {
         r1.setContentStream(new ByteArrayInputStream(str.getBytes()));
 
         String illegal = "~!@#%^*+={}|\\<>\"\',";
-                
+
         char[] illegalChars = illegal.toCharArray();
-        
+
         for (char character : illegalChars) {
             try {
                 registry.put("/a" + character + "b", r1);
@@ -108,13 +108,13 @@ public class JDBCRegistryTest extends BaseTestCase {
         r1 = registry.get("/c1/c2/c3/c4/r1");
         InputStream inContent = r1.getContentStream();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        
+
         int c;
-        
+
         while ((c = inContent.read()) != -1) {
             outStream.write(c);
         }
-        
+
         inContent.close();
         Assert.assertEquals(str, RepositoryUtils.decodeBytes(outStream.toByteArray()));
     }
@@ -142,10 +142,12 @@ public class JDBCRegistryTest extends BaseTestCase {
         boolean failed = false;
         
         try {
-            registry.get("/r1");
+            Resource resource = registry.get("/r1");
+            System.out.println(resource.getPath() + "TEST");
         } catch (RepositoryException e) {
             failed = true;
         }
+
 
         Assert.assertTrue(failed, "Deleted resource /r1 is returned on get.");
 
@@ -165,16 +167,16 @@ public class JDBCRegistryTest extends BaseTestCase {
         Assert.assertTrue(d1.getContent() instanceof String[], "Content of /d1 should be a String[]");
 
         String[] children = (String[])d1.getContent();
-        
+
         boolean found = false;
-        
+
         for (String aChildren : children) {
             if (aChildren.startsWith("/d1/r1")) {
                 found = true;
                 break;
             }
         }
-        
+
         Assert.assertTrue(found, "/d1/r1 should be a child of /d1");
 
         Resource r1f = registry.get("/d1/r1");
@@ -184,23 +186,23 @@ public class JDBCRegistryTest extends BaseTestCase {
         registry.delete("/d1");
 
         boolean f1 = false;
-        
+
         try {
             registry.get("/d1");
         } catch (RepositoryException e) {
             f1 = true;
         }
-        
+
         Assert.assertTrue(f1, "Deleted collection /d1 is not marked as deleted.");
 
         boolean f2 = false;
-        
+
         try {
             registry.get("/d1/r1");
         } catch (RepositoryException e) {
             f2 = true;
         }
-        
+
         Assert.assertTrue(f2, "Deleted collection /d1/r1 is not marked as deleted.");
     }
 
@@ -208,7 +210,7 @@ public class JDBCRegistryTest extends BaseTestCase {
     public void testResourceVersioning() throws Exception {
     	RepositoryContext registryContext = InternalUtils.getRepositoryContext(registry) ;
         boolean isVersionOnChange = registryContext.isVersionOnChange();
-    	
+
         Resource r1 = registry.newResource();
         byte[] r1Content = "R1 content".getBytes();
         r1.setContent(r1Content);
@@ -223,7 +225,7 @@ public class JDBCRegistryTest extends BaseTestCase {
         if (!isVersionOnChange) {
             registry.createVersion("/r5");
         }
-        
+
         registry.put("/r5", readIt1);
 
         // second update
@@ -234,7 +236,7 @@ public class JDBCRegistryTest extends BaseTestCase {
         if (!isVersionOnChange) {
             registry.createVersion("/r5");
         }
-        
+
         registry.put("/r5", readIt2);
 
         // after the redesigning of the database, we need to put another do
@@ -242,7 +244,7 @@ public class JDBCRegistryTest extends BaseTestCase {
         if (!isVersionOnChange) {
             registry.createVersion("/r5");
         }
-        
+
         registry.put("/r5", readIt2);
 
         String[] versionPaths = registry.getVersions("/r5");
@@ -373,7 +375,7 @@ public class JDBCRegistryTest extends BaseTestCase {
         q1.setContent(sql1);
         q1.setMediaType(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
         q1.addProperty(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME, RepositoryConstants.RESOURCES_RESULT_TYPE);
-        
+
         systemRegistry.put("/qs/q1", q1);
 
         Map<String, String> parameters = new HashMap<String, String>();
@@ -408,7 +410,7 @@ public class JDBCRegistryTest extends BaseTestCase {
         String content1 = "Content1";
         Resource r1 = registry.newResource();
         r1.setContent(content1);
-        
+
         try {
             registry.put("/wso2/wsas/v1/r1", r1);
         } catch (RepositoryException e) {
@@ -500,9 +502,9 @@ public class JDBCRegistryTest extends BaseTestCase {
 
         Resource rm = registry.getMetaData("/rgm");
         Assert.assertNull(rm.getContent());
-        
+
         Resource rr = registry.get("/rgm");
-        Assert.assertNotNull(rr.getContent());      
+        Assert.assertNotNull(rr.getContent());
     }
 
     @Test
@@ -548,7 +550,7 @@ public class JDBCRegistryTest extends BaseTestCase {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            
+
         }
 
         Resource r3 = registry.get("/pqr/xyz");
@@ -575,7 +577,7 @@ public class JDBCRegistryTest extends BaseTestCase {
 
     private boolean containsString(String[] array, String value) {
         boolean found = false;
-        
+
         for (String anArray : array) {
             if (anArray.startsWith(value)) {
                 found = true;
