@@ -369,7 +369,10 @@ public class HandlerManager {
     public synchronized void removeHandler(Handler handler) {
         for (METHODS method : METHODS.values()) {
             Set<Handler> handlers = handlerMap.get(method);
-            handlers.remove(handler);
+            if (handlers != null) {
+                handlers.remove(handler);
+                handlerMap.put(method, handlers);
+            }
         }
 
         if (log.isDebugEnabled()) {
