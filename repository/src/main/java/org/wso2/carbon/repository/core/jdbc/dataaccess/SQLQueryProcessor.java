@@ -352,7 +352,7 @@ public class SQLQueryProcessor implements QueryProcessor {
     /**
      * A summary count of all tags. Format is "tagname # totalcount"
      * @param results
-     * @return
+     * @return tag summery collection
      * @throws SQLException
      * @throws RepositoryException
      */

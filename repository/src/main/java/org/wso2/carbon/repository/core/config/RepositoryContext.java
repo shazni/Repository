@@ -242,12 +242,12 @@ public class RepositoryContext {
                     registryService.setRegistryRoot(registryRoot);
                     StaticConfiguration.setRegistryRoot(registryRoot);
      *
-     * @param realmService realm service
+     * @param repositoryService repository service
      *
      * @return the base registry context
      */
-    public static RepositoryContext getBaseInstance(RepositoryService registryService) {
-        return getBaseInstance(true, registryService);
+    public static RepositoryContext getBaseInstance(RepositoryService repositoryService) {
+        return getBaseInstance(true, repositoryService);
     }
 
     /**
@@ -255,18 +255,18 @@ public class RepositoryContext {
      * registry context doesn't exist, it will create a new one and return it. Otherwise it will
      * create the current base registry context
      *
-     * @param realmService          realm service
      * @param populateConfiguration whether the configuration must be populated or not.
+     * @param repositoryService repository service
      *
      * @return the base registry context
      */
-    public static RepositoryContext getBaseInstance(boolean populateConfiguration, RepositoryService registryService) {
+    public static RepositoryContext getBaseInstance(boolean populateConfiguration, RepositoryService repositoryService) {
         try {
             if (getBaseInstance() != null) {
                 return getBaseInstance(); 
             } 
             
-            new RepositoryContext(populateConfiguration, registryService);
+            new RepositoryContext(populateConfiguration, repositoryService);
         } catch (RepositoryException e) {
             log.error("Unable to get instance of the registry context", e);
             return null;
@@ -393,7 +393,7 @@ public class RepositoryContext {
     /**
      * Create a new registry context object with a custom realm service
      *
-     * @param realmService associated realm service
+     * @param repositoryService repository service
      * @param populateConfiguration whether the configuration must be populated or not.
      *
      * @throws RepositoryException throws if the construction failed.
@@ -406,7 +406,7 @@ public class RepositoryContext {
      * Create a registry context with custom configuration and realm service.
      *
      * @param configStream configuration stream. (registry.xml input stream)//
-     * @param realmService the associated realm service
+     * @param repositoryService repository service
      *
      * @throws RepositoryException throws if the construction failed.
      */
