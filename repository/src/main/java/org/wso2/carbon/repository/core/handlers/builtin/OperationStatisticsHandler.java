@@ -31,10 +31,9 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.repository.api.Collection;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
-import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.api.utils.METHODS;
+import org.wso2.carbon.repository.api.utils.Methods;
 import org.wso2.carbon.repository.core.statistics.StatisticsLog;
 
 /**
@@ -48,7 +47,7 @@ public class OperationStatisticsHandler extends Handler {
     private static Log statsLog = StatisticsLog.getLog();
 
     // Map of statistic records.
-    private static Map<METHODS, Long> records = null;
+    private static Map<Methods, Long> records = null;
 
     // The executor service used to create threads to record operation statistics.
     private static ExecutorService executor = null;
@@ -63,7 +62,7 @@ public class OperationStatisticsHandler extends Handler {
         if (executor != null) {
             return;
         }
-        records = new HashMap<METHODS, Long>();
+        records = new HashMap<Methods, Long>();
         executor = Executors.newCachedThreadPool();
         Runtime.getRuntime().addShutdownHook(new Thread(){
             public void run() {
@@ -71,10 +70,10 @@ public class OperationStatisticsHandler extends Handler {
             }
         });
         
-        for (METHODS method : new METHODS[]{METHODS.GET, METHODS.PUT, METHODS.IMPORT, METHODS.MOVE,
-                METHODS.COPY, METHODS.RENAME, METHODS.DELETE, METHODS.ADD_ASSOCIATION,
-                METHODS.REMOVE_ASSOCIATION, METHODS.GET_ASSOCIATIONS, METHODS.GET_ALL_ASSOCIATIONS,
-                METHODS.EXECUTE_QUERY, METHODS.RESOURCE_EXISTS, METHODS.DUMP, METHODS.RESTORE}) {
+        for (Methods method : new Methods[]{Methods.GET, Methods.PUT, Methods.IMPORT, Methods.MOVE,
+                Methods.COPY, Methods.RENAME, Methods.DELETE, Methods.ADD_ASSOCIATION,
+                Methods.REMOVE_ASSOCIATION, Methods.GET_ASSOCIATIONS, Methods.GET_ALL_ASSOCIATIONS,
+                Methods.EXECUTE_QUERY, Methods.RESOURCE_EXISTS, Methods.DUMP, Methods.RESTORE}) {
             records.put(method, 0l);
         }
         
@@ -92,21 +91,21 @@ public class OperationStatisticsHandler extends Handler {
                     log.error("Unable to store operation statistics.");
                 } else {
                     synchronized (this) {
-                        statsLog.debug("Total Number of get calls                : " + records.get(METHODS.GET));
-                        statsLog.debug("Total Number of put calls                : " + records.get(METHODS.PUT));
-                        statsLog.debug("Total Number of import calls             : " + records.get(METHODS.IMPORT));
-                        statsLog.debug("Total Number of move calls               : " + records.get(METHODS.MOVE));
-                        statsLog.debug("Total Number of copy calls               : " + records.get(METHODS.COPY));
-                        statsLog.debug("Total Number of rename calls             : " + records.get(METHODS.RENAME));
-                        statsLog.debug("Total Number of delete calls             : " + records.get(METHODS.DELETE));
-                        statsLog.debug("Total Number of addAssociation calls     : " + records.get(METHODS.ADD_ASSOCIATION));
-                        statsLog.debug("Total Number of removeAssociation calls  : " + records.get(METHODS.REMOVE_ASSOCIATION));
-                        statsLog.debug("Total Number of getAssociations calls    : " + records.get(METHODS.GET_ASSOCIATIONS));
-                        statsLog.debug("Total Number of getAllAssociations calls : " + records.get(METHODS.GET_ALL_ASSOCIATIONS));
-                        statsLog.debug("Total Number of executeQuery calls       : " + records.get(METHODS.EXECUTE_QUERY));
-                        statsLog.debug("Total Number of resourceExists calls     : " + records.get(METHODS.RESOURCE_EXISTS));
-                        statsLog.debug("Total Number of dump calls               : " + records.get(METHODS.DUMP));
-                        statsLog.debug("Total Number of restore calls            : " + records.get(METHODS.RESTORE));
+                        statsLog.debug("Total Number of get calls                : " + records.get(Methods.GET));
+                        statsLog.debug("Total Number of put calls                : " + records.get(Methods.PUT));
+                        statsLog.debug("Total Number of import calls             : " + records.get(Methods.IMPORT));
+                        statsLog.debug("Total Number of move calls               : " + records.get(Methods.MOVE));
+                        statsLog.debug("Total Number of copy calls               : " + records.get(Methods.COPY));
+                        statsLog.debug("Total Number of rename calls             : " + records.get(Methods.RENAME));
+                        statsLog.debug("Total Number of delete calls             : " + records.get(Methods.DELETE));
+                        statsLog.debug("Total Number of addAssociation calls     : " + records.get(Methods.ADD_ASSOCIATION));
+                        statsLog.debug("Total Number of removeAssociation calls  : " + records.get(Methods.REMOVE_ASSOCIATION));
+                        statsLog.debug("Total Number of getAssociations calls    : " + records.get(Methods.GET_ASSOCIATIONS));
+                        statsLog.debug("Total Number of getAllAssociations calls : " + records.get(Methods.GET_ALL_ASSOCIATIONS));
+                        statsLog.debug("Total Number of executeQuery calls       : " + records.get(Methods.EXECUTE_QUERY));
+                        statsLog.debug("Total Number of resourceExists calls     : " + records.get(Methods.RESOURCE_EXISTS));
+                        statsLog.debug("Total Number of dump calls               : " + records.get(Methods.DUMP));
+                        statsLog.debug("Total Number of restore calls            : " + records.get(Methods.RESTORE));
                     }
                 }
             }
@@ -115,7 +114,7 @@ public class OperationStatisticsHandler extends Handler {
         scheduler.scheduleAtFixedRate(runnable, 60, 60, TimeUnit.SECONDS);
     }
 
-    private void incrementRecord(final METHODS operation) {
+    private void incrementRecord(final Methods operation) {
         Runnable runnable = new Runnable() {
             public void run() {
                 if (records == null) {
@@ -138,7 +137,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public Resource get(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.GET);
+            incrementRecord(Methods.GET);
         }
         
         return super.get(requestContext);
@@ -146,7 +145,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public void put(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.PUT);
+            incrementRecord(Methods.PUT);
         }
         
         super.put(requestContext);
@@ -154,7 +153,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public void importResource(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.IMPORT);
+            incrementRecord(Methods.IMPORT);
         }
         
         super.importResource(requestContext);
@@ -162,7 +161,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public String move(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.MOVE);
+            incrementRecord(Methods.MOVE);
         }
         
         return super.move(requestContext);
@@ -170,7 +169,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public String copy(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.COPY);
+            incrementRecord(Methods.COPY);
         }
         
         return super.copy(requestContext);
@@ -178,7 +177,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public String rename(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.RENAME);
+            incrementRecord(Methods.RENAME);
         }
         
         return super.rename(requestContext);
@@ -186,7 +185,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public void delete(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.DELETE);
+            incrementRecord(Methods.DELETE);
         }
         
         super.delete(requestContext);
@@ -194,7 +193,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public Collection executeQuery(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.EXECUTE_QUERY);
+            incrementRecord(Methods.EXECUTE_QUERY);
         }
         
         return super.executeQuery(requestContext);
@@ -202,7 +201,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public boolean resourceExists(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.RESOURCE_EXISTS);
+            incrementRecord(Methods.RESOURCE_EXISTS);
         }
         
         return super.resourceExists(requestContext);
@@ -210,7 +209,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public void dump(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.DUMP);
+            incrementRecord(Methods.DUMP);
         }
         
         super.dump(requestContext);
@@ -218,7 +217,7 @@ public class OperationStatisticsHandler extends Handler {
 
     public void restore(HandlerContext requestContext) throws RepositoryException {
         if (statsLog.isDebugEnabled()) {
-            incrementRecord(METHODS.RESTORE);
+            incrementRecord(Methods.RESTORE);
         }
         
         super.restore(requestContext);

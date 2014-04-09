@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -51,9 +50,8 @@ import org.wso2.carbon.repository.api.RepositoryService;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.ResourcePath;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
-import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.api.utils.METHODS;
+import org.wso2.carbon.repository.api.utils.Methods;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.CollectionImpl;
 import org.wso2.carbon.repository.core.CurrentContext;
@@ -941,16 +939,16 @@ public class InternalUtils {
      *
      * @return the list of operations.
      */
-    public static METHODS[] getMountingMethods() {
-        return new METHODS[]{METHODS.RESOURCE_EXISTS, METHODS.GET, METHODS.PUT, METHODS.DELETE,
-                METHODS.RENAME,
-                METHODS.MOVE, METHODS.COPY, METHODS.GET_AVERAGE_RATING, METHODS.GET_RATING,
-                METHODS.RATE_RESOURCE, METHODS.GET_COMMENTS, METHODS.ADD_COMMENT, METHODS.EDIT_COMMENT,
-                METHODS.REMOVE_COMMENT, METHODS.GET_TAGS, METHODS.APPLY_TAG, METHODS.REMOVE_TAG,
-                METHODS.GET_ALL_ASSOCIATIONS, METHODS.GET_ASSOCIATIONS, METHODS.ADD_ASSOCIATION,
-                METHODS.DUMP, METHODS.RESTORE, METHODS.REMOVE_ASSOCIATION, METHODS.IMPORT,
-                METHODS.EXECUTE_QUERY, METHODS.GET_RESOURCE_PATHS_WITH_TAG,
-                METHODS.GET_REGISTRY_CONTEXT, METHODS.REMOVE_LINK };
+    public static Methods[] getMountingMethods() {
+        return new Methods[]{Methods.RESOURCE_EXISTS, Methods.GET, Methods.PUT, Methods.DELETE,
+                Methods.RENAME,
+                Methods.MOVE, Methods.COPY, Methods.GET_AVERAGE_RATING, Methods.GET_RATING,
+                Methods.RATE_RESOURCE, Methods.GET_COMMENTS, Methods.ADD_COMMENT, Methods.EDIT_COMMENT,
+                Methods.REMOVE_COMMENT, Methods.GET_TAGS, Methods.APPLY_TAG, Methods.REMOVE_TAG,
+                Methods.GET_ALL_ASSOCIATIONS, Methods.GET_ASSOCIATIONS, Methods.ADD_ASSOCIATION,
+                Methods.DUMP, Methods.RESTORE, Methods.REMOVE_ASSOCIATION, Methods.IMPORT,
+                Methods.EXECUTE_QUERY, Methods.GET_RESOURCE_PATHS_WITH_TAG,
+                Methods.GET_REGISTRY_CONTEXT, Methods.REMOVE_LINK };
     }
     
     /**

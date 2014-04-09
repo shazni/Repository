@@ -32,8 +32,7 @@ import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.api.utils.METHODS;
-import org.wso2.carbon.repository.api.utils.RepositoryUtils;
+import org.wso2.carbon.repository.api.utils.Methods;
 import org.wso2.carbon.repository.core.handlers.builtin.SimulationFilter;
 
 /**
@@ -63,7 +62,7 @@ public class HandlerManager {
 
     private static final String AN_EXCEPTION_OCCURRED_WHILE_EXECUTING_HANDLER_CHAIN = "An exception occurred while executing handler chain. ";
     private static final String UNABLE_TO_PROCEED_WITH_SIMULATION = "Unable to proceed with simulation";
-    private Map<METHODS, Set<Handler>> handlerMap = new LinkedHashMap<METHODS, Set<Handler>>();
+    private Map<Methods, Set<Handler>> handlerMap = new LinkedHashMap<Methods, Set<Handler>>();
 
     private boolean evaluateAllHandlers = false;
 
@@ -85,14 +84,14 @@ public class HandlerManager {
      * @param filter  Filter instance associated with the handler.
      * @param handler Handler instance to be registered.
      */
-    public synchronized void addHandler(METHODS[] methods, Filter filter, Handler handler) {
+    public synchronized void addHandler(Methods[] methods, Filter filter, Handler handler) {
         String methodInfo;
         Set<Filter> filterSet = new LinkedHashSet<Filter>();
         filterSet.add(filter);
         handler.setFilters(filterSet);
         if (methods != null) {
             StringBuilder sb = new StringBuilder();
-            for (METHODS method : methods) {
+            for (Methods method : methods) {
                 Set<Handler> handlers = handlerMap.get(method);
                 if (handlers == null) {
                     handlers = new LinkedHashSet<Handler>();
@@ -103,7 +102,7 @@ public class HandlerManager {
             }
             methodInfo = sb.toString();
         } else {
-            for (METHODS method : METHODS.values()) {
+            for (Methods method : Methods.values()) {
                 Set<Handler> handlers = handlerMap.get(method);
                 if (handlers == null) {
                     handlers = new LinkedHashSet<Handler>();
@@ -139,7 +138,7 @@ public class HandlerManager {
      * @param lifecyclePhase The name of the lifecycle phase.
      * @param handler        Handler instance to be registered.
      */
-    public void addHandler(METHODS[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+    public void addHandler(Methods[] methods, Filter filter, Handler handler, String lifecyclePhase) {
         // We don't handle lifecycle phases in this Handler Manager. The Handler Lifecycle Manager
         // Does the required handling.
         addHandler(methods, filter, handler);
@@ -151,7 +150,7 @@ public class HandlerManager {
      * @param handler the handler to remove
      */
     public synchronized void removeHandler(Handler handler) {
-        for (METHODS method : METHODS.values()) {
+        for (Methods method : Methods.values()) {
             Set<Handler> handlers = handlerMap.get(method);
             if (handlers != null) {
                 handlers.remove(handler);
@@ -198,10 +197,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public void createVersion(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.CREATE_VERSION);
+        Set<Handler> handlers =  handlerMap.get(Methods.CREATE_VERSION);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.CREATE_VERSION)) {
+                if (handler.engageHandler(requestContext, Methods.CREATE_VERSION)) {
                     try {
                         handler.createVersion(requestContext);
 
@@ -248,10 +247,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public void restoreVersion(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.RESTORE_VERSION);
+        Set<Handler> handlers =  handlerMap.get(Methods.RESTORE_VERSION);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.RESTORE_VERSION)) {
+                if (handler.engageHandler(requestContext, Methods.RESTORE_VERSION)) {
                     try {
                         handler.restoreVersion(requestContext);
 
@@ -301,10 +300,10 @@ public class HandlerManager {
      */
     public String[] getVersions(HandlerContext requestContext) throws RepositoryException {
         String[] versions = null;
-        Set<Handler> handlers =  handlerMap.get(METHODS.GET_VERSIONS);
+        Set<Handler> handlers =  handlerMap.get(Methods.GET_VERSIONS);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.GET_VERSIONS)) {
+                if (handler.engageHandler(requestContext, Methods.GET_VERSIONS)) {
                     try {
                         versions = handler.getVersions(requestContext);
 
@@ -357,10 +356,10 @@ public class HandlerManager {
     public Collection executeQuery(HandlerContext requestContext) throws RepositoryException {
         Collection collection = null;
         List<String> results = new LinkedList<String>();
-        Set<Handler> handlers =  handlerMap.get(METHODS.EXECUTE_QUERY);
+        Set<Handler> handlers =  handlerMap.get(Methods.EXECUTE_QUERY);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.EXECUTE_QUERY)) {
+                if (handler.engageHandler(requestContext, Methods.EXECUTE_QUERY)) {
                     try {
                         collection = handler.executeQuery(requestContext);
                         if (collection != null) {
@@ -428,10 +427,10 @@ public class HandlerManager {
      */
     public Collection searchContent(HandlerContext requestContext) throws RepositoryException {
         Collection collection = null;
-        Set<Handler> handlers =  handlerMap.get(METHODS.SEARCH_CONTENT);
+        Set<Handler> handlers =  handlerMap.get(Methods.SEARCH_CONTENT);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.SEARCH_CONTENT)) {
+                if (handler.engageHandler(requestContext, Methods.SEARCH_CONTENT)) {
                     try {
                         collection = handler.searchContent(requestContext);
 
@@ -484,10 +483,10 @@ public class HandlerManager {
      */
     public Resource get(HandlerContext requestContext) throws RepositoryException {
         Resource resource = null;
-        Set<Handler> handlers =  handlerMap.get(METHODS.GET);
+        Set<Handler> handlers =  handlerMap.get(Methods.GET);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.GET)) {
+                if (handler.engageHandler(requestContext, Methods.GET)) {
                     try {
                         resource = handler.get(requestContext);
 
@@ -540,10 +539,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public String put(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.PUT);
+        Set<Handler> handlers =  handlerMap.get(Methods.PUT);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.PUT)) {
+                if (handler.engageHandler(requestContext, Methods.PUT)) {
                     try {
                         handler.put(requestContext);
 
@@ -600,10 +599,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public String importResource(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.IMPORT);
+        Set<Handler> handlers =  handlerMap.get(Methods.IMPORT);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.IMPORT)) {
+                if (handler.engageHandler(requestContext, Methods.IMPORT)) {
                     try {
                         handler.importResource(requestContext);
 
@@ -658,11 +657,11 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public void delete(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.DELETE);
+        Set<Handler> handlers =  handlerMap.get(Methods.DELETE);
 
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.DELETE)) {
+                if (handler.engageHandler(requestContext, Methods.DELETE)) {
                     try {
                         handler.delete(requestContext);
 
@@ -711,10 +710,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public void putChild(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.PUT_CHILD);
+        Set<Handler> handlers =  handlerMap.get(Methods.PUT_CHILD);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.PUT_CHILD)) {
+                if (handler.engageHandler(requestContext, Methods.PUT_CHILD)) {
                     try {
                         handler.putChild(requestContext);
 
@@ -763,10 +762,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public void importChild(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.IMPORT_CHILD);
+        Set<Handler> handlers =  handlerMap.get(Methods.IMPORT_CHILD);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.IMPORT_CHILD)) {
+                if (handler.engageHandler(requestContext, Methods.IMPORT_CHILD)) {
                     try {
                         handler.importChild(requestContext);
 
@@ -817,10 +816,10 @@ public class HandlerManager {
      */
     public String copy(HandlerContext requestContext) throws RepositoryException {
         String copiedPath = null;
-        Set<Handler> handlers =  handlerMap.get(METHODS.COPY);
+        Set<Handler> handlers =  handlerMap.get(Methods.COPY);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.COPY)) {
+                if (handler.engageHandler(requestContext, Methods.COPY)) {
                     try {
                         copiedPath = handler.copy(requestContext);
                         if (!requestContext.isExecutionStatusSet(handler)) {
@@ -872,10 +871,10 @@ public class HandlerManager {
      */
     public String move(HandlerContext requestContext) throws RepositoryException {
         String movedPath = null;
-        Set<Handler> handlers =  handlerMap.get(METHODS.MOVE);
+        Set<Handler> handlers =  handlerMap.get(Methods.MOVE);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.MOVE)) {
+                if (handler.engageHandler(requestContext, Methods.MOVE)) {
                     try {
                         movedPath = handler.move(requestContext);
 
@@ -928,10 +927,10 @@ public class HandlerManager {
      */
     public String rename(HandlerContext requestContext) throws RepositoryException {
         String renamedPath = null;
-        Set<Handler> handlers =  handlerMap.get(METHODS.RENAME);
+        Set<Handler> handlers =  handlerMap.get(Methods.RENAME);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.RENAME)) {
+                if (handler.engageHandler(requestContext, Methods.RENAME)) {
                     try {
                         renamedPath = handler.rename(requestContext);
 
@@ -982,10 +981,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public void createLink(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.CREATE_LINK);
+        Set<Handler> handlers =  handlerMap.get(Methods.CREATE_LINK);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.CREATE_LINK)) {
+                if (handler.engageHandler(requestContext, Methods.CREATE_LINK)) {
                     try {
                         handler.createLink(requestContext);
 
@@ -1032,10 +1031,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public void removeLink(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.REMOVE_LINK);
+        Set<Handler> handlers =  handlerMap.get(Methods.REMOVE_LINK);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.REMOVE_LINK)) {
+                if (handler.engageHandler(requestContext, Methods.REMOVE_LINK)) {
                     try {
                         handler.removeLink(requestContext);
 
@@ -1086,10 +1085,10 @@ public class HandlerManager {
      */
     public boolean resourceExists(HandlerContext requestContext) throws RepositoryException {
         boolean resourceExist = false;
-        Set<Handler> handlers =  handlerMap.get(METHODS.RESOURCE_EXISTS);
+        Set<Handler> handlers =  handlerMap.get(Methods.RESOURCE_EXISTS);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.RESOURCE_EXISTS)) {
+                if (handler.engageHandler(requestContext, Methods.RESOURCE_EXISTS)) {
                     try {
                         resourceExist = handler.resourceExists(requestContext);
 
@@ -1142,10 +1141,10 @@ public class HandlerManager {
      */
     public Element dump(HandlerContext requestContext) throws RepositoryException {
         Element dumpedElement = null;
-        Set<Handler> handlers =  handlerMap.get(METHODS.DUMP);
+        Set<Handler> handlers =  handlerMap.get(Methods.DUMP);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.DUMP)) {
+                if (handler.engageHandler(requestContext, Methods.DUMP)) {
                     try {
                         handler.dump(requestContext);
 
@@ -1196,10 +1195,10 @@ public class HandlerManager {
      *                           handlers or filters.
      */
     public void restore(HandlerContext requestContext) throws RepositoryException {
-        Set<Handler> handlers =  handlerMap.get(METHODS.RESTORE);
+        Set<Handler> handlers =  handlerMap.get(Methods.RESTORE);
         if (handlers != null) {
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.RESTORE)) {
+                if (handler.engageHandler(requestContext, Methods.RESTORE)) {
                     try {
                         handler.restore(requestContext);
 
@@ -1244,6 +1243,6 @@ public class HandlerManager {
     }
     
     public Set<Handler> getRegistryContextHandlerSet() {
-    	return handlerMap.get(METHODS.GET_REGISTRY_CONTEXT);
+    	return handlerMap.get(Methods.GET_REGISTRY_CONTEXT);
     }
 }

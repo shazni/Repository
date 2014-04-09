@@ -22,7 +22,7 @@ package org.wso2.carbon.repository.core.handlers.builtin;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.api.utils.METHODS;
+import org.wso2.carbon.repository.api.utils.Methods;
 
 /**
  * This is a built-in Filter that is used for simulation operations. The handler simulator uses an
@@ -213,7 +213,7 @@ public class SimulationFilter extends Filter {
 //    }
 
     @Override
-    public boolean filter(HandlerContext handlerContext, METHODS method) throws RepositoryException {
+    public boolean filter(HandlerContext handlerContext, Methods method) throws RepositoryException {
         return isSimulation();
     }
 }

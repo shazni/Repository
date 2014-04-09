@@ -51,7 +51,7 @@ import org.wso2.carbon.repository.api.RepositoryService;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
-import org.wso2.carbon.repository.api.utils.METHODS;
+import org.wso2.carbon.repository.api.utils.Methods;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.exceptions.RepositoryConfigurationException;
 import org.wso2.carbon.repository.core.exceptions.RepositoryDBException;
@@ -428,7 +428,7 @@ public class RepositoryConfigurationProcessor {
     		String lifecyclePhase) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, RepositoryConfigurationException {
     	
         HandlerDefinitionObject handlerDefinitionObject = new HandlerDefinitionObject(customEditManager, handlerConfigElement).invoke();
-        METHODS[] methods = handlerDefinitionObject.getMethods();
+        Methods[] methods = handlerDefinitionObject.getMethods();
         Filter filter = handlerDefinitionObject.getFilter();
         Handler handler = handlerDefinitionObject.getHandler();
         
@@ -645,7 +645,7 @@ public class RepositoryConfigurationProcessor {
     	
         private CustomEditManager customEditManager;
         private Element handlerConfigElement;
-        private List<METHODS> methods;
+        private List<Methods> methods;
         private Handler handler;
         private Filter filter;
         private int tenantId;
@@ -676,11 +676,11 @@ public class RepositoryConfigurationProcessor {
          *
          * @return array of methods
          */
-        public METHODS[] getMethods() {
+        public Methods[] getMethods() {
             if (methods == null) {
                 return null;
             }
-            return methods.toArray(new METHODS[methods.size()]);
+            return methods.toArray(new Methods[methods.size()]);
         }
 
         /**
@@ -748,9 +748,9 @@ public class RepositoryConfigurationProcessor {
 
             if (methodsValue != null && !methodsValue.isEmpty()) {
                 String[] methods = methodsValue.split(",");
-                METHODS[] handlerMethods = new METHODS[methods.length];
+                Methods[] handlerMethods = new Methods[methods.length];
                 for (int i = 0; i < methods.length; i++) {
-                    handlerMethods[i] = METHODS.valueOf(methods[i].trim().toUpperCase());
+                    handlerMethods[i] = Methods.valueOf(methods[i].trim().toUpperCase());
                 }
                 this.methods = Arrays.asList(handlerMethods);
             }

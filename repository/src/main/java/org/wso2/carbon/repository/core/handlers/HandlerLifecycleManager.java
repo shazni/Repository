@@ -21,7 +21,6 @@ package org.wso2.carbon.repository.core.handlers;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -33,7 +32,7 @@ import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.api.utils.METHODS;
+import org.wso2.carbon.repository.api.utils.Methods;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.config.RepositoryContext;
 import org.wso2.carbon.repository.core.handlers.builtin.MountHandler;
@@ -159,7 +158,7 @@ public class HandlerLifecycleManager extends HandlerManager {
     }
 
     @Override
-    public void addHandler(METHODS[] methods, Filter filter, Handler handler) {
+    public void addHandler(Methods[] methods, Filter filter, Handler handler) {
         handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE).addHandler(methods, filter, handler);
     }
 //
@@ -174,7 +173,7 @@ public class HandlerLifecycleManager extends HandlerManager {
     }
 
     @Override
-    public void addHandler(METHODS[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+    public void addHandler(Methods[] methods, Filter filter, Handler handler, String lifecyclePhase) {
         if (lifecyclePhase == null) {
             addHandler(methods, filter, handler);
             return;
@@ -978,7 +977,7 @@ public class HandlerLifecycleManager extends HandlerManager {
         if (handlerSet != null) {
             Handler[] handlers = handlerSet.toArray(new Handler[handlerSet.size()]);
             for (Handler handler : handlers) {
-                if (handler.engageHandler(requestContext, METHODS.RESTORE)) {
+                if (handler.engageHandler(requestContext, Methods.RESTORE)) {
                     if(handler instanceof MountHandler) {
                         registryContext = ((MountHandler) handler).getRegistryContext(requestContext);
                     }

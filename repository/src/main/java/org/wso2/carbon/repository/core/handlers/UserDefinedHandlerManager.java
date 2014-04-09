@@ -29,7 +29,7 @@ import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.api.utils.METHODS;
+import org.wso2.carbon.repository.api.utils.Methods;
 import org.wso2.carbon.repository.core.CurrentContext;
 
 /**
@@ -51,12 +51,12 @@ public class UserDefinedHandlerManager extends HandlerManager {
     }
 
     @Override
-    public void addHandler(METHODS[] methods, Filter filter, Handler handler) {
+    public void addHandler(Methods[] methods, Filter filter, Handler handler) {
         getUserHandlerManager().addHandler(methods, filter, handler);
     }
 
     @Override
-    public void addHandler(METHODS[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+    public void addHandler(Methods[] methods, Filter filter, Handler handler, String lifecyclePhase) {
         getUserHandlerManager().addHandler(methods, filter, handler, lifecyclePhase);
     }
 
