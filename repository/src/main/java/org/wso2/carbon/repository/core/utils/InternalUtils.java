@@ -51,7 +51,7 @@ import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.ResourcePath;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.api.utils.Methods;
+import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.CollectionImpl;
 import org.wso2.carbon.repository.core.CurrentContext;
@@ -939,16 +939,16 @@ public class InternalUtils {
      *
      * @return the list of operations.
      */
-    public static Methods[] getMountingMethods() {
-        return new Methods[]{Methods.RESOURCE_EXISTS, Methods.GET, Methods.PUT, Methods.DELETE,
-                Methods.RENAME,
-                Methods.MOVE, Methods.COPY, Methods.GET_AVERAGE_RATING, Methods.GET_RATING,
-                Methods.RATE_RESOURCE, Methods.GET_COMMENTS, Methods.ADD_COMMENT, Methods.EDIT_COMMENT,
-                Methods.REMOVE_COMMENT, Methods.GET_TAGS, Methods.APPLY_TAG, Methods.REMOVE_TAG,
-                Methods.GET_ALL_ASSOCIATIONS, Methods.GET_ASSOCIATIONS, Methods.ADD_ASSOCIATION,
-                Methods.DUMP, Methods.RESTORE, Methods.REMOVE_ASSOCIATION, Methods.IMPORT,
-                Methods.EXECUTE_QUERY, Methods.GET_RESOURCE_PATHS_WITH_TAG,
-                Methods.GET_REGISTRY_CONTEXT, Methods.REMOVE_LINK };
+    public static Method[] getMountingMethods() {
+        return new Method[]{Method.RESOURCE_EXISTS, Method.GET, Method.PUT, Method.DELETE,
+                Method.RENAME,
+                Method.MOVE, Method.COPY, Method.GET_AVERAGE_RATING, Method.GET_RATING,
+                Method.RATE_RESOURCE, Method.GET_COMMENTS, Method.ADD_COMMENT, Method.EDIT_COMMENT,
+                Method.REMOVE_COMMENT, Method.GET_TAGS, Method.APPLY_TAG, Method.REMOVE_TAG,
+                Method.GET_ALL_ASSOCIATIONS, Method.GET_ASSOCIATIONS, Method.ADD_ASSOCIATION,
+                Method.DUMP, Method.RESTORE, Method.REMOVE_ASSOCIATION, Method.IMPORT,
+                Method.EXECUTE_QUERY, Method.GET_RESOURCE_PATHS_WITH_TAG,
+                Method.GET_REGISTRY_CONTEXT, Method.REMOVE_LINK };
     }
     
     /**

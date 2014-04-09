@@ -23,7 +23,7 @@ import org.wso2.carbon.repository.api.ResourcePath;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
-import org.wso2.carbon.repository.api.utils.Methods;
+import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.EmbeddedRepository;
 import org.wso2.carbon.repository.core.exceptions.RepositoryServerContentException;
@@ -106,7 +106,7 @@ public class MediaTypeMatcher extends Filter {
     }
 
     @Override
-    public boolean filter(HandlerContext handlerContext, Methods method) throws RepositoryException {
+    public boolean filter(HandlerContext handlerContext, Method method) throws RepositoryException {
         switch (method) {
             case GET:
                 return handleGet(handlerContext);

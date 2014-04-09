@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
-import org.wso2.carbon.repository.api.utils.Methods;
+import org.wso2.carbon.repository.api.utils.Method;
 
 /**
  * This interface can be used to implement an OSGi Service of the Repository. By doing so, the
@@ -394,7 +394,7 @@ public interface RepositoryService {
      * @param filter  Filter instance associated with the handler.
      * @param handler Handler instance to be registered.
      */
-    void addHandler(Methods[] methods, Filter filter, Handler handler);
+    void addHandler(Method[] methods, Filter filter, Handler handler);
     
     /**
      * Registers handlers belonging to the given lifecycle phase with the handler manager. Each
@@ -416,7 +416,7 @@ public interface RepositoryService {
      * @param lifecyclePhase The name of the lifecycle phase.
      * @param handler        Handler instance to be registered.
      */
-    void addHandler(Methods[] methods, Filter filter, Handler handler, String lifecyclePhase);
+    void addHandler(Method[] methods, Filter filter, Handler handler, String lifecyclePhase);
 
     /**
      * remove a handler belonging to the given lifecycle phase from all the filters, all the

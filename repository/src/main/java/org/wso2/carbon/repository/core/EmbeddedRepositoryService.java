@@ -35,7 +35,7 @@ import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
-import org.wso2.carbon.repository.api.utils.Methods;
+import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.core.config.DataBaseConfiguration;
 import org.wso2.carbon.repository.core.config.RemoteConfiguration;
 import org.wso2.carbon.repository.core.config.RepositoryConfigurationProcessor;
@@ -365,12 +365,12 @@ public class EmbeddedRepositoryService implements RepositoryService {
     }
 
 	@Override
-	public void addHandler(Methods[] methods, Filter filter, Handler handler) {
+	public void addHandler(Method[] methods, Filter filter, Handler handler) {
 		getHandlerManager().addHandler(methods, filter, handler);
 	}
 
 	@Override
-	public void addHandler(Methods[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+	public void addHandler(Method[] methods, Filter filter, Handler handler, String lifecyclePhase) {
 		getHandlerManager().addHandler(methods, filter, handler, lifecyclePhase);
 	}
 

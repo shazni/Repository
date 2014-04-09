@@ -44,7 +44,7 @@ import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.SimulationService;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Handler;
-import org.wso2.carbon.repository.api.utils.Methods;
+import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.CollectionImpl;
 import org.wso2.carbon.repository.core.CurrentContext;
@@ -440,7 +440,7 @@ public class RepositoryServiceComponent {
         // media type:SQL_QUERY_MEDIA_TYPE
         SQLQueryHandler sqlQueryHandler = new SQLQueryHandler();
         MediaTypeMatcher sqlMediaTypeMatcher = new MediaTypeMatcher(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
-        handlerManager.addHandler(new Methods[]{Methods.GET, Methods.PUT}, sqlMediaTypeMatcher, sqlQueryHandler);
+        handlerManager.addHandler(new Method[]{Method.GET, Method.PUT}, sqlMediaTypeMatcher, sqlQueryHandler);
 
         // Register Simulation Handler
         handlerManager.addHandler(null, new SimulationFilter(), new SimulationHandler(), HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
@@ -465,7 +465,7 @@ public class RepositoryServiceComponent {
         URLMatcher logUrlMatcher = new URLMatcher();
         logUrlMatcher.setPattern(".*");
 
-        handlerManager.addHandler(new Methods[]{Methods.RENAME, Methods.MOVE}, logUrlMatcher, regexBaseRestrictionHandler, HandlerLifecycleManager.DEFAULT_SYSTEM_HANDLER_PHASE);
+        handlerManager.addHandler(new Method[]{Method.RENAME, Method.MOVE}, logUrlMatcher, regexBaseRestrictionHandler, HandlerLifecycleManager.DEFAULT_SYSTEM_HANDLER_PHASE);
     }
 
     /**

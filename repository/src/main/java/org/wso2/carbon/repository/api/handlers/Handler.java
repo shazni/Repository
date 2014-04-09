@@ -19,7 +19,7 @@ package org.wso2.carbon.repository.api.handlers;
 import org.wso2.carbon.repository.api.Collection;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
-import org.wso2.carbon.repository.api.utils.Methods;
+import org.wso2.carbon.repository.api.utils.Method;
 
 import java.util.Set;
 
@@ -58,7 +58,7 @@ public abstract class Handler {
         return filters;
     }
 
-    public final boolean engageHandler(HandlerContext handlerContext, Methods method) throws RepositoryException {
+    public final boolean engageHandler(HandlerContext handlerContext, Method method) throws RepositoryException {
         for (Filter filter : filters) {
             if (!filter.filter(handlerContext, method)) {
                 return false;

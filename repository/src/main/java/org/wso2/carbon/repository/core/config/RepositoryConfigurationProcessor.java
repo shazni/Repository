@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -51,7 +50,7 @@ import org.wso2.carbon.repository.api.RepositoryService;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
-import org.wso2.carbon.repository.api.utils.Methods;
+import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.exceptions.RepositoryConfigurationException;
 import org.wso2.carbon.repository.core.exceptions.RepositoryDBException;
@@ -428,7 +427,7 @@ public class RepositoryConfigurationProcessor {
     		String lifecyclePhase) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, RepositoryConfigurationException {
     	
         HandlerDefinitionObject handlerDefinitionObject = new HandlerDefinitionObject(customEditManager, handlerConfigElement).invoke();
-        Methods[] methods = handlerDefinitionObject.getMethods();
+        Method[] methods = handlerDefinitionObject.getMethods();
         Filter filter = handlerDefinitionObject.getFilter();
         Handler handler = handlerDefinitionObject.getHandler();
         
@@ -645,7 +644,7 @@ public class RepositoryConfigurationProcessor {
     	
         private CustomEditManager customEditManager;
         private Element handlerConfigElement;
-        private List<Methods> methods;
+        private List<Method> methods;
         private Handler handler;
         private Filter filter;
         private int tenantId;
@@ -676,11 +675,11 @@ public class RepositoryConfigurationProcessor {
          *
          * @return array of methods
          */
-        public Methods[] getMethods() {
+        public Method[] getMethods() {
             if (methods == null) {
                 return null;
             }
-            return methods.toArray(new Methods[methods.size()]);
+            return methods.toArray(new Method[methods.size()]);
         }
 
         /**
@@ -748,9 +747,9 @@ public class RepositoryConfigurationProcessor {
 
             if (methodsValue != null && !methodsValue.isEmpty()) {
                 String[] methods = methodsValue.split(",");
-                Methods[] handlerMethods = new Methods[methods.length];
+                Method[] handlerMethods = new Method[methods.length];
                 for (int i = 0; i < methods.length; i++) {
-                    handlerMethods[i] = Methods.valueOf(methods[i].trim().toUpperCase());
+                    handlerMethods[i] = Method.valueOf(methods[i].trim().toUpperCase());
                 }
                 this.methods = Arrays.asList(handlerMethods);
             }
@@ -786,11 +785,11 @@ public class RepositoryConfigurationProcessor {
 	                    try {
 		                    if (propType != null && "xml".equals(propType)) {
 		                        String setterName = getSetterName(propName);
-		                        Method setter = handlerClass.getMethod(setterName, Element.class);
+		                        java.lang.reflect.Method setter = handlerClass.getMethod(setterName, Element.class);
 		                        setter.invoke(handler, propElement);
 		                    } else {
 		                        String setterName = getSetterName(propName);
-		                        Method setter = handlerClass.getMethod(setterName, String.class);
+		                        java.lang.reflect.Method setter = handlerClass.getMethod(setterName, String.class);
 		                        String propValue = propElement.getTextContent();
 		                        setter.invoke(handler, propValue);
 		                    }
@@ -845,7 +844,7 @@ public class RepositoryConfigurationProcessor {
 	                    String setterName = getSetterName(propName);
 	                    
 	                    try {
-		                    Method setter = filterClass.getMethod(setterName, String.class);
+		                    java.lang.reflect.Method setter = filterClass.getMethod(setterName, String.class);
 		                    setter.invoke(filter, propValue);
 	                    } catch(NoSuchMethodException ex) {
 	                    	continue ;

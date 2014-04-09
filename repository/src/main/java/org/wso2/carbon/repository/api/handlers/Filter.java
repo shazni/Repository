@@ -17,7 +17,7 @@
 package org.wso2.carbon.repository.api.handlers;
 
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
-import org.wso2.carbon.repository.api.utils.Methods;
+import org.wso2.carbon.repository.api.utils.Method;
 
 /**
  * Base class of all filter implementations. All handlers have to be registered in the JDBC registry
@@ -31,6 +31,6 @@ public abstract class Filter {
      */
     protected boolean invert = false;
 
-    public abstract boolean filter (HandlerContext handlerContext, Methods method) throws RepositoryException;
+    public abstract boolean filter (HandlerContext handlerContext, Method method) throws RepositoryException;
 
 }
