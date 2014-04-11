@@ -85,12 +85,11 @@ public class HandlerManager {
      * @param handler Handler instance to be registered.
      */
     public synchronized void addHandler(Method[] methods, Filter filter, Handler handler) {
-        String methodInfo;
         Set<Filter> filterSet = new LinkedHashSet<Filter>();
         filterSet.add(filter);
         handler.setFilters(filterSet);
+        StringBuilder sb = new StringBuilder();
         if (methods != null) {
-            StringBuilder sb = new StringBuilder();
             for (Method method : methods) {
                 Set<Handler> handlers = handlerMap.get(method);
                 if (handlers == null) {
@@ -98,9 +97,10 @@ public class HandlerManager {
                 }
                 handlers.add(handler);
                 handlerMap.put(method , handlers);
-                sb.append(" ").append(method);
+                if (log.isDebugEnabled()) {
+                    sb.append(" ").append(method);
+                }
             }
-            methodInfo = sb.toString();
         } else {
             for (Method method : Method.values()) {
                 Set<Handler> handlers = handlerMap.get(method);
@@ -110,11 +110,13 @@ public class HandlerManager {
                 handlers.add(handler);
                 handlerMap.put(method , handlers);
             }
-            methodInfo = " all";
+            if (log.isDebugEnabled()) {
+                sb.append(" all");
+            }
         }
         
         if (log.isDebugEnabled()) {
-            log.debug("Registered the handler " + filter.getClass().getName() + " --> " + handler.getClass().getName() + " for" + methodInfo + " methods.");
+            log.debug("Registered the handler " + filter.getClass().getName() + " --> " + handler.getClass().getName() + " for" + sb.toString() + " methods.");
         }
     }
 
