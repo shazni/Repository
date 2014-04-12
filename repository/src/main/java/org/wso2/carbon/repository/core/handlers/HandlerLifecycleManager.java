@@ -158,8 +158,8 @@ public class HandlerLifecycleManager extends HandlerManager {
     }
 
     @Override
-    public void addHandler(Method[] methods, Filter filter, Handler handler) {
-        handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE).addHandler(methods, filter, handler);
+    public void addHandler(Method[] methods, Handler handler) {
+        handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE).addHandler(methods, handler);
     }
 //
 //    @Override
@@ -173,9 +173,9 @@ public class HandlerLifecycleManager extends HandlerManager {
     }
 
     @Override
-    public void addHandler(Method[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+    public void addHandler(Method[] methods, Handler handler, String lifecyclePhase) {
         if (lifecyclePhase == null) {
-            addHandler(methods, filter, handler);
+            addHandler(methods, handler);
             return;
         }
         
@@ -183,9 +183,9 @@ public class HandlerLifecycleManager extends HandlerManager {
         
         if (hm == null) {
             log.warn("Invalid handler lifecycle phase: " + lifecyclePhase + ". Adding handler to the default phase.");
-            addHandler(methods, filter, handler);
+            addHandler(methods,handler);
         } else {
-            hm.addHandler(methods, filter, handler);
+            hm.addHandler(methods, handler);
         }
     }
 

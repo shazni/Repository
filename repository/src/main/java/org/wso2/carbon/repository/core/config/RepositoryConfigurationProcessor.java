@@ -23,9 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.naming.Context;
@@ -430,6 +428,9 @@ public class RepositoryConfigurationProcessor {
         Method[] methods = handlerDefinitionObject.getMethods();
         Filter filter = handlerDefinitionObject.getFilter();
         Handler handler = handlerDefinitionObject.getHandler();
+        Set<Filter> filterSet = new LinkedHashSet<Filter>();
+        filterSet.add(filter);
+        handler.setFilters(filterSet);
         
         if (filter == null || handler == null) {
             return false;
@@ -444,15 +445,15 @@ public class RepositoryConfigurationProcessor {
                 try {
                     // We need to swap the tenant id for this call, if the handler overrides the
                     // default value.
-                    repositoryContext.getHandlerManager().addHandler(methods, filter, handler, lifecyclePhase);
+                    repositoryContext.getHandlerManager().addHandler(methods, handler, lifecyclePhase);
                 } finally {
                     CurrentContext.removeCallerTenantId();
                 }
             } else {
-                repositoryContext.getHandlerManager().addHandler(methods, filter, handler, lifecyclePhase);
+                repositoryContext.getHandlerManager().addHandler(methods, handler, lifecyclePhase);
             }
         } else {
-            repositoryContext.getHandlerManager().addHandler(methods, filter, handler, HandlerLifecycleManager.USER_DEFINED_SYSTEM_HANDLER_PHASE);
+            repositoryContext.getHandlerManager().addHandler(methods, handler, HandlerLifecycleManager.USER_DEFINED_SYSTEM_HANDLER_PHASE);
         }
         
         return true;
@@ -801,56 +802,55 @@ public class RepositoryConfigurationProcessor {
             }
 
             NodeList filterElements = handlerConfigElement.getElementsByTagName("filter");
-            
-            String filterClassName = null ;
-            Element filterElement = null ;
-            
-            if(filterElements != null && filterElements.getLength() > 0) {
-            	Node filterNode = filterElements.item(0) ;
-            	if(filterNode != null && filterNode.getNodeType() == Node.ELEMENT_NODE) {
-            		filterElement = (Element) filterNode ;
-            		filterClassName = filterElement.getAttribute("class");
-            	}
-            }
 
-            Class<?> filterClass;
-            
-            try {
-            	filterClass = Class.forName(filterClassName);
-            } catch (ClassNotFoundException e) {
-                String msg = "Could not find the filter class " +
-                        filterClassName + ". " + handlerClassName +
-                        " will not be registered. All configured handler, filter and " +
-                        "edit processor classes should be in the class " +
-                        "path of the Registry.";
-                log.warn(msg);
-                return this;
-            }
-            
-            filter = (Filter) filterClass.newInstance();
-            
-            NodeList filterProps = filterElement.getElementsByTagName("property");
-            
-            for( int index = 0 ; index < filterProps.getLength() ; index++ ) {
-            	Node filterPropNode = filterProps.item(index);
-            	
-            	if(filterPropNode.getParentNode().getNodeName() == "filter") {
-	            	if(filterPropNode != null && filterPropNode.getNodeType() == Node.ELEMENT_NODE) {
-	            		Element propElement = (Element) filterPropNode ;
-	            		
-	                    String propName = propElement.getAttribute("name");
-	                    String propValue = propElement.getTextContent();
-	
-	                    String setterName = getSetterName(propName);
-	                    
-	                    try {
-		                    java.lang.reflect.Method setter = filterClass.getMethod(setterName, String.class);
-		                    setter.invoke(filter, propValue);
-	                    } catch(NoSuchMethodException ex) {
-	                    	continue ;
-	                    }
-	            	}
-            	}
+            if(filterElements != null && filterElements.getLength() > 0) {
+                for (int i=0; i<filterElements.getLength(); i++) {
+                    Node filterNode = filterElements.item(i);
+                    if(filterNode != null && filterNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element filterElement = (Element) filterNode;
+                        String filterClassName = filterElement.getAttribute("class");
+
+                        Class<?> filterClass;
+
+                        try {
+                            filterClass = Class.forName(filterClassName);
+                        } catch (ClassNotFoundException e) {
+                            String msg = "Could not find the filter class " +
+                                    filterClassName + ". " + handlerClassName +
+                                    " will not be registered. All configured handler, filter and " +
+                                    "edit processor classes should be in the class " +
+                                    "path of the Registry.";
+                            log.warn(msg);
+                            return this;
+                        }
+
+                        filter = (Filter) filterClass.newInstance();
+
+                        NodeList filterProps = filterElement.getElementsByTagName("property");
+
+                        for( int index = 0 ; index < filterProps.getLength() ; index++ ) {
+                            Node filterPropNode = filterProps.item(index);
+
+                            if(filterPropNode.getParentNode().getNodeName() == "filter") {
+                                if(filterPropNode != null && filterPropNode.getNodeType() == Node.ELEMENT_NODE) {
+                                    Element propElement = (Element) filterPropNode ;
+
+                                    String propName = propElement.getAttribute("name");
+                                    String propValue = propElement.getTextContent();
+
+                                    String setterName = getSetterName(propName);
+
+                                    try {
+                                        java.lang.reflect.Method setter = filterClass.getMethod(setterName, String.class);
+                                        setter.invoke(filter, propValue);
+                                    } catch(NoSuchMethodException ex) {
+                                        continue ;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             if (customEditManager != null) {

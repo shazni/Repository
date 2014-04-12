@@ -81,13 +81,9 @@ public class HandlerManager {
      *                "GET_RATING", "CREATE_VERSION", "GET_VERSIONS", "RESTORE_VERSION",
      *                "EXECUTE_QUERY", "SEARCH_CONTENT", and "INVOKE_ASPECT". If null is given,
      *                handler will be engaged to all methods.
-     * @param filter  Filter instance associated with the handler.
      * @param handler Handler instance to be registered.
      */
-    public synchronized void addHandler(Method[] methods, Filter filter, Handler handler) {
-        Set<Filter> filterSet = new LinkedHashSet<Filter>();
-        filterSet.add(filter);
-        handler.setFilters(filterSet);
+    public synchronized void addHandler(Method[] methods, Handler handler) {
         StringBuilder sb = new StringBuilder();
         if (methods != null) {
             for (Method method : methods) {
@@ -116,7 +112,7 @@ public class HandlerManager {
         }
         
         if (log.isDebugEnabled()) {
-            log.debug("Registered the handler " + filter.getClass().getName() + " --> " + handler.getClass().getName() + " for" + sb.toString() + " methods.");
+            log.debug("Registered the handler " + handler.getClass().getName() + " for" + sb.toString() + " methods.");
         }
     }
 
@@ -136,14 +132,13 @@ public class HandlerManager {
      *                       "RESTORE_VERSION", "EXECUTE_QUERY", "SEARCH_CONTENT", and
      *                       "INVOKE_ASPECT". If null is given, handler will be engaged to all
      *                       methods.
-     * @param filter         Filter instance associated with the handler.
      * @param lifecyclePhase The name of the lifecycle phase.
      * @param handler        Handler instance to be registered.
      */
-    public void addHandler(Method[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+    public void addHandler(Method[] methods, Handler handler, String lifecyclePhase) {
         // We don't handle lifecycle phases in this Handler Manager. The Handler Lifecycle Manager
         // Does the required handling.
-        addHandler(methods, filter, handler);
+        addHandler(methods, handler);
     }
 
     /**

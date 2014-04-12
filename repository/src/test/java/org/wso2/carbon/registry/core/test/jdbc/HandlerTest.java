@@ -19,19 +19,21 @@ package org.wso2.carbon.registry.core.test.jdbc;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import java.io.ByteArrayInputStream;
-
 import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
 import org.wso2.carbon.repository.api.Repository;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
+import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.handlers.HandlerLifecycleManager;
 import org.wso2.carbon.repository.core.handlers.builtin.URLMatcher;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
+
+import java.io.ByteArrayInputStream;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class HandlerTest extends BaseTestCase {
 
@@ -81,11 +83,14 @@ public class HandlerTest extends BaseTestCase {
 
         URLMatcher filter = new URLMatcher();
         filter.setPattern(".*");
+        Set<Filter> filterSet = new LinkedHashSet<Filter>();
+        filterSet.add(filter);
+        handler.setFilters(filterSet);
 
         CurrentContext.setCallerTenantId(MultitenantConstants.SUPER_TENANT_ID);
         
         try {
-            registry.getRepositoryService().addHandler(null, filter, handler, HandlerLifecycleManager.COMMIT_HANDLER_PHASE);
+            registry.getRepositoryService().addHandler(null, handler, HandlerLifecycleManager.COMMIT_HANDLER_PHASE);
         } finally {
             CurrentContext.removeCallerTenantId();
         }
@@ -129,16 +134,22 @@ public class HandlerTest extends BaseTestCase {
 
         URLMatcher filter = new URLMatcher();
         filter.setPattern(".*");
+        Set<Filter> filterSet = new LinkedHashSet<Filter>();
+        filterSet.add(filter);
+        handler1.setFilters(filterSet);
 
-        registry.getRepositoryService().addHandler(null, filter, handler1);
+        registry.getRepositoryService().addHandler(null, handler1);
 
         filter = new URLMatcher();
         filter.setPattern(".*");
+        filterSet = new LinkedHashSet<Filter>();
+        filterSet.add(filter);
+        handler.setFilters(filterSet);
 
         CurrentContext.setCallerTenantId(MultitenantConstants.SUPER_TENANT_ID);
         
         try {
-            registry.getRepositoryService().addHandler(null, filter, handler, HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE);
+            registry.getRepositoryService().addHandler(null, handler, HandlerLifecycleManager.ROLLBACK_HANDLER_PHASE);
         } finally {
             CurrentContext.removeCallerTenantId();
         }

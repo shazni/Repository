@@ -20,9 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.management.ManagementPermission;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -43,6 +41,7 @@ import org.wso2.carbon.repository.api.RepositoryService;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.SimulationService;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
+import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
@@ -430,7 +429,10 @@ public class RepositoryServiceComponent {
         OperationStatisticsHandler systemStatisticsHandler = new OperationStatisticsHandler();
         URLMatcher systemStatisticsURLMatcher = new URLMatcher();
         systemStatisticsURLMatcher.setPattern(".*");
-        handlerManager.addHandler(null, systemStatisticsURLMatcher, systemStatisticsHandler);
+        Set<Filter> systemStatisticsFilterSet = new LinkedHashSet<Filter>();
+        systemStatisticsFilterSet.add(systemStatisticsURLMatcher);
+        systemStatisticsHandler.setFilters(systemStatisticsFilterSet);
+        handlerManager.addHandler(null, systemStatisticsHandler);
 
         if (log.isTraceEnabled()) {
             log.trace("Engaging the SQL Query Handler.");
@@ -440,10 +442,17 @@ public class RepositoryServiceComponent {
         // media type:SQL_QUERY_MEDIA_TYPE
         SQLQueryHandler sqlQueryHandler = new SQLQueryHandler();
         MediaTypeMatcher sqlMediaTypeMatcher = new MediaTypeMatcher(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
-        handlerManager.addHandler(new Method[]{Method.GET, Method.PUT}, sqlMediaTypeMatcher, sqlQueryHandler);
+        Set<Filter> sqlQueryFilterSet = new LinkedHashSet<Filter>();
+        sqlQueryFilterSet.add(sqlMediaTypeMatcher);
+        sqlQueryHandler.setFilters(sqlQueryFilterSet);
+        handlerManager.addHandler(new Method[]{Method.GET, Method.PUT}, sqlQueryHandler);
 
         // Register Simulation Handler
-        handlerManager.addHandler(null, new SimulationFilter(), new SimulationHandler(), HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
+        Handler simulationHandler = new SimulationHandler();
+        Set<Filter> simulationFilterSet = new LinkedHashSet<Filter>();
+        simulationFilterSet.add(new SimulationFilter());
+        simulationHandler.setFilters(simulationFilterSet);
+        handlerManager.addHandler(null, simulationHandler, HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
 
         if (log.isTraceEnabled()) {
             log.trace("Engaging the Caching Registry Handler.");
@@ -453,9 +462,11 @@ public class RepositoryServiceComponent {
         CachingHandler cachingHandler = new CachingHandler();
         URLMatcher cachingURLMatcher = new URLMatcher();
         cachingURLMatcher.setPattern(".*");
-
-        handlerManager.addHandler(null, cachingURLMatcher, cachingHandler);
-        handlerManager.addHandler(null, cachingURLMatcher, cachingHandler, HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
+        Set<Filter> cachingFilterSet = new LinkedHashSet<Filter>();
+        cachingFilterSet.add(cachingURLMatcher);
+        cachingHandler.setFilters(cachingFilterSet);
+        handlerManager.addHandler(null, cachingHandler);
+        handlerManager.addHandler(null, cachingHandler, HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
 
         if (log.isTraceEnabled()) {
             log.trace("Engaging the RegexBase Restriction Handler.");
@@ -464,8 +475,11 @@ public class RepositoryServiceComponent {
         Handler regexBaseRestrictionHandler =  new RegexBaseRestrictionHandler();
         URLMatcher logUrlMatcher = new URLMatcher();
         logUrlMatcher.setPattern(".*");
+        Set<Filter> regexBaseRestrictionFilterSet = new LinkedHashSet<Filter>();
+        regexBaseRestrictionFilterSet.add(logUrlMatcher);
+        regexBaseRestrictionHandler.setFilters(regexBaseRestrictionFilterSet);
 
-        handlerManager.addHandler(new Method[]{Method.RENAME, Method.MOVE}, logUrlMatcher, regexBaseRestrictionHandler, HandlerLifecycleManager.DEFAULT_SYSTEM_HANDLER_PHASE);
+        handlerManager.addHandler(new Method[]{Method.RENAME, Method.MOVE}, regexBaseRestrictionHandler, HandlerLifecycleManager.DEFAULT_SYSTEM_HANDLER_PHASE);
     }
 
     /**

@@ -51,13 +51,13 @@ public class UserDefinedHandlerManager extends HandlerManager {
     }
 
     @Override
-    public void addHandler(Method[] methods, Filter filter, Handler handler) {
-        getUserHandlerManager().addHandler(methods, filter, handler);
+    public void addHandler(Method[] methods, Handler handler) {
+        getUserHandlerManager().addHandler(methods, handler);
     }
 
     @Override
-    public void addHandler(Method[] methods, Filter filter, Handler handler, String lifecyclePhase) {
-        getUserHandlerManager().addHandler(methods, filter, handler, lifecyclePhase);
+    public void addHandler(Method[] methods, Handler handler, String lifecyclePhase) {
+        getUserHandlerManager().addHandler(methods, handler, lifecyclePhase);
     }
 
 //    @Override

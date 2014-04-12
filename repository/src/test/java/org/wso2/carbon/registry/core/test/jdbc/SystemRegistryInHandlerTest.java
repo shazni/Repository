@@ -26,6 +26,7 @@ import org.wso2.carbon.registry.core.test.utils.BaseTestCase;
 import org.wso2.carbon.repository.api.Repository;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
+import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
 import org.wso2.carbon.repository.api.utils.Method;
@@ -36,6 +37,9 @@ import org.wso2.carbon.repository.core.config.RepositoryContext;
 import org.wso2.carbon.repository.core.handlers.HandlerManager;
 import org.wso2.carbon.repository.core.handlers.builtin.URLMatcher;
 import org.wso2.carbon.repository.core.utils.InternalUtils;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class SystemRegistryInHandlerTest  extends BaseTestCase {
 //    RealmConfiguration realmConfig;
@@ -64,7 +68,12 @@ public class SystemRegistryInHandlerTest  extends BaseTestCase {
         URLMatcher myPrivateHandlerMatcher = new URLMatcher();
         myPrivateHandlerMatcher.setGetPattern(".*/to/my/private/handler");
         myPrivateHandlerMatcher.setPutPattern(".*/to/my/private/handler");
-        handlerManager.addHandler(new Method[] {Method.GET, Method.PUT} , myPrivateHandlerMatcher, myPrivateHandler);
+
+        Set<Filter> filterSet = new LinkedHashSet<Filter>();
+        filterSet.add(myPrivateHandlerMatcher);
+        myPrivateHandler.setFilters(filterSet);
+
+        handlerManager.addHandler(new Method[] {Method.GET, Method.PUT} , myPrivateHandler);
 
         Resource r = adminRegistry.newResource();
         String originalContent = "original content";

@@ -391,10 +391,9 @@ public interface RepositoryService {
      *                "GET_RATING", "CREATE_VERSION", "GET_VERSIONS", "RESTORE_VERSION",
      *                "EXECUTE_QUERY", "SEARCH_CONTENT", and "INVOKE_ASPECT". If null is given,
      *                handler will be engaged to all methods.
-     * @param filter  Filter instance associated with the handler.
      * @param handler Handler instance to be registered.
      */
-    void addHandler(Method[] methods, Filter filter, Handler handler);
+    void addHandler(Method[] methods, Handler handler);
     
     /**
      * Registers handlers belonging to the given lifecycle phase with the handler manager. Each
@@ -412,11 +411,10 @@ public interface RepositoryService {
      *                       "RESTORE_VERSION", "EXECUTE_QUERY", "SEARCH_CONTENT", and
      *                       "INVOKE_ASPECT". If null is given, handler will be engaged to all
      *                       methods.
-     * @param filter         Filter instance associated with the handler.
      * @param lifecyclePhase The name of the lifecycle phase.
      * @param handler        Handler instance to be registered.
      */
-    void addHandler(Method[] methods, Filter filter, Handler handler, String lifecyclePhase);
+    void addHandler(Method[] methods, Handler handler, String lifecyclePhase);
 
     /**
      * remove a handler belonging to the given lifecycle phase from all the filters, all the

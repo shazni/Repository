@@ -25,12 +25,7 @@ import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.cache.Cache;
@@ -50,6 +45,7 @@ import org.wso2.carbon.repository.api.RepositoryService;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.ResourcePath;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
+import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
 import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
@@ -663,8 +659,10 @@ public class InternalUtils {
         handler.setMountPoint(path);
         handler.setTargetPoint(target);
         handler.setAuthor(author);
-        
-        repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler,
+        Set<Filter> symbolicLinkFilterSet = new LinkedHashSet<Filter>();
+        symbolicLinkFilterSet.add(InternalUtils.getMountingMatcher(path));
+        handler.setFilters(symbolicLinkFilterSet);
+        repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(),  handler,
                 HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
         
         // now we are going to iterate through all the already available symbolic links and resolve
@@ -710,9 +708,11 @@ public class InternalUtils {
         handler.setMountPoint(path);
         handler.setTargetPoint(target);
         handler.setAuthor(author);
-
+        Set<Filter> symbolicLinkFilterSet = new LinkedHashSet<Filter>();
+        symbolicLinkFilterSet.add(InternalUtils.getMountingMatcher(path));
+        handler.setFilters(symbolicLinkFilterSet);
         HandlerManager hm = context.getHandlerManager();
-        hm.addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler,
+        hm.addHandler(InternalUtils.getMountingMethods(), handler,
                 HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
         // now we are going to iterate through all the already available symbolic links and resolve
         // the cyclic symbolic links
@@ -803,6 +803,9 @@ public class InternalUtils {
                 handler.setMountPoint(path);
                 handler.setSubPath(targetSubPath);
                 handler.setAuthor(author);
+                Set<Filter> remoteLinkFilterSet = new LinkedHashSet<Filter>();
+                remoteLinkFilterSet.add(InternalUtils.getMountingMatcher(path));
+                handler.setFilters(remoteLinkFilterSet);
                 
                 if (config.getTrustedUser() == null || config.getTrustedPwd() == null) {
                     handler.setRemote(false);
@@ -812,10 +815,10 @@ public class InternalUtils {
                 }
                 
                 if (forAllTenants) {
-                	repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler);
+                	repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(), handler);
                 } else {
                 	repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(),
-                    		InternalUtils.getMountingMatcher(path), handler, HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+                    		handler, HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
                 }
                 
                 return;
@@ -867,6 +870,9 @@ public class InternalUtils {
                 handler.setMountPoint(path);
                 handler.setSubPath(targetSubPath);
                 handler.setAuthor(author);
+                Set<Filter> remoteLinkFilterSet = new LinkedHashSet<Filter>();
+                remoteLinkFilterSet.add(InternalUtils.getMountingMatcher(path));
+                handler.setFilters(remoteLinkFilterSet);
                 
                 if (config.getTrustedUser() == null || config.getTrustedPwd() == null) {
                     handler.setRemote(false);
@@ -876,9 +882,9 @@ public class InternalUtils {
                 }
                 
                 if (forAllTenants) {
-                    hm.addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler);
+                    hm.addHandler(InternalUtils.getMountingMethods(), handler);
                 } else {
-                    hm.addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler,
+                    hm.addHandler(InternalUtils.getMountingMethods(), handler,
                             HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
                 }
                 
