@@ -380,24 +380,6 @@ public class HandlerContext {
     }
 
     /**
-     * Method to get the User Name.
-     *
-     * @return the User Name.
-     */
-    public String getUserName() {
-        return userName;
-    }
-
-    /**
-     * Method to set User Name.
-     *
-     * @param userName the User Name.
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    /**
      * Method to get the Version Path.
      *
      * @return the Version Path.
@@ -431,60 +413,6 @@ public class HandlerContext {
      */
     public void setQueryParameters(Map<?, ?> queryParameters) {
         this.queryParameters = queryParameters;
-    }
-
-    /**
-     * Method to get the Keywords.
-     *
-     * @return the Keywords.
-     */
-    public String getKeywords() {
-        return keywords;
-    }
-
-    /**
-     * Method to set Keywords.
-     *
-     * @param keywords the Keywords.
-     */
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
-
-    /**
-     * Method to get the bytes read when performing a repository restoration operation.
-     *
-     * @return the number of bytes read.
-     */
-    public long getBytesRead() {
-        return bytesRead;
-    }
-
-    /**
-     * Method to set the bytes read when performing a repository restoration operation.
-     *
-     * @param bytesRead the number of bytes read.
-     */
-    public void setBytesRead(long bytesRead) {
-        this.bytesRead = bytesRead;
-    }
-
-    /**
-     * Method to get the bytes written when performing a repository dump operation.
-     *
-     * @return the number of bytes written.
-     */
-    public long getBytesWritten() {
-        return bytesWritten;
-    }
-
-    /**
-     * Method to set the bytes written when performing a repository dump operation.
-     *
-     * @param bytesWritten the number of bytes written.
-     */
-    public void setBytesWritten(long bytesWritten) {
-        this.bytesWritten = bytesWritten;
     }
 
     /**

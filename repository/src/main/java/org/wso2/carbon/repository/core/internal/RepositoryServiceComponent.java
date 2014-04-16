@@ -20,9 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.management.ManagementPermission;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -42,10 +40,10 @@ import org.wso2.carbon.repository.api.RepositoryConstants;
 import org.wso2.carbon.repository.api.RepositoryService;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.SimulationService;
-import org.wso2.carbon.repository.api.StatisticsCollector;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
+import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.CollectionImpl;
 import org.wso2.carbon.repository.core.CurrentContext;
@@ -82,7 +80,6 @@ import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 )
 @Reference (
         name = "statistics.collector",
-        referenceInterface = org.wso2.carbon.repository.api.StatisticsCollector.class,
         cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
         policy = ReferencePolicy.DYNAMIC,
         bind = "setStatisticsCollector",
@@ -233,7 +230,7 @@ public class RepositoryServiceComponent {
         }
         
         Resource r = repository.get(lookupPath);
-        return (!isSuperTenant || targetPath.equals(r.getProperty("subPath"))) && Boolean.toString(true).equals(r.getProperty(InternalConstants.REGISTRY_FIXED_MOUNT));
+        return (!isSuperTenant || targetPath.equals(r.getPropertyValue("subPath"))) && Boolean.toString(true).equals(r.getPropertyValue(InternalConstants.REGISTRY_FIXED_MOUNT));
     }
 
     // Sets-up the media types for this instance.
@@ -300,8 +297,7 @@ public class RepositoryServiceComponent {
         resource.setMediaType(InternalConstants.LINK_MEDIA_TYPE);
         
         registry.put(path, resource);
-        
-        resource.discard();
+
     }
 
     private void setupMounts(RepositoryService repositoryService, int tenantId) {
@@ -342,7 +338,7 @@ public class RepositoryServiceComponent {
                 } else if (mount.isVirtual()) {
                     Resource r = repository.get(mount.getPath());
                     
-                    if (Boolean.toString(true).equals(r.getProperty(RepositoryConstants.REGISTRY_LINK))) {
+                    if (Boolean.toString(true).equals(r.getPropertyValue(RepositoryConstants.REGISTRY_LINK))) {
                         log.error("Unable to create virtual remote mount at location: " + mount.getPath() + ". Virtual remote mounts can only be created " +
                                 "for physical resources.");
                         continue;
@@ -387,10 +383,10 @@ public class RepositoryServiceComponent {
             
             Resource r = repository.get(lookupPath);
             
-            String mountPath = r.getProperty("path");
-            String target = r.getProperty("target");
-            String targetSubPath = r.getProperty("subPath");
-            String author = r.getProperty("author");
+            String mountPath = r.getPropertyValue("path");
+            String target = r.getPropertyValue("target");
+            String targetSubPath = r.getPropertyValue("subPath");
+            String author = r.getPropertyValue("author");
 
             try {
                 if (log.isTraceEnabled()) {
@@ -433,7 +429,10 @@ public class RepositoryServiceComponent {
         OperationStatisticsHandler systemStatisticsHandler = new OperationStatisticsHandler();
         URLMatcher systemStatisticsURLMatcher = new URLMatcher();
         systemStatisticsURLMatcher.setPattern(".*");
-        handlerManager.addHandler(null, systemStatisticsURLMatcher, systemStatisticsHandler);
+        Set<Filter> systemStatisticsFilterSet = new LinkedHashSet<Filter>();
+        systemStatisticsFilterSet.add(systemStatisticsURLMatcher);
+        systemStatisticsHandler.setFilters(systemStatisticsFilterSet);
+        handlerManager.addHandler(null, systemStatisticsHandler);
 
         if (log.isTraceEnabled()) {
             log.trace("Engaging the SQL Query Handler.");
@@ -443,10 +442,17 @@ public class RepositoryServiceComponent {
         // media type:SQL_QUERY_MEDIA_TYPE
         SQLQueryHandler sqlQueryHandler = new SQLQueryHandler();
         MediaTypeMatcher sqlMediaTypeMatcher = new MediaTypeMatcher(RepositoryConstants.SQL_QUERY_MEDIA_TYPE);
-        handlerManager.addHandler(new String[]{Filter.GET, Filter.PUT}, sqlMediaTypeMatcher, sqlQueryHandler);
+        Set<Filter> sqlQueryFilterSet = new LinkedHashSet<Filter>();
+        sqlQueryFilterSet.add(sqlMediaTypeMatcher);
+        sqlQueryHandler.setFilters(sqlQueryFilterSet);
+        handlerManager.addHandler(new Method[]{Method.GET, Method.PUT}, sqlQueryHandler);
 
         // Register Simulation Handler
-        handlerManager.addHandler(null, new SimulationFilter(), new SimulationHandler(), HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
+        Handler simulationHandler = new SimulationHandler();
+        Set<Filter> simulationFilterSet = new LinkedHashSet<Filter>();
+        simulationFilterSet.add(new SimulationFilter());
+        simulationHandler.setFilters(simulationFilterSet);
+        handlerManager.addHandler(null, simulationHandler, HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
 
         if (log.isTraceEnabled()) {
             log.trace("Engaging the Caching Registry Handler.");
@@ -456,9 +462,11 @@ public class RepositoryServiceComponent {
         CachingHandler cachingHandler = new CachingHandler();
         URLMatcher cachingURLMatcher = new URLMatcher();
         cachingURLMatcher.setPattern(".*");
-
-        handlerManager.addHandler(null, cachingURLMatcher, cachingHandler);
-        handlerManager.addHandler(null, cachingURLMatcher, cachingHandler, HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
+        Set<Filter> cachingFilterSet = new LinkedHashSet<Filter>();
+        cachingFilterSet.add(cachingURLMatcher);
+        cachingHandler.setFilters(cachingFilterSet);
+        handlerManager.addHandler(null, cachingHandler);
+        handlerManager.addHandler(null, cachingHandler, HandlerLifecycleManager.DEFAULT_REPORTING_HANDLER_PHASE);
 
         if (log.isTraceEnabled()) {
             log.trace("Engaging the RegexBase Restriction Handler.");
@@ -467,8 +475,11 @@ public class RepositoryServiceComponent {
         Handler regexBaseRestrictionHandler =  new RegexBaseRestrictionHandler();
         URLMatcher logUrlMatcher = new URLMatcher();
         logUrlMatcher.setPattern(".*");
+        Set<Filter> regexBaseRestrictionFilterSet = new LinkedHashSet<Filter>();
+        regexBaseRestrictionFilterSet.add(logUrlMatcher);
+        regexBaseRestrictionHandler.setFilters(regexBaseRestrictionFilterSet);
 
-        handlerManager.addHandler(new String[] {Filter.RENAME, Filter.MOVE}, logUrlMatcher, regexBaseRestrictionHandler, HandlerLifecycleManager.DEFAULT_SYSTEM_HANDLER_PHASE);
+        handlerManager.addHandler(new Method[]{Method.RENAME, Method.MOVE}, regexBaseRestrictionHandler, HandlerLifecycleManager.DEFAULT_SYSTEM_HANDLER_PHASE);
     }
 
     /**
@@ -597,25 +608,6 @@ public class RepositoryServiceComponent {
         }
         
         return serverConfig;
-    }
-
-    /**
-     * Method to set a register collector service.
-     *
-     * @param statisticsCollector the statistics collector service.
-     */
-    protected synchronized void setStatisticsCollector(StatisticsCollector statisticsCollector) {
-        RepositoryContext.getBaseInstance().addStatisticsCollector(statisticsCollector);
-        RepositoryUtils.addStatisticsCollector(statisticsCollector);
-    }
-
-    /**
-     * Method to set a un-register collector service.
-     *
-     * @param statisticsCollector the statistics collector service.
-     */
-    protected synchronized void unsetStatisticsCollector(StatisticsCollector statisticsCollector) {
-        RepositoryContext.getBaseInstance().removeStatisticsCollector(statisticsCollector);
     }
 
     private static void updateRepositoryConfiguration(RepositoryConfiguration config) {

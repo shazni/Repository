@@ -50,7 +50,7 @@ public class PropertiesTest extends BaseTestCase {
         registry.put("/", root);
 
         Resource rootB = registry.get("/");
-        Assert.assertEquals(rootB.getProperty("p1"), "v1", "Root should have a property named p1 with value v1");
+        Assert.assertEquals(rootB.getPropertyValue("p1"), "v1", "Root should have a property named p1 with value v1");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class PropertiesTest extends BaseTestCase {
         registry.put("/propTest/r2", r2);
 
         Resource r2b = registry.get("/propTest/r2");
-        String p1Value = r2b.getProperty("p1");
+        String p1Value = r2b.getPropertyValue("p1");
 
         Assert.assertEquals(p1Value, "p1v1", "Property p1 of /propTest/r2 should contain the value p1v1");
     }
@@ -90,7 +90,7 @@ public class PropertiesTest extends BaseTestCase {
         registry.put("/propTest3/r2", r2);
 
         Resource r2b = registry.get("/propTest3/r2");
-        String p1Value = r2b.getProperty("p1");
+        String p1Value = r2b.getPropertyValue("p1");
 
         Assert.assertEquals(p1Value, null, "Property p1 of /propTest3/r2 should contain the value null");
     }
@@ -125,8 +125,8 @@ public class PropertiesTest extends BaseTestCase {
 
         Resource r1e2 = registry.get("/props/t1/r1");
 
-        Assert.assertEquals(r1e2.getProperty("p1"), null, "Property is not removed.");
-        Assert.assertNotNull(r1e2.getProperty("p2"), "Wrong property is removed.");
+        Assert.assertEquals(r1e2.getPropertyValue("p1"), null, "Property is not removed.");
+        Assert.assertNotNull(r1e2.getPropertyValue("p2"), "Wrong property is removed.");
     }
 
     @Test
@@ -138,7 +138,9 @@ public class PropertiesTest extends BaseTestCase {
         registry.put("/props/t2/r1", r1);
 
         Resource r1e1 = registry.get("/props/t2/r1");
-        r1e1.removePropertyValue("p1", "v1");
+        List<String> propertyValues = r1e1.getPropertyValues("p1");
+        propertyValues.remove("v1");
+        r1e1.setProperty("p1", propertyValues);
         registry.put("/props/t2/r1", r1e1);
 
         Resource r1e2 = registry.get("/props/t2/r1");
@@ -156,7 +158,10 @@ public class PropertiesTest extends BaseTestCase {
         registry.put("/props/t3/r1", r1);
 
         Resource r1e1 = registry.get("/props/t3/r1");
-        r1e1.editPropertyValue("p1", "v1", "v3");
+        List<String> propertyValues = r1e1.getPropertyValues("p1");
+        propertyValues.remove("v1");
+        propertyValues.add("v3");
+        r1e1.setProperty("p1", propertyValues);
         registry.put("/props/t3/r1", r1e1);
 
         Resource r1e2 = registry.get("/props/t3/r1");

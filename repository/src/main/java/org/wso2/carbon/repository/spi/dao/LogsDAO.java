@@ -16,13 +16,13 @@
 
 package org.wso2.carbon.repository.spi.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import org.wso2.carbon.repository.api.Activity;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.core.utils.LogRecord;
 import org.wso2.carbon.repository.spi.dataaccess.DataAccessManager;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Data Access Object for Activity Logs.
@@ -51,7 +51,7 @@ public interface LogsDAO {
      * @return an array of log entries.
      * @throws RepositoryException if an error occurred while obtaining logs.
      */
-    List getLogs(String resourcePath, int action, String userName, Date from, Date to, boolean descending) throws RepositoryException;
+    List<Activity> getLogs(String resourcePath, int action, String userName, Date from, Date to, boolean descending) throws RepositoryException;
 
     /**
      * Method to get a list of log entries.

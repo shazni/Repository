@@ -19,7 +19,9 @@ package org.wso2.carbon.repository.api.handlers;
 import org.wso2.carbon.repository.api.Collection;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
-import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.Method;
+
+import java.util.Set;
 
 /**
  * Base class of all handler implementations. Provides the methods that handlers should implement.
@@ -41,6 +43,29 @@ import org.wso2.carbon.repository.api.handlers.HandlerContext;
  * consuming operations in handlers could slow down the whole repository.
  */
 public abstract class Handler {
+
+    /**
+     * Keep the reference for the relevant filters for the Handler
+     *
+     */
+    private Set<Filter> filters;
+
+    public final void setFilters(Set<Filter> filters) {
+        this.filters = filters;
+    }
+
+    public Set<Filter> getFilters() {
+        return filters;
+    }
+
+    public final boolean engageHandler(HandlerContext handlerContext, Method method) throws RepositoryException {
+        for (Filter filter : filters) {
+            if (!filter.filter(handlerContext, method)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Processes the GET action for resource path of the requestContext.

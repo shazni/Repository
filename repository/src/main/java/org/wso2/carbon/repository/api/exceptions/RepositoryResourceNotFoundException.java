@@ -16,8 +16,6 @@
 
 package org.wso2.carbon.repository.api.exceptions;
 
-import org.wso2.carbon.repository.api.exceptions.RepositoryUserException;
-
 /**
  * This is thrown when a requested resource cannot be located in the Registry.
  */

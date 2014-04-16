@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -32,7 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.repository.api.RepositoryConstants;
 import org.wso2.carbon.repository.api.RepositoryService;
-import org.wso2.carbon.repository.api.StatisticsCollector;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.EmbeddedRepositoryService;
@@ -73,8 +71,6 @@ public class RepositoryContext {
                           "org.wso2.carbon.registry.core.jdbc.dao.JDBCPathCache");
 
     private static final String NODE_IDENTIFIER = UUID.randomUUID().toString();
-
-    private static volatile List<StatisticsCollector> statisticsCollectors = new LinkedList<StatisticsCollector>();
 
     private String resourceMediaTypes = null;
     private String collectionMediaTypes = null;
@@ -246,12 +242,12 @@ public class RepositoryContext {
                     registryService.setRegistryRoot(registryRoot);
                     StaticConfiguration.setRegistryRoot(registryRoot);
      *
-     * @param realmService realm service
+     * @param repositoryService repository service
      *
      * @return the base registry context
      */
-    public static RepositoryContext getBaseInstance(RepositoryService registryService) {
-        return getBaseInstance(true, registryService);
+    public static RepositoryContext getBaseInstance(RepositoryService repositoryService) {
+        return getBaseInstance(true, repositoryService);
     }
 
     /**
@@ -259,18 +255,18 @@ public class RepositoryContext {
      * registry context doesn't exist, it will create a new one and return it. Otherwise it will
      * create the current base registry context
      *
-     * @param realmService          realm service
      * @param populateConfiguration whether the configuration must be populated or not.
+     * @param repositoryService repository service
      *
      * @return the base registry context
      */
-    public static RepositoryContext getBaseInstance(boolean populateConfiguration, RepositoryService registryService) {
+    public static RepositoryContext getBaseInstance(boolean populateConfiguration, RepositoryService repositoryService) {
         try {
             if (getBaseInstance() != null) {
                 return getBaseInstance(); 
             } 
             
-            new RepositoryContext(populateConfiguration, registryService);
+            new RepositoryContext(populateConfiguration, repositoryService);
         } catch (RepositoryException e) {
             log.error("Unable to get instance of the registry context", e);
             return null;
@@ -397,7 +393,7 @@ public class RepositoryContext {
     /**
      * Create a new registry context object with a custom realm service
      *
-     * @param realmService associated realm service
+     * @param repositoryService repository service
      * @param populateConfiguration whether the configuration must be populated or not.
      *
      * @throws RepositoryException throws if the construction failed.
@@ -410,7 +406,7 @@ public class RepositoryContext {
      * Create a registry context with custom configuration and realm service.
      *
      * @param configStream configuration stream. (registry.xml input stream)//
-     * @param realmService the associated realm service
+     * @param repositoryService repository service
      *
      * @throws RepositoryException throws if the construction failed.
      */
@@ -906,33 +902,5 @@ public class RepositoryContext {
      */
     public void registerNoCachePath(String path) {
         noCachePaths.add(Pattern.compile(Pattern.quote(path) + "($|" + RepositoryConstants.PATH_SEPARATOR + ".*|" + RepositoryConstants.URL_SEPARATOR + ".*)"));
-    }
-
-    /**
-     * Method to obtain a list of statistics collectors.
-     *
-     * @return array of statistics collectors if one or more statistics collectors exist, or an
-     * empty array.
-     */
-    public StatisticsCollector[] getStatisticsCollectors() {
-        return statisticsCollectors.isEmpty() ? new StatisticsCollector[0] : statisticsCollectors.toArray(new StatisticsCollector[statisticsCollectors.size()]);
-    }
-
-    /**
-     * Method to add a statistics collector
-     *
-     * @param statisticsCollector the statistics collector to be added.
-     */
-    public void addStatisticsCollector(StatisticsCollector statisticsCollector) {
-        statisticsCollectors.add(statisticsCollector);
-    }
-
-    /**
-     * Method to remove a statistics collector
-     *
-     * @param statisticsCollector the statistics collector to be removed.
-     */
-    public void removeStatisticsCollector(StatisticsCollector statisticsCollector) {
-        statisticsCollectors.remove(statisticsCollector);
     }
 }

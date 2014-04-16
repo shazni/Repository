@@ -52,7 +52,7 @@ public class TransactionsTest extends BaseTestCase {
         registry.commitTransaction();
 
         Resource r1b = registry.get("/t1/r1");
-        Assert.assertEquals(r1b.getProperty("test"), "t1", "Completed transaction resource should have a property named 'test' with value 't1'");
+        Assert.assertEquals(r1b.getPropertyValue("test"), "t1", "Completed transaction resource should have a property named 'test' with value 't1'");
     }
 
     @Test
@@ -84,7 +84,7 @@ public class TransactionsTest extends BaseTestCase {
         registry.commitTransaction();
 
         Resource r1b = registry.get("/t2/r1");
-        Assert.assertEquals(r1b.getProperty("test"), "t2", "Completed transaction resource should have a property named 'test' with value 't2'");
+        Assert.assertEquals(r1b.getPropertyValue("test"), "t2", "Completed transaction resource should have a property named 'test' with value 't2'");
     }
 
     @Test
@@ -121,7 +121,7 @@ public class TransactionsTest extends BaseTestCase {
         registry.commitTransaction();
 
         Resource r1b = registry.get("/t2/r1");
-        Assert.assertEquals(r1b.getProperty("test"), "t2", "Completed transaction resource should have a property named 'test' with value 't2'");
+        Assert.assertEquals(r1b.getPropertyValue("test"), "t2", "Completed transaction resource should have a property named 'test' with value 't2'");
     }
 
     @Test

@@ -53,11 +53,11 @@ public class SymlinkTest extends BaseTestCase {
         
         registry.createLink("/mountCollection", "/testCollection");
         Resource mountCollection = registry.get("/mountCollection");
-        Assert.assertEquals(mountCollection.getProperty("name"), "valueC");
+        Assert.assertEquals(mountCollection.getPropertyValue("name"), "valueC");
         String [] children = (String []) mountCollection.getContent();
         Assert.assertEquals(children[0], "/mountCollection/testResource");
         Resource mountedResource = registry.get("/mountCollection/testResource");
-        Assert.assertEquals(mountedResource.getProperty("name"), "value1");
+        Assert.assertEquals(mountedResource.getPropertyValue("name"), "value1");
 
         registry.createLink("/testCollection", "/");
         boolean exceptionOccurred = false;
@@ -82,11 +82,11 @@ public class SymlinkTest extends BaseTestCase {
 
         registry.createLink("/mountCollection2", "/");
         Resource mountCollection = registry.get("/mountCollection2");
-        Assert.assertEquals(mountCollection.getProperty("name"), "valueC");
+        Assert.assertEquals(mountCollection.getPropertyValue("name"), "valueC");
         String [] children = (String []) mountCollection.getContent();
         Assert.assertEquals(children[0], "/mountCollection2/testCollection2");
         Resource mountedResource = registry.get("/mountCollection2/testCollection2");
-        Assert.assertEquals(mountedResource.getProperty("name"), "value1");
+        Assert.assertEquals(mountedResource.getPropertyValue("name"), "value1");
     }    
 
     @Test
@@ -412,8 +412,8 @@ public class SymlinkTest extends BaseTestCase {
         byte[] content = (byte[])r2.getContent();
         String contentStr = RepositoryUtils.decodeBytes(content);
         Assert.assertEquals("guess me if you can", contentStr);
-        Assert.assertEquals("cycle-value1", r2.getProperty("key1"));
-        Assert.assertEquals("cycle-value2", r2.getProperty("key2"));
+        Assert.assertEquals("cycle-value1", r2.getPropertyValue("key1"));
+        Assert.assertEquals("cycle-value2", r2.getPropertyValue("key2"));
     }
 
     @Test
@@ -452,8 +452,8 @@ public class SymlinkTest extends BaseTestCase {
         byte[] content = (byte[])r2.getContent();
         String contentStr = RepositoryUtils.decodeBytes(content);
         Assert.assertEquals("guess me if you can", contentStr);
-        Assert.assertEquals("cycle-value1", r2.getProperty("key1"));
-        Assert.assertEquals("cycle-value2", r2.getProperty("key2"));
+        Assert.assertEquals("cycle-value1", r2.getPropertyValue("key1"));
+        Assert.assertEquals("cycle-value2", r2.getPropertyValue("key2"));
     }
 
     @Test

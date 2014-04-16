@@ -251,10 +251,9 @@ public class VersionResourceStorer {
         }
         
         resourceImpl.setDataAccessManager(dataAccessManager);
-
         resourceImpl.setPath(versionedPath.getPath());
-        resourceImpl.setSnapshotID(snapshotID);
         resourceImpl.setMatchingSnapshotID(snapshotID);
+        resourceImpl.setSnapshotID(snapshotID);
         return resourceImpl;
     }
 
@@ -304,13 +303,10 @@ public class VersionResourceStorer {
         resourceDAO.fillResourcePropertiesWithNoUpdate(resourceImpl);
 
         resourceImpl.setDataAccessManager(dataAccessManager);
-        resourceImpl.setUserName(CurrentContext.getUser());
         resourceImpl.setTenantId(CurrentContext.getTenantId());
-
         resourceImpl.setPath(versionedPath.getPath());
         resourceImpl.setSnapshotID(snapshotID);
         resourceImpl.setMatchingSnapshotID(snapshotID);
-
         return resourceImpl;
     }
 
@@ -340,13 +336,10 @@ public class VersionResourceStorer {
         }
 
         collectionImpl.setDataAccessManager(dataAccessManager);
-        collectionImpl.setUserName(CurrentContext.getUser());
         collectionImpl.setTenantId(CurrentContext.getTenantId());
-
         collectionImpl.setPath(versionedPath.getPath());
         collectionImpl.setSnapshotID(snapshotID);
         collectionImpl.setMatchingSnapshotID(snapshotID);
-        
         return collectionImpl;
     }
 

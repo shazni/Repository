@@ -148,8 +148,7 @@ public class TenantAwareSQLTransformer {
 
     /**
      * Parse sqlQuery for possible malicious injections
-     * @param sqlQuery
-     * @return
+     * @param sqlQuery sanity check query
      */
     private void sanityCheckSQL(String sqlQuery) throws RepositoryException{
         if(sqlQuery.trim().length() == 0){

@@ -151,7 +151,7 @@ public class SQLQueryProcessor implements QueryProcessor {
 
             results = s.executeQuery();
 
-            String resultType = query.getProperty(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME);
+            String resultType = query.getPropertyValue(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME);
 
             if (resultType == null) {
                 resultType = RepositoryConstants.RESOURCES_RESULT_TYPE;
@@ -204,7 +204,7 @@ public class SQLQueryProcessor implements QueryProcessor {
         }
 
         if (resultCollection != null && RepositoryConstants.RESOURCES_RESULT_TYPE.equals(
-                query.getProperty(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME))) {
+                query.getPropertyValue(RepositoryConstants.RESULT_TYPE_PROPERTY_NAME))) {
 
             List<String> filteredResults = new ArrayList<String>();
             String[] resultPaths = resultCollection.getChildPaths();
@@ -310,7 +310,7 @@ public class SQLQueryProcessor implements QueryProcessor {
 //            long ratingID = results.getLong(DatabaseConstants.RATING_ID_FIELD);
 //            RatingDO ratingDAO = ((JDBCRatingsDAO)ratingsDAO).getRating(ratingID);
 //            String ratingPath =
-//                    ratingDAO.getResourcePath() + RepositoryConstants.URL_SEPARATOR + "ratings:" +
+//                    ratingDAO.getPath() + RepositoryConstants.URL_SEPARATOR + "ratings:" +
 //                            ratingDAO.getRatedUserName();
 //            ratingPathList.add(ratingPath);
 //        }
@@ -339,7 +339,7 @@ public class SQLQueryProcessor implements QueryProcessor {
 
 //            TaggingDO taggingDO = tagsDAO.getTagging(taggingID);
 
-//            String tagPath = taggingDO.getResourcePath() + RepositoryConstants.URL_SEPARATOR +
+//            String tagPath = taggingDO.getPath() + RepositoryConstants.URL_SEPARATOR +
 //                    "tags:" + taggingDO.getTagName() + ":" + taggingDO.getTaggedUserName();
 //            tagPathList.add(tagPath);
         }
@@ -352,7 +352,7 @@ public class SQLQueryProcessor implements QueryProcessor {
     /**
      * A summary count of all tags. Format is "tagname # totalcount"
      * @param results
-     * @return
+     * @return tag summery collection
      * @throws SQLException
      * @throws RepositoryException
      */

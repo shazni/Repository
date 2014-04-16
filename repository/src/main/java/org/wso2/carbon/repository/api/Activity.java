@@ -16,6 +16,8 @@
 
 package org.wso2.carbon.repository.api;
 
+import org.wso2.carbon.repository.api.utils.Actions;
+
 import java.util.Date;
 
 /**
@@ -24,104 +26,40 @@ import java.util.Date;
  * resource in the repository. Each activity performed in the repository will have a corresponding log
  * entry, which is a record of a single action performed on the repository.
  */
-public class Activity {
-
-    /**
-     * The log action to filter with. All is for don't filter at all.
-     */
-    public static final int ALL = -1;
-
-    /**
-     * Filter value for the resource adding action.
-     */
-    public static final int ADD = 0;
-
-    /**
-     * Filter value for the resource updating action.
-     */
-    public static final int UPDATE = 1;
-
-    /**
-     * Filter value for the resource deleting action.
-     */
-    public static final int DELETE_RESOURCE = 7;
-
-    /**
-     * Filter value for the resource restoring action.
-     */
-    public static final int RESTORE = 8;
-
-    /**
-     * Filter value for the resource renaming action.
-     */
-    public static final int RENAME = 9;
-
-    /**
-     * Filter value for the resource moving action.
-     */
-    public static final int MOVE = 10;
-
-    /**
-     * Filter value for the resource copying action.
-     */
-    public static final int COPY = 11;
-
-    /**
-     * Filter value for the create remote link action.
-     */
-    public static final int CREATE_REMOTE_LINK = 12;
-
-    /**
-     * Filter value for the create symbolic link action.
-     */
-    public static final int CREATE_SYMBOLIC_LINK = 13;
-
-    /**
-     * Filter value for the removing link action.
-     */
-    public static final int REMOVE_LINK = 14;
+public abstract class Activity {
 
     /**
      * Path of the resource on which the action is performed.
      */
-    private String resourcePath;
+    protected String resourcePath;
 
     /**
      * User who has performed the action.
      */
-    private String userName;
+    protected String userName;
 
     /**
      * Date and time at which the action is performed.
      */
-    private long date;
+    protected long date;
 
     /**
      * Name of the actions. e.g. put, get
      */
-    private int action;
+    protected Actions action;
 
     /**
      * Additional data to describe the actions. This depends on the action.
      */
-    private String actionData;
+    protected String actionData;
 
     /**
      * Get the resource path of the log entry.
      *
      * @return the resource path
      */
-    public String getResourcePath() {
+    public String getPath() {
         return resourcePath;
-    }
-
-    /**
-     * Set the resource path to the log entry.
-     *
-     * @param resourcePath the resource path.
-     */
-    public void setResourcePath(String resourcePath) {
-        this.resourcePath = resourcePath;
     }
 
     /**
@@ -134,15 +72,6 @@ public class Activity {
     }
 
     /**
-     * Set the user name the action is logged with.
-     *
-     * @param userName the user name
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    /**
      * Method to get the date.
      *
      * @return the date
@@ -152,30 +81,12 @@ public class Activity {
     }
 
     /**
-     * Method to set the date.
-     *
-     * @param date the date object
-     */
-    public void setDate(Date date) {
-        this.date = date.getTime();
-    }
-
-    /**
      * Method to get the action.
      *
      * @return the action.
      */
-    public int getAction() {
+    public Actions getAction() {
         return action;
-    }
-
-    /**
-     * Method to set the action.
-     *
-     * @param action the action.
-     */
-    public void setAction(int action) {
-        this.action = action;
     }
 
     /**
@@ -185,15 +96,6 @@ public class Activity {
      */
     public String getActionData() {
         return actionData;
-    }
-
-    /**
-     * Method to set the action data.
-     *
-     * @param actionData the additional data
-     */
-    public void setActionData(String actionData) {
-        this.actionData = actionData;
     }
 
     /**
@@ -213,7 +115,7 @@ public class Activity {
             	break;
         }
         
-        entryBuf.append(getResourcePath());
+        entryBuf.append(getPath());
         
         return entryBuf.toString();
     }
@@ -223,7 +125,7 @@ public class Activity {
      *
      * @return the text of the log entry
      */
-    public String getText() {
+    public String toString() {
         StringBuffer entryBuf = new StringBuffer();
         entryBuf.append(getUserName());
         
@@ -258,7 +160,7 @@ public class Activity {
             default:
         }
         
-        entryBuf.append(getResourcePath());
+        entryBuf.append(getPath());
         entryBuf.append(" on ");
         entryBuf.append(getDate().toString());
         entryBuf.append(".");

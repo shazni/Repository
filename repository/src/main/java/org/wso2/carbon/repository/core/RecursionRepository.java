@@ -72,7 +72,7 @@ public class RecursionRepository {
     private boolean isNonRecursive(String path) throws RepositoryException {
         Resource source = repository.get(path);
         if (source != null) {
-            String isNonRecursive = source.getProperty(RepositoryConstants.REGISTRY_NON_RECURSIVE);
+            String isNonRecursive = source.getPropertyValue(RepositoryConstants.REGISTRY_NON_RECURSIVE);
                 return isNonRecursive != null && Boolean.toString(true).equals(isNonRecursive);
         } else {
             return false;

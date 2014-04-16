@@ -21,7 +21,6 @@ package org.wso2.carbon.repository.core.handlers;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -33,6 +32,7 @@ import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.Handler;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.core.CurrentContext;
 import org.wso2.carbon.repository.core.config.RepositoryContext;
 import org.wso2.carbon.repository.core.handlers.builtin.MountHandler;
@@ -158,14 +158,14 @@ public class HandlerLifecycleManager extends HandlerManager {
     }
 
     @Override
-    public void addHandler(String[] methods, Filter filter, Handler handler) {
-        handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE).addHandler(methods, filter, handler);
+    public void addHandler(Method[] methods, Handler handler) {
+        handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE).addHandler(methods, handler);
     }
-
-    @Override
-    public void addHandlerWithPriority(String[] methods, Filter filter, Handler handler) {
-        handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE).addHandlerWithPriority(methods, filter, handler);
-    }
+//
+//    @Override
+//    public void addHandlerWithPriority(String[] methods, Filter filter, Handler handler) {
+//        handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE).addHandlerWithPriority(methods, filter, handler);
+//    }
 
     @Override
     public void removeHandler(Handler handler) {
@@ -173,14 +173,9 @@ public class HandlerLifecycleManager extends HandlerManager {
     }
 
     @Override
-    public void removeHandler(String[] methods, Filter filter, Handler handler) {
-        handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE).removeHandler(methods, filter, handler);
-    }
-
-    @Override
-    public void addHandler(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+    public void addHandler(Method[] methods, Handler handler, String lifecyclePhase) {
         if (lifecyclePhase == null) {
-            addHandler(methods, filter, handler);
+            addHandler(methods, handler);
             return;
         }
         
@@ -188,28 +183,28 @@ public class HandlerLifecycleManager extends HandlerManager {
         
         if (hm == null) {
             log.warn("Invalid handler lifecycle phase: " + lifecyclePhase + ". Adding handler to the default phase.");
-            addHandler(methods, filter, handler);
+            addHandler(methods,handler);
         } else {
-            hm.addHandler(methods, filter, handler);
+            hm.addHandler(methods, handler);
         }
     }
 
-    @Override
-    public void addHandlerWithPriority(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
-        if (lifecyclePhase == null) {
-            addHandlerWithPriority(methods, filter, handler);
-            return;
-        }
-        
-        HandlerManager hm = handlerManagers.get(lifecyclePhase);
-        
-        if (hm == null) {
-            log.warn("Invalid handler lifecycle phase: " + lifecyclePhase + ". Adding handler to the default phase.");
-            addHandlerWithPriority(methods, filter, handler);
-        } else {
-            hm.addHandlerWithPriority(methods, filter, handler, lifecyclePhase);
-        }
-    }
+//    @Override
+//    public void addHandlerWithPriority(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
+//        if (lifecyclePhase == null) {
+//            addHandlerWithPriority(methods, filter, handler);
+//            return;
+//        }
+//
+//        HandlerManager hm = handlerManagers.get(lifecyclePhase);
+//
+//        if (hm == null) {
+//            log.warn("Invalid handler lifecycle phase: " + lifecyclePhase + ". Adding handler to the default phase.");
+//            addHandlerWithPriority(methods, filter, handler);
+//        } else {
+//            hm.addHandlerWithPriority(methods, filter, handler, lifecyclePhase);
+//        }
+//    }
 
     @Override
     public void removeHandler(Handler handler, String lifecyclePhase) {
@@ -225,23 +220,6 @@ public class HandlerLifecycleManager extends HandlerManager {
             removeHandler(handler);
         } else {
             hm.removeHandler(handler, lifecyclePhase);
-        }
-    }
-
-    @Override
-    public void removeHandler(String[] methods, Filter filter, Handler handler, String lifecyclePhase) {
-        if (lifecyclePhase == null) {
-            removeHandler(methods, filter, handler);
-            return;
-        }
-        
-        HandlerManager hm = handlerManagers.get(lifecyclePhase);
-        
-        if (hm == null) {
-            log.warn("Invalid handler lifecycle phase: " + lifecyclePhase + ". Removing handler from the default phase.");
-            removeHandler(methods, filter, handler);
-        } else {
-            hm.removeHandler(methods, filter, handler, lifecyclePhase);
         }
     }
 
@@ -942,7 +920,7 @@ public class HandlerLifecycleManager extends HandlerManager {
         return userDefinedValue || defaultValue;
     }
 
-    public RepositoryContext getRegistryContext(HandlerContext requestContext) {
+    public RepositoryContext getRegistryContext(HandlerContext requestContext) throws RepositoryException {
         RepositoryContext defaultValue = getRegistryContext(handlerManagers.get(DEFAULT_SYSTEM_HANDLER_PHASE), requestContext);
         boolean isProcessingComplete = requestContext.isProcessingComplete();
         
@@ -992,18 +970,17 @@ public class HandlerLifecycleManager extends HandlerManager {
      *
      * @return whether the resource exists
      */
-    public RepositoryContext getRegistryContext(HandlerManager handlerManager, HandlerContext requestContext) {
+    public RepositoryContext getRegistryContext(HandlerManager handlerManager,
+                                                HandlerContext requestContext) throws RepositoryException {
         RepositoryContext registryContext = null;
-        Map<Filter, Set<Handler>> getRegistryContextHandlerMap = handlerManager.getRegistryContextMap();
-        Set<Filter> filters = getRegistryContextHandlerMap.keySet();
-        for (Filter filter : filters) {
-            if (filter != null && filter.handleGetRegistryContext(requestContext)) {
-                Set<Handler> handlerSet = getRegistryContextHandlerMap.get(filter);
-                Handler[] handlers = handlerSet.toArray(new Handler[handlerSet.size()]);
-                for (Handler handler : handlers) {
-                	if(handler instanceof MountHandler) {
-                		registryContext = ((MountHandler) handler).getRegistryContext(requestContext);
-                	}
+        Set<Handler> handlerSet = handlerManager.getRegistryContextHandlerSet();
+        if (handlerSet != null) {
+            Handler[] handlers = handlerSet.toArray(new Handler[handlerSet.size()]);
+            for (Handler handler : handlers) {
+                if (handler.engageHandler(requestContext, Method.RESTORE)) {
+                    if(handler instanceof MountHandler) {
+                        registryContext = ((MountHandler) handler).getRegistryContext(requestContext);
+                    }
                     if (!requestContext.isExecutionStatusSet(handler)) {
                         requestContext.setExecutionStatus(handler, true);
                     }
@@ -1012,12 +989,7 @@ public class HandlerLifecycleManager extends HandlerManager {
                     }
                 }
             }
-
-            if (isProcessingComplete(requestContext)) {
-                break;
-            }
         }
-
         return registryContext;
     }
 }

@@ -19,11 +19,9 @@
 
 package org.wso2.carbon.repository.spi.dataaccess;
 
-import org.wso2.carbon.repository.core.Transaction;
-
 /**
  * This class represents a database transaction, which is used to support consistency and
- * concurrency. A database transaction is utilized by the {@link Transaction} API, to provide
+ * concurrency. A database transaction is utilized by the API, to provide
  * database access to the registry.
  */
 public interface DatabaseTransaction {

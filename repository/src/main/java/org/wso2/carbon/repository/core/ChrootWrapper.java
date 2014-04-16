@@ -19,16 +19,16 @@
 
 package org.wso2.carbon.repository.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.repository.api.Activity;
 import org.wso2.carbon.repository.api.Collection;
 import org.wso2.carbon.repository.api.RepositoryConstants;
 import org.wso2.carbon.repository.api.Resource;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
+import org.wso2.carbon.repository.spi.ResourceActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class providing the chroot related functionality. The instance of this is used by the
@@ -183,15 +183,15 @@ public class ChrootWrapper {
         // fixing the path attribute of the resource
         if (absolutePath != null) {
             String relativePath = getOutPath(absolutePath);
-            ((ResourceImpl) resource).setPath(relativePath);
+            resource.setPath(relativePath);
         }
-        
+
         String permanentPath = resource.getPermanentPath();
-        
         if (permanentPath != null) {
-            ((ResourceImpl) resource).setMatchingSnapshotID(((ResourceImpl) resource).getMatchingSnapshotID());
+            ((ResourceImpl) resource)
+                    .setMatchingSnapshotID(((ResourceImpl) resource).getMatchingSnapshotID());
         }
-        
+
         fixMountPoints(resource);
         
         return resource;
@@ -302,19 +302,19 @@ public class ChrootWrapper {
             return;
         }
         
-        String mountPoint = resource.getProperty(RepositoryConstants.REGISTRY_MOUNT_POINT);
+        String mountPoint = resource.getPropertyValue(RepositoryConstants.REGISTRY_MOUNT_POINT);
       
         if (mountPoint != null) {
             resource.setProperty(RepositoryConstants.REGISTRY_MOUNT_POINT, getOutPath(mountPoint));
         }
         
-        String targetPoint = resource.getProperty(RepositoryConstants.REGISTRY_TARGET_POINT);
+        String targetPoint = resource.getPropertyValue(RepositoryConstants.REGISTRY_TARGET_POINT);
         
         if (targetPoint != null) {
             resource.setProperty(RepositoryConstants.REGISTRY_TARGET_POINT, getOutPath(targetPoint));
         }
         
-        String actualPath = resource.getProperty(RepositoryConstants.REGISTRY_ACTUAL_PATH);
+        String actualPath = resource.getPropertyValue(RepositoryConstants.REGISTRY_ACTUAL_PATH);
         
         if (actualPath != null) {
             resource.setProperty(RepositoryConstants.REGISTRY_ACTUAL_PATH, getOutPath(actualPath));
@@ -324,25 +324,26 @@ public class ChrootWrapper {
     /**
      * Convert the paths of the log entries to relative values.
      *
+     *
      * @param logEntries the array of log entries to be converted to relative paths.
      *
      * @return the log entries after converting them relative values.
      */
-    public Activity[] fixLogEntries(Activity[] logEntries) {
+    public ResourceActivity[] fixLogEntries(ResourceActivity[] logEntries) {
         if (basePrefix == null || basePrefix.length() == 0) {
             return logEntries;
         }
         
-        List<Activity> fixedLogEntries = new ArrayList<Activity>();
+        List<ResourceActivity> fixedLogEntries = new ArrayList<ResourceActivity>();
         
-        for (Activity logEntry : logEntries) {
-            String logPath = logEntry.getResourcePath();
+        for (ResourceActivity logEntry : logEntries) {
+            String logPath = logEntry.getPath();
             
             if (logPath == null || (!logPath.startsWith(basePrefix + RepositoryConstants.PATH_SEPARATOR) && !logPath.equals(basePrefix))) {
                 continue;
             }
             
-            logEntry.setResourcePath(getOutPath(logPath));
+            logEntry.setPath(getOutPath(logPath));
             
             if (logEntry.getActionData() != null && logEntry.getActionData().startsWith(basePrefix)) {
                 logEntry.setActionData(getOutPath(logEntry.getActionData()));
@@ -351,6 +352,6 @@ public class ChrootWrapper {
             fixedLogEntries.add(logEntry);
         }
         
-        return fixedLogEntries.toArray(new Activity[fixedLogEntries.size()]);
+        return fixedLogEntries.toArray(new ResourceActivity[fixedLogEntries.size()]);
     }
 }

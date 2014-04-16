@@ -32,7 +32,7 @@ public final class RepositoryErrorCodes {
 	 * Registry User Exceptions Error Codes
 	 */
 	
-	// RegistryUserExcetion Error Codes (100 - 199)
+	// RegistryUserException Error Codes (100 - 199)
 	
 	public static final int GENERAL_USER_ERROR = 100;
 	

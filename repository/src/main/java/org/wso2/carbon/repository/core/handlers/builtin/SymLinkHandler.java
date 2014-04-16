@@ -154,7 +154,6 @@ public class SymLinkHandler extends Handler {
             
             ((ResourceImpl) tempResource).setPath(fullPath);
             ((ResourceImpl) tempResource).setAuthorUserName(author);
-            ((ResourceImpl) tempResource).setUserName(CurrentContext.getUser());
             ((ResourceImpl) tempResource).setTenantId(CurrentContext.getTenantId());
         } else {
         	tempResource = ((EmbeddedRepository) requestContext.getRepository()).getRepository().get(this.mountPoint);
@@ -171,7 +170,7 @@ public class SymLinkHandler extends Handler {
         ((ResourceImpl) tempResource).addPropertyWithNoUpdate(RepositoryConstants.REGISTRY_TARGET_POINT, this.targetPoint);
         ((ResourceImpl) tempResource).addPropertyWithNoUpdate(RepositoryConstants.REGISTRY_AUTHOR, author);
 
-        if (tempResource.getProperty(RepositoryConstants.REGISTRY_ACTUAL_PATH) == null) {
+        if (tempResource.getPropertyValue(RepositoryConstants.REGISTRY_ACTUAL_PATH) == null) {
             ((ResourceImpl) tempResource).addPropertyWithNoUpdate(RepositoryConstants.REGISTRY_ACTUAL_PATH, actualPath);
         }
         

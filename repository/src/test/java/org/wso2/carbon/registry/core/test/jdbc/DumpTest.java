@@ -69,9 +69,9 @@ public class DumpTest extends BaseTestCase {
         Assert.assertEquals(RepositoryUtils.decodeBytes((byte[])r.getContent()), "content 1");
 
         // checking the properties.
-        Assert.assertEquals(r.getProperties().size(), 2);
-        Assert.assertEquals(r.getProperty("key1"), "value1");
-        Assert.assertEquals(r.getProperty("key2"), "value2");
+        Assert.assertEquals(r.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r.getPropertyValue("key1"), "value1");
+        Assert.assertEquals(r.getPropertyValue("key2"), "value2");
     }
 
     @Test
@@ -101,15 +101,15 @@ public class DumpTest extends BaseTestCase {
         r = registry.get("/testDumpDupC");
 
         // checking the properties.
-        Assert.assertEquals(r.getProperties().size(), 2);
-        Assert.assertEquals(r.getProperty("key1"), "value1");
-        Assert.assertEquals(r.getProperty("key2"), "value2");
+        Assert.assertEquals(r.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r.getPropertyValue("key1"), "value1");
+        Assert.assertEquals(r.getPropertyValue("key2"), "value2");
 
         // getting the children
         r1 = registry.get("/testDumpDupC/child1C");
-        Assert.assertEquals(r1.getProperties().size(), 2);
-        Assert.assertEquals(r1.getProperty("key1"), "value1C");
-        Assert.assertEquals(r1.getProperty("key2"), "value2C");
+        Assert.assertEquals(r1.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r1.getPropertyValue("key1"), "value1C");
+        Assert.assertEquals(r1.getPropertyValue("key2"), "value2C");
 
         r2 = registry.get("/testDumpDupC/child2R");
         Assert.assertEquals(RepositoryUtils.decodeBytes((byte[])r2.getContent()), "content child2R");
@@ -140,15 +140,15 @@ public class DumpTest extends BaseTestCase {
         r = registry.get("/testDumpDupR");
 
         // checking the properties.
-        Assert.assertEquals(r.getProperties().size(), 2);
-        Assert.assertEquals(r.getProperty("key1"), "value1");
-        Assert.assertEquals(r.getProperty("key2"), "value2");
+        Assert.assertEquals(r.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r.getPropertyValue("key1"), "value1");
+        Assert.assertEquals(r.getPropertyValue("key2"), "value2");
         
         // getting the children
         r1 = registry.get("/testDumpDupR/child1CX");
-        Assert.assertEquals(r1.getProperties().size(), 2);
-        Assert.assertEquals(r1.getProperty("key1"), "value1C");
-        Assert.assertEquals(r1.getProperty("key2"), "value2C");
+        Assert.assertEquals(r1.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r1.getPropertyValue("key1"), "value1C");
+        Assert.assertEquals(r1.getPropertyValue("key2"), "value2C");
 
         r2 = registry.get("/testDumpDupR/child2RX");
         Assert.assertEquals(RepositoryUtils.decodeBytes((byte[])r2.getContent()), "content child2R");
@@ -182,15 +182,15 @@ public class DumpTest extends BaseTestCase {
         r = registry.get("/anotherLocation");
 
         // checking the properties.
-        Assert.assertEquals(r.getProperties().size(), 2);
-        Assert.assertEquals(r.getProperty("key1"), "value3");
-        Assert.assertEquals(r.getProperty("key2"), "value4");
+        Assert.assertEquals(r.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r.getPropertyValue("key1"), "value3");
+        Assert.assertEquals(r.getPropertyValue("key2"), "value4");
 
         // getting the children
         r1 = registry.get("/anotherLocation/child1CY");
-        Assert.assertEquals(r1.getProperties().size(), 2);
-        Assert.assertEquals(r1.getProperty("key1"), "value1C");
-        Assert.assertEquals(r1.getProperty("key2"), "value2C");
+        Assert.assertEquals(r1.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r1.getPropertyValue("key1"), "value1C");
+        Assert.assertEquals(r1.getPropertyValue("key2"), "value2C");
 
         r2 = registry.get("/anotherLocation/child2RY");
         Assert.assertEquals(RepositoryUtils.decodeBytes((byte[])r2.getContent()), "content child2R");
@@ -262,15 +262,15 @@ public class DumpTest extends BaseTestCase {
         r = registry.get("/anotherLocation");
 
         // checking the properties.
-        Assert.assertEquals(r.getProperties().size(), 2);
-        Assert.assertEquals(r.getProperty("key1"), "value3");
-        Assert.assertEquals(r.getProperty("key2"), "value4");
+        Assert.assertEquals(r.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r.getPropertyValue("key1"), "value3");
+        Assert.assertEquals(r.getPropertyValue("key2"), "value4");
 
         // getting the children
         r1 = registry.get("/anotherLocation/child1CY");
-        Assert.assertEquals(r1.getProperties().size(), 2);
-        Assert.assertEquals(r1.getProperty("key1"), "value1C");
-        Assert.assertEquals(r1.getProperty("key2"), "value2C");
+        Assert.assertEquals(r1.getPropertyKeys().size(), 2);
+        Assert.assertEquals(r1.getPropertyValue("key1"), "value1C");
+        Assert.assertEquals(r1.getPropertyValue("key2"), "value2C");
 
         r2 = registry.get("/anotherLocation/child1CY/foo");
         Assert.assertTrue((r2 instanceof CollectionImpl));
@@ -321,8 +321,8 @@ public class DumpTest extends BaseTestCase {
 
         // just check the sym
         Resource r2 = registry.get("/my/sym/link/resource");
-        Assert.assertEquals("value3", r2.getProperty("key1"));
-        Assert.assertEquals("value4", r2.getProperty("key2"));
+        Assert.assertEquals("value3", r2.getPropertyValue("key1"));
+        Assert.assertEquals("value4", r2.getPropertyValue("key2"));
 
         // now get a dump of /my
         StringWriter writer = new StringWriter();
@@ -333,8 +333,8 @@ public class DumpTest extends BaseTestCase {
         registry.restore("/restored", reader);
 
         Resource r3 =  registry.get("/restored/sym/link/resource");
-        Assert.assertEquals("value3", r3.getProperty("key1"));
-        Assert.assertEquals("value4", r3.getProperty("key2"));
+        Assert.assertEquals("value3", r3.getPropertyValue("key1"));
+        Assert.assertEquals("value4", r3.getPropertyValue("key2"));
 
         // do some changes to the original and check the sym link changing
         Resource r4 = registry.get("/restored/original/link/resource");
@@ -342,7 +342,7 @@ public class DumpTest extends BaseTestCase {
         registry.put("/restored/original/link/resource", r4);
 
         Resource r5 =  registry.get("/restored/sym/link/resource");
-        Assert.assertEquals("value5", r5.getProperty("key3"));
+        Assert.assertEquals("value5", r5.getPropertyValue("key3"));
     }
 
     @Test

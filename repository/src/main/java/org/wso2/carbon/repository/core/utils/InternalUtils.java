@@ -25,13 +25,7 @@ import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.cache.Cache;
@@ -53,6 +47,7 @@ import org.wso2.carbon.repository.api.ResourcePath;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.Method;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.CollectionImpl;
 import org.wso2.carbon.repository.core.CurrentContext;
@@ -79,7 +74,7 @@ import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 public class InternalUtils {
 	
     private static final Log log = LogFactory.getLog(RepositoryUtils.class);
-//    private static final String ENCODING = System.getProperty("carbon.registry.character.encoding");
+//    private static final String ENCODING = System.getPropertyValue("carbon.registry.character.encoding");
 
     private InternalUtils() {
     }
@@ -367,9 +362,8 @@ public class InternalUtils {
         try {
             /* set all the variables to the resource */
             Resource resource = registry.get(path);
-            Properties props = resource.getProperties();
             //List<Property> propList = new ArrayList<Property>();
-            Iterator<?> iKeys = props.keySet().iterator();
+            Iterator<?> iKeys = resource.getPropertyKeys().iterator();
             ArrayList<String> propertiesToRemove = new ArrayList<String>();
 
             while (iKeys.hasNext()) {
@@ -432,7 +426,6 @@ public class InternalUtils {
                     "used to store the resources required by the carbon server.";
             systemCollection.setDescription(systemDescription);
             registry.put(getAbsolutePath(registryContext, RepositoryConstants.SYSTEM_COLLECTION_BASE_PATH), systemCollection);
-            systemCollection.discard();
 
             CollectionImpl localRepositoryCollection = (CollectionImpl) registry.newCollection();
             String localRepositoryDescription =
@@ -442,14 +435,12 @@ public class InternalUtils {
             
             localRepositoryCollection.setDescription(localRepositoryDescription);
             registry.put(getAbsolutePath(registryContext, RepositoryConstants.LOCAL_REPOSITORY_BASE_PATH), localRepositoryCollection);
-            localRepositoryCollection.discard();
 
             CollectionImpl configRegistryCollection = (CollectionImpl) registry.newCollection();
             String configRegistryDescription = "Configuration registry of the carbon server. " +
                     "This collection is used to store the resources of this product cluster.";
             configRegistryCollection.setDescription(configRegistryDescription);
             registry.put(getAbsolutePath(registryContext, RepositoryConstants.CONFIG_REGISTRY_BASE_PATH), configRegistryCollection);
-            configRegistryCollection.discard();
 
             CollectionImpl governanceRegistryCollection = (CollectionImpl) registry.newCollection();
             String governanceRegistryDescription = "Governance registry of the carbon server. " +
@@ -457,7 +448,6 @@ public class InternalUtils {
                     "platform.";
             governanceRegistryCollection.setDescription(governanceRegistryDescription);
             registry.put(getAbsolutePath(registryContext, RepositoryConstants.GOVERNANCE_REGISTRY_BASE_PATH), governanceRegistryCollection);
-            governanceRegistryCollection.discard();
         }
         
         // This is to create the repository collections for the various registries and clean
@@ -622,14 +612,14 @@ public class InternalUtils {
             
             mountPoint = systemRepository.get(mountPointString);
             
-            if (Boolean.toString(true).equals(mountPoint.getProperty(InternalConstants.REGISTRY_FIXED_MOUNT))) {
+            if (Boolean.toString(true).equals(mountPoint.getPropertyValue(InternalConstants.REGISTRY_FIXED_MOUNT))) {
                 continue;
             }
             
-            String path = mountPoint.getProperty("path");
-            String target = mountPoint.getProperty("target");
-            String targetSubPath = mountPoint.getProperty("subPath");
-            String author = mountPoint.getProperty("author");
+            String path = mountPoint.getPropertyValue("path");
+            String target = mountPoint.getPropertyValue("target");
+            String targetSubPath = mountPoint.getPropertyValue("subPath");
+            String author = mountPoint.getPropertyValue("author");
 
             try {
                 CurrentContext.setCallerTenantId(tenantId);
@@ -669,8 +659,10 @@ public class InternalUtils {
         handler.setMountPoint(path);
         handler.setTargetPoint(target);
         handler.setAuthor(author);
-        
-        repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler,
+        Set<Filter> symbolicLinkFilterSet = new LinkedHashSet<Filter>();
+        symbolicLinkFilterSet.add(InternalUtils.getMountingMatcher(path));
+        handler.setFilters(symbolicLinkFilterSet);
+        repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(),  handler,
                 HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
         
         // now we are going to iterate through all the already available symbolic links and resolve
@@ -716,9 +708,11 @@ public class InternalUtils {
         handler.setMountPoint(path);
         handler.setTargetPoint(target);
         handler.setAuthor(author);
-
+        Set<Filter> symbolicLinkFilterSet = new LinkedHashSet<Filter>();
+        symbolicLinkFilterSet.add(InternalUtils.getMountingMatcher(path));
+        handler.setFilters(symbolicLinkFilterSet);
         HandlerManager hm = context.getHandlerManager();
-        hm.addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler,
+        hm.addHandler(InternalUtils.getMountingMethods(), handler,
                 HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
         // now we are going to iterate through all the already available symbolic links and resolve
         // the cyclic symbolic links
@@ -809,6 +803,9 @@ public class InternalUtils {
                 handler.setMountPoint(path);
                 handler.setSubPath(targetSubPath);
                 handler.setAuthor(author);
+                Set<Filter> remoteLinkFilterSet = new LinkedHashSet<Filter>();
+                remoteLinkFilterSet.add(InternalUtils.getMountingMatcher(path));
+                handler.setFilters(remoteLinkFilterSet);
                 
                 if (config.getTrustedUser() == null || config.getTrustedPwd() == null) {
                     handler.setRemote(false);
@@ -818,10 +815,10 @@ public class InternalUtils {
                 }
                 
                 if (forAllTenants) {
-                	repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler);
+                	repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(), handler);
                 } else {
                 	repository.getRepositoryService().addHandler(InternalUtils.getMountingMethods(),
-                    		InternalUtils.getMountingMatcher(path), handler, HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
+                    		handler, HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
                 }
                 
                 return;
@@ -873,6 +870,9 @@ public class InternalUtils {
                 handler.setMountPoint(path);
                 handler.setSubPath(targetSubPath);
                 handler.setAuthor(author);
+                Set<Filter> remoteLinkFilterSet = new LinkedHashSet<Filter>();
+                remoteLinkFilterSet.add(InternalUtils.getMountingMatcher(path));
+                handler.setFilters(remoteLinkFilterSet);
                 
                 if (config.getTrustedUser() == null || config.getTrustedPwd() == null) {
                     handler.setRemote(false);
@@ -882,9 +882,9 @@ public class InternalUtils {
                 }
                 
                 if (forAllTenants) {
-                    hm.addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler);
+                    hm.addHandler(InternalUtils.getMountingMethods(), handler);
                 } else {
-                    hm.addHandler(InternalUtils.getMountingMethods(), InternalUtils.getMountingMatcher(path), handler,
+                    hm.addHandler(InternalUtils.getMountingMethods(), handler,
                             HandlerLifecycleManager.TENANT_SPECIFIC_SYSTEM_HANDLER_PHASE);
                 }
                 
@@ -945,16 +945,16 @@ public class InternalUtils {
      *
      * @return the list of operations.
      */
-    public static String[] getMountingMethods() {
-        return new String[]{Filter.RESOURCE_EXISTS, Filter.GET, Filter.PUT, Filter.DELETE,
-                Filter.RENAME,
-                Filter.MOVE, Filter.COPY, Filter.GET_AVERAGE_RATING, Filter.GET_RATING,
-                Filter.RATE_RESOURCE, Filter.GET_COMMENTS, Filter.ADD_COMMENT, Filter.EDIT_COMMENT,
-                Filter.REMOVE_COMMENT, Filter.GET_TAGS, Filter.APPLY_TAG, Filter.REMOVE_TAG,
-                Filter.GET_ALL_ASSOCIATIONS, Filter.GET_ASSOCIATIONS, Filter.ADD_ASSOCIATION,
-                Filter.DUMP, Filter.RESTORE, Filter.REMOVE_ASSOCIATION, Filter.IMPORT,
-                Filter.EXECUTE_QUERY, Filter.GET_RESOURCE_PATHS_WITH_TAG,
-                Filter.GET_REGISTRY_CONTEXT, Filter.REMOVE_LINK };
+    public static Method[] getMountingMethods() {
+        return new Method[]{Method.RESOURCE_EXISTS, Method.GET, Method.PUT, Method.DELETE,
+                Method.RENAME,
+                Method.MOVE, Method.COPY, Method.GET_AVERAGE_RATING, Method.GET_RATING,
+                Method.RATE_RESOURCE, Method.GET_COMMENTS, Method.ADD_COMMENT, Method.EDIT_COMMENT,
+                Method.REMOVE_COMMENT, Method.GET_TAGS, Method.APPLY_TAG, Method.REMOVE_TAG,
+                Method.GET_ALL_ASSOCIATIONS, Method.GET_ASSOCIATIONS, Method.ADD_ASSOCIATION,
+                Method.DUMP, Method.RESTORE, Method.REMOVE_ASSOCIATION, Method.IMPORT,
+                Method.EXECUTE_QUERY, Method.GET_RESOURCE_PATHS_WITH_TAG,
+                Method.GET_REGISTRY_CONTEXT, Method.REMOVE_LINK };
     }
     
     /**
@@ -1229,7 +1229,7 @@ public class InternalUtils {
         return resourceImpl;
     }
     
-    public static RepositoryContext getRepositoryContext(Repository repository) {
+    public static RepositoryContext getRepositoryContext(Repository repository) throws RepositoryException {
     	RepositoryContext registryContext = null ;
 
         if(repository instanceof EmbeddedRepository) {
@@ -1257,7 +1257,7 @@ public class InternalUtils {
         System.setProperty("javax.net.ssl.trustStorePassword", password);
     }
     
-    public static boolean isRepositoryReadOnly(Repository repository) {
+    public static boolean isRepositoryReadOnly(Repository repository) throws RepositoryException {
         String repositoryWriteModeProperty = System.getProperty(ServerConstants.REPO_WRITE_MODE);
         
         if (repositoryWriteModeProperty != null) {

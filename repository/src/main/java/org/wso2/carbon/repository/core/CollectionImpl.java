@@ -355,7 +355,6 @@ public class CollectionImpl extends ResourceImpl implements Collection {
                     log.error(msg);
                     throw new RepositoryServerException(msg);
                 }
-                
                 resourceDAO.fillChildren(this, dataAccessManager);
             }
             return content;

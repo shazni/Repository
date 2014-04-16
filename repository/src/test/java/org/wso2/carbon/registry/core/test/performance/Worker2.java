@@ -44,7 +44,6 @@ public class Worker2 extends Worker {
                 long putTime = putEnd - putStart;
                 
                 System.out.println("CSV,"+threadName+","+"put,"+putTime/1000000);
-                r1.discard();
 
                 long getStart = System.nanoTime();                
                 Resource r2 = registry.get(basePath + i);
@@ -52,7 +51,6 @@ public class Worker2 extends Worker {
                 long getTime = getEnd - getStart;
                 
                 System.out.println("CSV,"+threadName+","+"get,"+getTime/1000000);
-                r2.discard();
 
                 long deleteStart = System.nanoTime();
                 

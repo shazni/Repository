@@ -22,6 +22,7 @@ package org.wso2.carbon.repository.core.handlers.builtin;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.handlers.Filter;
 import org.wso2.carbon.repository.api.handlers.HandlerContext;
+import org.wso2.carbon.repository.api.utils.Method;
 
 /**
  * This is a built-in Filter that is used for simulation operations. The handler simulator uses an
@@ -59,155 +60,160 @@ public class SimulationFilter extends Filter {
         simulation.set(input);
     }
 
-    /**
-     * Handles the get operation
-     */
-    @Override
-    public boolean handleGet(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
+//    /**
+//     * Handles the get operation
+//     */
+//    @Override
+//    public boolean handleGet(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the put operation
+//     */
+//    @Override
+//    public boolean handlePut(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the import resource operation
+//     */
+//    @Override
+//    public boolean handleImportResource(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the delete operation
+//     */
+//    @Override
+//    public boolean handleDelete(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the put child operation
+//     */
+//    @Override
+//    public boolean handlePutChild(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the import child operation
+//     */
+//    @Override
+//    public boolean handleImportChild(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the move operation
+//     */
+//    @Override
+//    public boolean handleMove(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the copy operation
+//     */
+//    @Override
+//    public boolean handleCopy(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the rename operation
+//     */
+//    @Override
+//    public boolean handleRename(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the create link operation
+//     */
+//    @Override
+//    public boolean handleCreateLink(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the remove link operation
+//     */
+//    @Override
+//    public boolean handleRemoveLink(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the restore version operation
+//     */
+//    @Override
+//    public boolean handleRestoreVersion(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the create version operation
+//     */
+//    @Override
+//    public boolean handleCreateVersion(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the get versions operation
+//     */
+//    @Override
+//    public boolean handleGetVersions(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the execute query operation
+//     */
+//    @Override
+//    public boolean handleExecuteQuery(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the search operation
+//     */
+//    @Override
+//    public boolean handleSearchContent(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the resource exists operation
+//     */
+//    @Override
+//    public boolean handleResourceExists(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the dump operation
+//     */
+//    @Override
+//    public boolean handleDump(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
+//
+//    /**
+//     * Handles the resource operation
+//     */
+//    @Override
+//    public boolean handleRestore(HandlerContext requestContext) throws RepositoryException {
+//        return isSimulation();
+//    }
 
-    /**
-     * Handles the put operation
-     */
     @Override
-    public boolean handlePut(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the import resource operation
-     */
-    @Override
-    public boolean handleImportResource(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the delete operation
-     */
-    @Override
-    public boolean handleDelete(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the put child operation
-     */
-    @Override
-    public boolean handlePutChild(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the import child operation
-     */
-    @Override
-    public boolean handleImportChild(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the move operation
-     */
-    @Override
-    public boolean handleMove(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the copy operation
-     */
-    @Override
-    public boolean handleCopy(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the rename operation
-     */
-    @Override
-    public boolean handleRename(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the create link operation
-     */
-    @Override
-    public boolean handleCreateLink(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the remove link operation
-     */
-    @Override
-    public boolean handleRemoveLink(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the restore version operation
-     */
-    @Override
-    public boolean handleRestoreVersion(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the create version operation
-     */
-    @Override
-    public boolean handleCreateVersion(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the get versions operation
-     */
-    @Override
-    public boolean handleGetVersions(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the execute query operation
-     */
-    @Override
-    public boolean handleExecuteQuery(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-    
-    /**
-     * Handles the search operation
-     */
-    @Override
-    public boolean handleSearchContent(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the resource exists operation
-     */
-    @Override
-    public boolean handleResourceExists(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the dump operation
-     */
-    @Override
-    public boolean handleDump(HandlerContext requestContext) throws RepositoryException {
-        return isSimulation();
-    }
-
-    /**
-     * Handles the resource operation
-     */
-    @Override
-    public boolean handleRestore(HandlerContext requestContext) throws RepositoryException {
+    public boolean filter(HandlerContext handlerContext, Method method) throws RepositoryException {
         return isSimulation();
     }
 }

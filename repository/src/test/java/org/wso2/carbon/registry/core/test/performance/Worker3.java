@@ -66,7 +66,6 @@ public class Worker3 extends Worker {
                 long putEnd = System.nanoTime();
                 long putTime = putEnd - putStart;
                 System.out.println("CSV," + threadName + "," + "put," + putTime / 1000000);
-                r1.discard();
 
                 long queryStart = System.nanoTime();
                 Map<String, String> params = new HashMap<String, String>();
@@ -77,7 +76,6 @@ public class Worker3 extends Worker {
                 long queryTime = queryEnd - queryStart;
                 System.out.println("CSV," + threadName + "," + "query," + queryTime / 1000000);
 
-                r2.discard();
 
                 long deleteStart = System.nanoTime();
                 registry.delete(basePath + i + "/s1/a1");

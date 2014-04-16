@@ -63,7 +63,7 @@ public final class RepositoryConstants {
 
 	/**
 	 * The base path for the governance repository.
-	 */
+    */
 	public static final String GOVERNANCE_REGISTRY_BASE_PATH = SYSTEM_COLLECTION_BASE_PATH + "/governance";
 
 	/**

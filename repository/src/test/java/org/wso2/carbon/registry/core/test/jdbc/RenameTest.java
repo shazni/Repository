@@ -60,7 +60,7 @@ public class RenameTest extends BaseTestCase {
         Assert.assertTrue(failed, "Resource should not be accessible from the old path after renaming.");
 
         Resource newR1 = registry.get("/rename2");
-        Assert.assertEquals(newR1.getProperty("test"), "rename", "Resource should contain a property with name test and value rename.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "rename", "Resource should contain a property with name test and value rename.");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class RenameTest extends BaseTestCase {
         Assert.assertTrue(failed, "Resource should not be accessible from the old path after renaming.");
 
         Resource newR1 = registry.get("/tests/rename2");
-        Assert.assertEquals(newR1.getProperty("test"), "rename", "Resource should contain a property with name test and value rename.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "rename", "Resource should contain a property with name test and value rename.");
     }
 
     @Test
@@ -106,7 +106,7 @@ public class RenameTest extends BaseTestCase {
         Assert.assertTrue(failed, "Resource should not be accessible from the old path after renaming the parent.");
 
         Resource newR1 = registry.get("/rename4/c1/dummy");
-        Assert.assertEquals(newR1.getProperty("test"), "rename", "Resource should contain a property with name test and value rename.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "rename", "Resource should contain a property with name test and value rename.");
     }
 
     @Test
@@ -129,6 +129,6 @@ public class RenameTest extends BaseTestCase {
         Assert.assertTrue(failed, "Resource should not be accessible from the old path after renaming the parent.");
 
         Resource newR1 = registry.get("/c2/rename4/c1/dummy");
-        Assert.assertEquals(newR1.getProperty("test"), "rename", "Resource should contain a property with name test and value rename.");
+        Assert.assertEquals(newR1.getPropertyValue("test"), "rename", "Resource should contain a property with name test and value rename.");
     }
 }

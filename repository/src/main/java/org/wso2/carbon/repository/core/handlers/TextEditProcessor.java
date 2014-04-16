@@ -48,7 +48,6 @@ public class TextEditProcessor extends EditProcessor {
         Resource resource = registry.get(path);
         resource.setContent(textContent);
         registry.put(path, resource);
-        resource.discard();
 
         return false;
     }

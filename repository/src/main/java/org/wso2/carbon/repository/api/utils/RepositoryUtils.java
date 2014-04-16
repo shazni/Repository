@@ -35,7 +35,6 @@ import org.wso2.carbon.repository.api.Repository;
 import org.wso2.carbon.repository.api.RepositoryConstants;
 import org.wso2.carbon.repository.api.RepositoryService;
 import org.wso2.carbon.repository.api.Resource;
-import org.wso2.carbon.repository.api.StatisticsCollector;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.exceptions.RepositoryUserContentException;
 
@@ -49,8 +48,6 @@ public final class RepositoryUtils {
     private static final Log log = LogFactory.getLog(RepositoryUtils.class);
     private static final String ENCODING = System.getProperty("carbon.registry.character.encoding");
     
-    private static volatile List<StatisticsCollector> statisticsCollectors = new LinkedList<StatisticsCollector>();
-
     private RepositoryUtils() {
     }
 
@@ -212,41 +209,6 @@ public final class RepositoryUtils {
         
         return false;
     }
-
-    /**
-     * Method to record statistics.
-     *
-     * @param parameters The parameters to be passed to the statistics collector interface.
-     *                   Generally, it is expected that each method invoking this method will pass
-     *                   all relevant parameters such that the statistics collectors can examine
-     *                   them as required.
-     */
-    public static void recordStatistics(Object ... parameters) {
-        StatisticsCollector[] statisticsCollectors = getStatisticsCollectors();
-        
-        for (StatisticsCollector collector : statisticsCollectors) {
-            collector.collect(parameters);
-        }
-    }
-    
-    /**
-     * Method to obtain a list of statistics collectors.
-     *
-     * @return array of statistics collectors if one or more statistics collectors exist, or an
-     * empty array.
-     */
-    public static StatisticsCollector[] getStatisticsCollectors() {
-        return statisticsCollectors.isEmpty() ? new StatisticsCollector[0] : statisticsCollectors.toArray(new StatisticsCollector[statisticsCollectors.size()]);
-    }
-
-    /**
-     * Method to add a statistics collector
-     *
-     * @param statisticsCollector the statistics collector to be added.
-     */
-    public static void addStatisticsCollector(StatisticsCollector statisticsCollector) {
-        statisticsCollectors.add(statisticsCollector);
-    }
     
     /**
      * Method to obtain the relative path for the given absolute path.
@@ -286,7 +248,7 @@ public final class RepositoryUtils {
      * @param relativePath        the relative path of which absolute path is required
      * @return                    the absolute path of the given relative path
      */
-    public static String getAbsolutePath(Repository registry, String relativePath) {
+    public static String  getAbsolutePath(Repository registry, String relativePath) {
     	if(registry.getRepositoryService() != null) {
     		return getAbsolutePathToOriginal(relativePath, registry.getRepositoryService().getRepositoryRoot());
     	}
@@ -562,7 +524,7 @@ public final class RepositoryUtils {
      * @param path     : Where to put the file
      * @param registry : Registry instance
      *
-     * @throws org.wso2.carbon.registry.core.exceptions.RepositoryException
+     * @throws org.wso2.carbon.repository.api.exceptions.RepositoryException
      *          : if something went wrong
      */
     public static void importToRegistry(File file, String path, Repository registry) throws RepositoryException {
@@ -597,7 +559,7 @@ public final class RepositoryUtils {
             throw new RepositoryException("Failed to export from registry", e);
         }
     }
-    
+
     private static void processImport(File file, String path, Repository repository) throws Exception {
         String filePart = file.getName();
         String resourcePath = path + "/" + filePart;

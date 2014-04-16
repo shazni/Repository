@@ -16,16 +16,12 @@
 
 package org.wso2.carbon.repository.api;
 
+import org.wso2.carbon.repository.api.exceptions.RepositoryException;
+
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Date;
 import java.util.Map;
-
-import org.wso2.carbon.repository.api.Activity;
-import org.wso2.carbon.repository.api.Collection;
-import org.wso2.carbon.repository.api.Resource;
-import org.wso2.carbon.repository.api.TransactionManager;
-import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 
 /**
  * This is the "Full" Repository interface. It contains not only the get/put behavior

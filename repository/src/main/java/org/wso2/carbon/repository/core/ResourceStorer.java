@@ -16,54 +16,33 @@
 
 package org.wso2.carbon.repository.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.repository.api.Activity;
+import org.wso2.carbon.repository.api.*;
 import org.wso2.carbon.repository.api.Collection;
-import org.wso2.carbon.repository.api.RepositoryConstants;
-import org.wso2.carbon.repository.api.Resource;
-import org.wso2.carbon.repository.api.ResourcePath;
 import org.wso2.carbon.repository.api.exceptions.RepositoryErrorCodes;
 import org.wso2.carbon.repository.api.exceptions.RepositoryException;
 import org.wso2.carbon.repository.api.exceptions.RepositoryResourceNotFoundException;
 import org.wso2.carbon.repository.api.exceptions.RepositoryUserContentException;
+import org.wso2.carbon.repository.api.utils.Actions;
 import org.wso2.carbon.repository.api.utils.RepositoryUtils;
 import org.wso2.carbon.repository.core.config.RepositoryContext;
 import org.wso2.carbon.repository.core.config.StaticConfiguration;
 import org.wso2.carbon.repository.core.dataobjects.ResourceDO;
 import org.wso2.carbon.repository.core.exceptions.RepositoryServerContentException;
-import org.wso2.carbon.repository.core.utils.DumpReader;
-import org.wso2.carbon.repository.core.utils.DumpWriter;
-import org.wso2.carbon.repository.core.utils.InternalConstants;
-import org.wso2.carbon.repository.core.utils.InternalUtils;
-import org.wso2.carbon.repository.core.utils.MediaTypesUtils;
+import org.wso2.carbon.repository.core.utils.*;
 import org.wso2.carbon.repository.spi.dao.ResourceDAO;
 import org.wso2.carbon.repository.spi.dao.ResourceVersionDAO;
 import org.wso2.carbon.repository.spi.dataaccess.DataAccessManager;
+
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.stream.*;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Encapsulates the retrieving, storing, modifying and deleting of resources. This class only deals
@@ -156,7 +135,6 @@ public class ResourceStorer {
         }
         
         ((ResourceImpl) resource).setDataAccessManager(dataAccessManager);
-        ((ResourceImpl) resource).setUserName(CurrentContext.getUser());
         ((ResourceImpl) resource).setTenantId(CurrentContext.getTenantId());
 
         return resource;
@@ -183,7 +161,6 @@ public class ResourceStorer {
         
         resourceDAO.fillResource((ResourceImpl) resource);
         ((ResourceImpl) resource).setDataAccessManager(dataAccessManager);
-        ((ResourceImpl) resource).setUserName(CurrentContext.getUser());
         ((ResourceImpl) resource).setTenantId(CurrentContext.getTenantId());
 
         return resource;
@@ -209,7 +186,6 @@ public class ResourceStorer {
         
         resourceDAO.fillResource(resource, start, pageLen);
         resource.setDataAccessManager(dataAccessManager);
-        resource.setUserName(CurrentContext.getUser());
         resource.setTenantId(CurrentContext.getTenantId());
 
         return resource;
@@ -282,13 +258,12 @@ public class ResourceStorer {
      *
      * @param path  path of the resource
      * @param resource  resource object
-     * @throws org.wso2.carbon.registry.core.exceptions.RepositoryException If operation failed
+     * @throws org.wso2.carbon.repository.api.exceptions.RepositoryException If operation failed
      */
     private void validateProperties(String path, Resource resource) throws RepositoryException {
-        Properties properties = resource.getProperties();
 
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            if (rejectIfNull(entry.getKey())) {
+        for (String key : resource.getPropertyKeys()) {
+            if (rejectIfNull(key)) {
                 String errMsg = "The resource at " + path +
                         " contains a property that has a key with NULL.";
                 log.warn(errMsg);
@@ -307,13 +282,13 @@ public class ResourceStorer {
         // copying the id attribute for the resource
         ((ResourceImpl) resource).setPathID(resourceID.getPathID());
         ((ResourceImpl) resource).setName(resourceID.getName());
-        ((ResourceImpl) resource).setPath(resourceID.getPath());
+        resource.setPath(resourceID.getPath());
 
         ((ResourceImpl) resource).setCreatedTime(new Date(oldResourceDO.getCreatedOn()));
         ((ResourceImpl) resource).setAuthorUserName(oldResourceDO.getAuthor());
-        
+
         // we are always creating versions for resources (files), if the resource has changed.
-        if (!(resource instanceof Collection) && this.versionOnChange && resource.isVersionableChange()) {
+        if (!(resource instanceof Collection) && this.versionOnChange && ((ResourceImpl) resource).isVersionableChange()) {
             ResourceImpl oldResourceImpl = new ResourceImpl(resourceID.getPath(), oldResourceDO);
             versionRepository.createSnapshot(oldResourceImpl, false, false);
         } else {
@@ -387,13 +362,12 @@ public class ResourceStorer {
      * @throws RepositoryException if the operation failed.
      */
     public void delete(String _path) throws RepositoryException {
-
         String path = _path;
         path = InternalUtils.getPureResourcePath(path);
 
         ResourceIDImpl resourceID = resourceDAO.getResourceID(path);
         ResourceDO resourceDO = resourceDAO.getResourceDO(resourceID);
-        
+
         if (resourceDO == null) {
             boolean isCollection = resourceID.isCollection();
             // then we will check for non-collections as the getResourceID only check the collection exist
@@ -858,7 +832,7 @@ public class ResourceStorer {
         
         if (!Boolean.FALSE.equals(CurrentContext.getAttribute(IS_LOGGING_ACTIVITY))) {
             registryContext.getLogWriter().addLog(
-                    path, CurrentContext.getUser(), Activity.ADD, null);
+                    path, CurrentContext.getUser(), Actions.ADD, null);
         }
         
         if (!(resource instanceof CollectionImpl)) {
@@ -905,7 +879,7 @@ public class ResourceStorer {
         
         if (!Boolean.FALSE.equals(CurrentContext.getAttribute(IS_LOGGING_ACTIVITY))) {
             registryContext.getLogWriter().addLog(resourceID.getPath(), CurrentContext.getUser(),
-                    Activity.UPDATE, null);
+                    Actions.UPDATE, null);
         }
         
         if (!(resource instanceof CollectionImpl)) {
@@ -982,7 +956,7 @@ public class ResourceStorer {
         }
         if (!Boolean.FALSE.equals(CurrentContext.getAttribute(IS_LOGGING_ACTIVITY))) {
             registryContext.getLogWriter().addLog(
-                    path, CurrentContext.getUser(), Activity.ADD, null);
+                    path, CurrentContext.getUser(), Actions.ADD, null);
         }
         if(collection.getUUID() == null){
             setUUIDForResource(collection);
@@ -1407,7 +1381,7 @@ public class ResourceStorer {
         }
 
         // create sym links
-        String linkRestoration = resourceImpl.getProperty(InternalConstants.REGISTRY_LINK_RESTORATION);
+        String linkRestoration = resourceImpl.getPropertyValue(InternalConstants.REGISTRY_LINK_RESTORATION);
         if (linkRestoration != null) {
             String[] parts = linkRestoration.split(RepositoryConstants.URL_SEPARATOR);
             
@@ -1476,8 +1450,8 @@ public class ResourceStorer {
                     resourceDAO.createAndApplyResourceID(path, parentResourceID, resourceImpl);
                 } else {
                     resourceImpl.setPathID(resourceID.getPathID());
-                    resourceImpl.setPath(path);
                     resourceImpl.setName(resourceID.getName());
+                    resourceImpl.setPath(path);
                 }
 
                 // adding resource followed by content (for nonCollection)
@@ -1713,28 +1687,25 @@ public class ResourceStorer {
 
         // fill properties
         resourceDAO.fillResourceProperties(resource);
-        Properties properties = resource.getProperties();
-        if (properties != null && properties.size() > 0) {
-        	xmlWriter.writeStartElement(DumpConstants.PROPERTIES);
-            
-            for (Object keyObject : properties.keySet()) {
-                String key = (String) keyObject;
-                List<String> propValues = resource.getPropertyValues(key);
-                for (String value : propValues) {
-                	xmlWriter.writeStartElement(DumpConstants.PROPERTY_ENTRY);
-                    // adding the key and value as attributes
-                	
-                	xmlWriter.writeAttribute(DumpConstants.PROPERTY_ENTRY_KEY, key);
-     	
-                    if (value != null) {
-                    	xmlWriter.writeCharacters(value != null ? value : "");
-                    }
+        xmlWriter.writeStartElement(DumpConstants.PROPERTIES);
 
-                    xmlWriter.writeEndElement();
+        for (Object keyObject : resource.getPropertyKeys()) {
+            String key = (String) keyObject;
+            List<String> propValues = resource.getPropertyValues(key);
+            for (String value : propValues) {
+                xmlWriter.writeStartElement(DumpConstants.PROPERTY_ENTRY);
+                // adding the key and value as attributes
+
+                xmlWriter.writeAttribute(DumpConstants.PROPERTY_ENTRY_KEY, key);
+
+                if (value != null) {
+                    xmlWriter.writeCharacters(value != null ? value : "");
                 }
+
+                xmlWriter.writeEndElement();
             }
-            xmlWriter.writeEndElement();
         }
+        xmlWriter.writeEndElement();
         
         // adding contents..
         if (!(resource instanceof CollectionImpl)) {

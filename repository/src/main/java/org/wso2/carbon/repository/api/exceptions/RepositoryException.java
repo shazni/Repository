@@ -16,8 +16,6 @@
 
 package org.wso2.carbon.repository.api.exceptions;
 
-import org.wso2.carbon.repository.api.exceptions.RepositoryErrorCodes;
-
 /**
  * Base Class for capturing any type of exception that occurs when using the Registry APIs.
  */
